@@ -7,8 +7,11 @@ title: 卡洛斯的博客
 subtitle:
 description: 千里之行，始于足下；书读百遍，不如搬砖一遍。
 author: KarosLi (卡洛斯)
-language: zh-CN
+language: zh-Hans
 timezone: Asia/Shanghai
+
+# 评论
+duoshuo_shortname: karosli
 
 # URL
 ## If your site is put in a subdirectory, set url as 'http://yoursite.com/child' and root as '/child/'
@@ -39,7 +42,7 @@ relative_link: false
 future: true
 highlight:
   enable: true
-  line_number: true
+  line_number: false
   auto_detect: true
   tab_replace:
 
