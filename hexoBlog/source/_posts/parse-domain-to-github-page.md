@@ -13,6 +13,8 @@ categories: hexo
 karosli.com
 ```
 
+<!-- more -->
+
 # 二，添加a记录
 根据[文档](https://help.github.com/articles/setting-up-an-apex-domain/)添加a记录，这里我是用dnspod做域名解析的，前提是需要把万网的dns解析服务器设置成dnspod的服务器。
 
