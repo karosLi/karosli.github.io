@@ -10,9 +10,6 @@ author: KarosLi (卡洛斯)
 language: zh-Hans
 timezone: Asia/Shanghai
 
-# 评论
-duoshuo_shortname: karosli
-
 # URL
 ## If your site is put in a subdirectory, set url as 'http://yoursite.com/child' and root as '/child/'
 url: https://karosli.github.io

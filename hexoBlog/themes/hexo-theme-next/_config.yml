@@ -251,7 +251,7 @@ custom_logo:
 # Available value:
 #    normal | night | night eighties | night blue | night bright
 # https://github.com/chriskempson/tomorrow-theme
-highlight_theme: normal
+highlight_theme: night eighties
 
 
 # ---------------------------------------------------------------
@@ -269,10 +269,10 @@ mathjax:
 #swiftype_key:
 
 # Baidu Analytics ID
-#baidu_analytics:
+baidu_analytics: 2c60eb726acae80a0bd58fe0229a46b8
 
 # Duoshuo ShortName
-#duoshuo_shortname:
+duoshuo_shortname: karosli
 
 # Disqus
 #disqus_shortname:
