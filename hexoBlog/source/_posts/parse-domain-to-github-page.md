@@ -1,7 +1,8 @@
 ---
 title: 自定义域名解析到Github Page
 date: 2017-02-09 17:25:53
-tags:
+tags: hexo
+categories: hexo
 ---
 
 今天刚刚搭建了Github page，但是始终没有一个自己的域名，感觉总是没那么爽快。于是马上在万网上注册一个顶级域名。根据github page的[官方文档](https://help.github.com/articles/using-a-custom-domain-with-github-pages/)我们可以很方便的进行解析。
