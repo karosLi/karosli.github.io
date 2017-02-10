@@ -1,0 +1,343 @@
+<!doctype html>
+
+<!--
+
+    Welcome to the light side of the source, young padawan.
+
+    One step closer to learn something interesting you are...
+
+                               ____                  
+                            _.' :  `._               
+                        .-.'`.  ;   .'`.-.           
+               __      / : ___\ ;  /___ ; \      __  
+             ,'_ ""=-.:__;".-.";: :".-.":__;.-="" _`,
+             :' `.t""=-.. '<@.`;_  ',@:` ..-=""j.' `;
+                  `:-.._J '-.-'L__ `-.-' L_..-;'     
+                    "-.__ ;  .-"  "-.  : __.-"       
+                        L ' /.======.\ ' J           
+                         "-.   "__"   .-"            
+                        __.l"-:_JL_;-";.__           
+                     .-j/'.;  ;""""  / .'\"-.        
+                   .' /:`. "-.:     .-" .';  `.      
+                .-"  / ;  "-. "-..-" .-"  :    "-.   
+             .+"-.  : :      "-.__.-"      ;-._   \  
+             ; \  `.; ;                    : : "+. ; 
+             :  ;   ; ;                    : ;  : \: 
+             ;  :   ; :                    ;:   ;  : 
+            : \  ;  :  ;                  : ;  /  :: 
+            ;  ; :   ; :                  ;   :   ;: 
+            :  :  ;  :  ;                : :  ;  : ; 
+            ;\    :   ; :                ; ;     ; ; 
+            : `."-;   :  ;              :  ;    /  ; 
+             ;    -:   ; :              ;  : .-"   : 
+             :\     \  :  ;            : \.-"      : 
+              ;`.    \  ; :            ;.'_..-=  / ; 
+              :  "-.  "-:  ;          :/."      .'  :
+               \         \ :          ;/  __        :
+                \       .-`.\        /t-""  ":-+.   :
+                 `.  .-"    `l    __/ /`. :  ; ; \  ;
+                   \   .-" .-"-.-"  .' .'j \  /   ;/ 
+                    \ / .-"   /.     .'.' ;_:'    ;  
+                     :-""-.`./-.'     /    `.___.'   
+                           \ `t  ._  /               
+                            "-.t-._:'                
+
+-->
+
+<!--
+    
+    So you'd like to know how to use impress.js?
+    
+    You've made the first, very important step - you're reading the source code.
+    And that's how impress.js presentations are built - with HTML and CSS code.
+    
+    Believe me, you need quite decent HTML and CSS skills to be able to use impress.js effectively.
+    More importantly, you need to be a designer. There are no default styles or layouts for impress.js presentations.
+    
+    You need to design and build it by hand.
+    
+    So...
+    
+    Would you still like to know how to use impress.js?
+    
+-->
+
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=1024" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <title>impress.js | presentation tool based on the power of CSS3 transforms and transitions in modern browsers | by Bartek Szopka @bartaz</title>
+    
+    <meta name="description" content="impress.js is a presentation tool based on the power of CSS3 transforms and transitions in modern browsers and inspired by the idea behind prezi.com." />
+    <meta name="author" content="Bartek Szopka" />
+
+    <link href="http://fonts.googleapis.com/css?family=Open+Sans:regular,semibold,italic,italicsemibold|PT+Sans:400,700,400italic,700italic|PT+Serif:400,700,400italic,700italic" rel="stylesheet" />
+
+    <!--
+        
+        Impress.js doesn't depend on any external stylesheets. It adds all of the styles it needs for the
+        presentation to work.
+        
+        This style below contains styles only for demo presentation. Browse it to see how impress.js
+        classes are used to style presentation steps, or how to apply fallback styles, but I don't want
+        you to use them directly in your presentation.
+        
+        Be creative, build your own. We don't really want all impress.js presentations to look the same,
+        do we?
+        
+        When creating your own presentation get rid of this file. Start from scratch, it's fun!
+        
+    -->
+    <link href="css/impress-demo.css" rel="stylesheet" />
+    
+    <link rel="shortcut icon" href="favicon.png" />
+    <link rel="apple-touch-icon" href="apple-touch-icon.png" />
+
+    <style type="text/css">
+        body {
+            color: rgb(225, 225, 225)
+        }
+
+        .slide {
+            height: 750px;
+        }
+
+        .step ul li {
+            padding-top: 5px;
+            padding-bottom: 5px; 
+            font-size: 35px;
+        }
+
+        .hvcenter {
+            text-align: center;
+            width: 50%;  
+            margin: auto;  
+            position: absolute;  
+            top: 50%; 
+            left: 50%;  
+            -webkit-transform: translate(-50%,-50%);  
+            -ms-transform: translate(-50%,-50%);  
+            transform: translate(-50%,-50%); 
+        } 
+
+        #source1 {
+            width: 500px;
+            padding-bottom: 200px;
+            background-position: bottom right;
+            background-repeat: no-repeat;
+            background-image: url(img/bolt.png);
+        }
+
+    </style>
+</head>
+
+<body class="impress-not-supported" style="background-image: url(img/bg.jpg); background-size: cover;">
+
+<div class="fallback-message">
+    <p>Your browser <b>doesn't support the features required</b> by impress.js, so you are presented with a simplified version of this presentation.</p>
+    <p>For the best experience please use the latest <b>Chrome</b>, <b>Safari</b> or <b>Firefox</b> browser.</p>
+</div>
+
+<div id="impress">
+
+    <div id="bored" class="step slide" data-x="-1200" data-y="-1500">
+        <q>2016 述职总结</q>
+
+        <q style="position: absolute; bottom: 200px; right: 200px;">李凯</q>
+    </div>
+
+    <div class="step slide" data-x="-200" data-y="-1500">
+        <q><strong>目录</strong></q><br>
+        <ul>
+            <li><p><b>1.&nbsp&nbsp</b>简要概述</p></li>
+            <li><p><b>2.&nbsp&nbsp</b>做了什么?</p></li>
+            <li><p><b>3.&nbsp&nbsp</b>问题，建议及改进</p></li>
+            <li><p><b>4.&nbsp&nbsp</b>2017 展望</p></li>
+        </ul>
+    </div>
+
+    <div class="step slide" data-x="800" data-y="-1500">
+        <q><strong>简要概述</strong></q>
+        <span>我是11月份进的公司，到现在刚刚是两个月的时间，从一开始刚进团队的时候，当时需求还没有明确，而我也没有电脑，又处在东湖绿道项目的初期，在这个时间点上，于是我们就开始讨论具体的技术选型，讨论底层框架的搭建，业务上的分层，代码的规范，这些都为我们后面编码工作提供了明确方向。后面项目忙的起来的时候，并没有因为忙，而降低我们对整个项目的要求，在功能实现上，我们做的不错了。相反更多的时间是花在了需求的不明确和开发测试流程上，导致开发好的功能需要重新改动，或者是在测试过程中突然又不工作了，而这些都是需要改进的。总的来说，在项目里我们尝试很多新的技术，组件化，自动化打包，热修复等，为我们的项目增加扩展性和可维护性，后面我们将引入新的技术来继续优化我们的代码结构。</span>
+    </div>
+
+    <div class="step slide" data-x="1800" data-y="-1500">
+        <h1 class="hvcenter"><b>做了什么？</b></h1>
+    </div>
+
+    <div id="title1" class="step" data-x="0" data-y="0" data-scale="5">
+        <q><strong>代码样式</strong></q>
+        <ul>
+            <li class="positioning">编码样式统一，有利于代码的开发和维护。</li>
+            <li class="rotating">代码目录结构调整，分出工具模块和业务模块和通信模块。</li>
+        </ul>
+    </div>
+
+    <div id="title2" class="step" data-x="300" data-y="3000" data-rotate="90" data-scale="5">
+        <q><strong>基础组件</strong></q>
+        <ul>
+            <li><p>基于 <b class="rotating">yymodel</b> 和 <b class="scaling">afnnetworking</b> 搭建底层网络通信基础组件。</p></li>
+            <li class="positioning">组件化方案，让模块解偶合，减少依赖，增加灵活性。</li>
+            <li class="rotating">增加基础缓存服务，在没网的情况下可以继续浏览缓存的数据。</li>
+            <li>统一登录引擎。</li>
+        </ul>
+    </div>
+
+    <div id="ing" class="step" data-x="3500" data-y="-850" data-rotate="270" data-scale="6">
+        <q><strong class="positioning">hybird 框架</strong></q>
+        <ul>
+            <li>完成统一的 jsbridge 接口，可以让第三方 h5 使用同一个 js api 接口去与 iOS 和 Android 进行数据交互和事件交互。</li>
+        </ul>
+    </div>
+
+    <div id="imagination" class="step" data-x="6700" data-y="-300" data-scale="6">
+        <q><strong>自动化构建和热更新</strong></q>
+        <ul class="imagination">
+            <li>完成自动化构建脚本，自动打包上传到蒲公英和 testflight。</li>
+            <li>集成 jspatch 热更新功能。</li>
+        </ul>
+    </div>
+
+    <div id="big" class="step" data-x="3500" data-y="2100" data-rotate="180" data-scale="6">
+        <p>问题 <b>建议</b> <span class="thoughts">改进</span></p>
+    </div>
+
+    <div id="tiny" class="step" data-x="2825" data-y="2325" data-z="-3000" data-rotate="100" data-scale="1">
+        <q>问题：需求及接口设计</q>
+        <ul>
+            <li>没有需求评审，导致做过的功能被推翻或者很难用。</li>
+            <li>没有接口设计评审，导致个子系统接口设计不一致或者不是预期的结果。</li>
+            <li>没有统一的 api 网关，去分发请求，不利于后台的扩展和移动端的维护。</li>
+        </ul>
+    </div>
+
+    <div id="tiny1" class="step" data-x="3825" data-y="2325" data-z="-3000" data-rotate="200" data-scale="1">
+        <q>建议及改进</q>
+        <ul>
+            <li>需要安排时间，进行需求和接口的评审。</li>
+            <li>建议后台做好 api 网关，做好微服务。</li>
+        </ul>
+    </div>
+
+    <div id="tiny2" class="step" data-x="3825" data-y="3325" data-z="-3000" data-rotate="300" data-scale="1">
+        <q>问题：开发及测试流程</q>
+        <ul>
+            <li>没有开发环境，测试环境和产品环境的区分。</li>
+            <li>没有 candidate 和 codefreeze 的概念。</li>
+        </ul>
+    </div>
+
+    <div id="tiny3" class="step" data-x="4825" data-y="4325" data-z="-3000" data-rotate="400" data-scale="1">
+        <q>建议及改进</q>
+        <ul>
+            <li>需要搭建完整的开发，测试，产品环境。</li>
+            <li>构建版本的时候，交付给 qa 测试的时候，就应该 codefreeze。</li>
+        </ul>
+    </div>
+    
+
+    <div id="source1" class="step" data-x="6300" data-y="2000" data-rotate="20" data-scale="4">
+        <q>2017 展望</q>
+    </div>
+
+    
+    <div id="its-in-3d" class="step" data-x="6000" data-y="4000" data-z="-100" data-rotate-x="-40" data-rotate-y="10" data-scale="4">
+        <p><span class="have">动</span> <span class="you">态</span> <span class="noticed">化，</span> <span class="its">插</span> <span class="in">件</span> <b>化<sub>。</sub></b></p>
+        <p><span class="have">响</span> <span class="you">应</span> <span class="noticed">式</span> <span class="its">编</span> <span class="in">程</span> <b><sub>。</sub></b></p>
+    </div>
+
+    <div id="one-more-thing" class="step" data-x="7200" data-y="7300" data-scale="2" data-rotate-z="100">
+        <p>It's Over! Thank You!</p>
+    </div>
+
+    <div id="overview" class="step" data-x="3000" data-y="1500" data-scale="10">
+    </div>
+
+</div>
+
+<div class="hint">
+    <p>使用空格或者方向键来进入下一页</p>
+</div>
+<script>
+if ("ontouchstart" in document.documentElement) { 
+    document.querySelector(".hint").innerHTML = "<p>Tap on the left or right to navigate</p>";
+}
+</script>
+
+<script src="js/impress.js"></script>
+<script>impress().init();</script>
+
+<!--
+    
+    The `impress()` function also gives you access to the API that controls the presentation.
+    
+    Just store the result of the call:
+    
+        var api = impress();
+    
+    and you will get three functions you can call:
+    
+        `api.init()` - initializes the presentation,
+        `api.next()` - moves to next step of the presentation,
+        `api.prev()` - moves to previous step of the presentation,
+        `api.goto( stepIndex | stepElementId | stepElement, [duration] )` - moves the presentation to the step given by its index number
+                id or the DOM element; second parameter can be used to define duration of the transition in ms,
+                but it's optional - if not provided default transition duration for the presentation will be used.
+    
+    You can also simply call `impress()` again to get the API, so `impress().next()` is also allowed.
+    Don't worry, it wont initialize the presentation again.
+    
+    For some example uses of this API check the last part of the source of impress.js where the API
+    is used in event handlers.
+    
+-->
+
+</body>
+</html>
+
+<!--
+    
+    Now you know more or less everything you need to build your first impress.js presentation, but before
+    you start...
+    
+    Oh, you've already cloned the code from GitHub?
+    
+    You have it open in text editor?
+    
+    Stop right there!
+    
+    That's not how you create awesome presentations. This is only a code. Implementation of the idea that
+    first needs to grow in your mind.
+    
+    So if you want to build great presentation take a pencil and piece of paper. And turn off the computer.
+    
+    Sketch, draw and write. Brainstorm your ideas on a paper. Try to build a mind-map of what you'd like
+    to present. It will get you closer and closer to the layout you'll build later with impress.js.
+    
+    Get back to the code only when you have your presentation ready on a paper. It doesn't make sense to do
+    it earlier, because you'll only waste your time fighting with positioning of useless points.
+    
+    If you think I'm crazy, please put your hands on a book called "Presentation Zen". It's all about 
+    creating awesome and engaging presentations.
+    
+    Think about it. 'Cause impress.js may not help you, if you have nothing interesting to say.
+    
+-->
+
+<!--
+    
+    Are you still reading this?
+    
+    For real?
+    
+    I'm impressed! Feel free to let me know that you got that far (I'm @bartaz on Twitter), 'cause I'd like
+    to congratulate you personally :)
+    
+    But you don't have to do it now. Take my advice and take some time off. Make yourself a cup of coffee, tea,
+    or anything you like to drink. And raise a glass for me ;)
+    
+    Cheers!
+    
+-->
+
