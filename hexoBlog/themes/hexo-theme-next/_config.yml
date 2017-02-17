@@ -217,7 +217,7 @@ post_meta:
   created_at: true
   updated_at: false
   categories: true
-  
+
 # Post wordcount display settings
 # Dependies: https://github.com/willin/hexo-wordcount
 post_wordcount:
@@ -251,7 +251,7 @@ custom_logo:
 # Available value:
 #    normal | night | night eighties | night blue | night bright
 # https://github.com/chriskempson/tomorrow-theme
-highlight_theme: night eighties
+highlight_theme: normal
 
 
 # ---------------------------------------------------------------
@@ -392,7 +392,7 @@ busuanzi_count:
 # tencent_analytics:
 
 # Tencent MTA ID
-# tencent_mta: 
+# tencent_mta:
 
 
 # Enable baidu push so that the blog will push the url to baidu automatically which is very helpful for SEO
