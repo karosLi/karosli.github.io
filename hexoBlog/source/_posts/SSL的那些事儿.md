@@ -5,7 +5,14 @@ tags: 安全
 categories: 安全
 ---
 
+# SSL的那些事儿
+
+![timg-2](http://olf3t4omk.bkt.clouddn.com/timg-2.jpeg)
+
+
 `Https`，`SSL` 平时我们都听的挺多，知道它是用来加密的，但是对于里面的工作原理不是很清楚，所以在这里我也总结下 `SSL` 的工作原理，希望大家能够帮助到大家。
+
+<!--more-->
 
 > PS：其实这篇文章写了很久了，是在一次公司的内部培训准备的，写了几天PPT，也看了好多资料，虽然讲完了，但是一直放在自己的iCloud里了，最近又突然看到它了，想到毕竟也是花了时间在上面，还是想整理下发出来，和大家一起学习探讨。
 
@@ -187,6 +194,9 @@ duang，duang，duang，数字签名来了。数字签名就是为了解决信�
 * http://netsecurity.51cto.com/art/201108/287971.htm
 * http://www.educity.cn/labs/568700.html
 * http://hi.baidu.com/cqs2006123/item/70af9d46d9d3153efb896049
+
+
+
 
 
 
