@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>065DE412C5911919D337AECDB6D36A0C</key>
+	<array>
+		<dict>
+			<key>localURL</key>
+			<string>media/%E4%BC%98%E9%85%B7_5s.png</string>
+			<key>remoteURL</key>
+			<string>http://olf3t4omk.bkt.clouddn.com/优酷_5s.png</string>
+		</dict>
+		<dict>
+			<key>localURL</key>
+			<string>media/%E4%BC%98%E9%85%B7_7p_%E7%BB%93%E8%AE%BA%E5%B0%B1%E6%98%AF%E4%B8%8D%E7%AE%A1%E5%B1%8F%E5%B9%95%E5%B0%BA%E5%AF%B8%E8%BF%98%E6%98%AF%E6%8C%89%E7%82%B9%E5%8E%BB%E5%B8%83%E5%B1%80.png</string>
+			<key>remoteURL</key>
+			<string>http://olf3t4omk.bkt.clouddn.com/优酷_7p_结论就是不管屏幕尺寸还是按点去布局.png</string>
+		</dict>
+		<dict>
+			<key>localURL</key>
+			<string>media/%E6%B7%98%E5%AE%9D_5s_%E6%A0%87%E9%A2%98%E6%98%AF14%E5%8F%B7%E5%AD%97%E4%BD%93.png</string>
+			<key>remoteURL</key>
+			<string>http://olf3t4omk.bkt.clouddn.com/淘宝_5s_标题是14号字体.png</string>
+		</dict>
+		<dict>
+			<key>localURL</key>
+			<string>media/%E6%B7%98%E5%AE%9D_7p_%E7%BB%93%E8%AE%BA%E5%B0%B1%E6%98%AF%E4%B8%8D%E7%AE%A1%E5%B1%8F%E5%B9%95%E5%B0%BA%E5%AF%B8%E8%BF%98%E6%98%AF%E6%8C%89%E7%82%B9%E5%8E%BB%E5%B8%83%E5%B1%80.png</string>
+			<key>remoteURL</key>
+			<string>http://olf3t4omk.bkt.clouddn.com/淘宝_7p_结论就是不管屏幕尺寸还是按点去布局.png</string>
+		</dict>
+		<dict>
+			<key>localURL</key>
+			<string>media/%E6%B7%98%E5%AE%9D%E6%88%AA%E5%9B%BE1.jpg</string>
+			<key>remoteURL</key>
+			<string>http://olf3t4omk.bkt.clouddn.com/淘宝截图1.jpg</string>
+		</dict>
+		<dict>
+			<key>localURL</key>
+			<string>media/%E6%B7%98%E5%AE%9D_7p_%E7%BB%93%E8%AE%BA%E6%98%AF%E6%A0%87%E9%A2%98%E5%9C%A8%E5%A4%A7%E5%B0%8F%E5%B1%8F%E5%B9%95%E6%98%AF14%E5%8F%B7%E5%AD%97%E4%BD%93.png</string>
+			<key>remoteURL</key>
+			<string>http://olf3t4omk.bkt.clouddn.com/淘宝_7p_结论是标题在大小屏幕是14号字体.png</string>
+		</dict>
+	</array>
+	<key>selectedItem</key>
+	<string>065DE412C5911919D337AECDB6D36A0C</string>
+</dict>
+</plist>
