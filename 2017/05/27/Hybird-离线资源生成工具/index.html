@@ -1,0 +1,779 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css">
+
+
+  <meta name="keywords" content="hybird,">
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.0">
+
+
+
+
+
+
+<meta name="description" content="Hybird-离线资源生成工具目录  背景 离线资源生成工具 前端协助   背景由于线上乐刻客户端 App 第一次打开平台 H5 需要几秒的加载时间，这个体验对用户来说并不友好，为了让用户跳转 H5 和跳转到原生一样的用户体验，就需要把 H5 相关的离线资源包下发给客户端，客户端就可以使用离线资源来代替实际网络请求，节省用户等待时间和流量消耗。为了满足以上需求，就需要制作打包脚本和工具，来满足正常">
+<meta name="keywords" content="hybird">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Hybird-离线资源生成工具">
+<meta property="og:url" content="https://karosli.github.io/2017/05/27/Hybird-离线资源生成工具/index.html">
+<meta property="og:site_name" content="卡洛斯的博客">
+<meta property="og:description" content="Hybird-离线资源生成工具目录  背景 离线资源生成工具 前端协助   背景由于线上乐刻客户端 App 第一次打开平台 H5 需要几秒的加载时间，这个体验对用户来说并不友好，为了让用户跳转 H5 和跳转到原生一样的用户体验，就需要把 H5 相关的离线资源包下发给客户端，客户端就可以使用离线资源来代替实际网络请求，节省用户等待时间和流量消耗。为了满足以上需求，就需要制作打包脚本和工具，来满足正常">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2017-05-27T15:44:10.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Hybird-离线资源生成工具">
+<meta name="twitter:description" content="Hybird-离线资源生成工具目录  背景 离线资源生成工具 前端协助   背景由于线上乐刻客户端 App 第一次打开平台 H5 需要几秒的加载时间，这个体验对用户来说并不友好，为了让用户跳转 H5 和跳转到原生一样的用户体验，就需要把 H5 相关的离线资源包下发给客户端，客户端就可以使用离线资源来代替实际网络请求，节省用户等待时间和流量消耗。为了满足以上需求，就需要制作打包脚本和工具，来满足正常">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://karosli.github.io/2017/05/27/Hybird-离线资源生成工具/">
+
+
+
+
+
+  <title> Hybird-离线资源生成工具 | 卡洛斯的博客 </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?2c60eb726acae80a0bd58fe0229a46b8";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">卡洛斯的博客</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+    
+      <p class="site-subtitle"></p>
+    
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+  <link itemprop="mainEntityOfPage" href="https://karosli.github.io/2017/05/27/Hybird-离线资源生成工具/">
+
+  <span style="display:none" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <meta itemprop="name" content="KarosLi (卡洛斯)">
+    <meta itemprop="description" content>
+    <meta itemprop="image" content="/images/avatar.jpeg">
+  </span>
+
+  <span style="display:none" itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+    <meta itemprop="name" content="卡洛斯的博客">
+    <span style="display:none" itemprop="logo" itemscope itemtype="http://schema.org/ImageObject">
+      <img style="display:none;" itemprop="url image" alt="卡洛斯的博客" src>
+    </span>
+  </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                Hybird-离线资源生成工具
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-05-27T23:42:20+08:00">
+                2017-05-27
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/hybird/" itemprop="url" rel="index">
+                    <span itemprop="name">hybird</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2017/05/27/Hybird-离线资源生成工具/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2017/05/27/Hybird-离线资源生成工具/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="Hybird-离线资源生成工具"><a href="#Hybird-离线资源生成工具" class="headerlink" title="Hybird-离线资源生成工具"></a>Hybird-离线资源生成工具</h1><h2 id="目录"><a href="#目录" class="headerlink" title="目录"></a>目录</h2><blockquote>
+<ul>
+<li>背景</li>
+<li>离线资源生成工具</li>
+<li>前端协助</li>
+</ul>
+</blockquote>
+<h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>由于线上乐刻客户端 <code>App</code> 第一次打开平台 <code>H5</code> 需要几秒的加载时间，这个体验对用户来说并不友好，为了让用户跳转 <code>H5</code> 和跳转到原生一样的用户体验，就需要把 <code>H5</code> 相关的离线资源包下发给客户端，客户端就可以使用离线资源来代替实际网络请求，节省用户等待时间和流量消耗。为了满足以上需求，就需要制作打包脚本和工具，来满足正常的运维。</p>
+<a id="more"></a>
+<h2 id="离线资源生成工具"><a href="#离线资源生成工具" class="headerlink" title="离线资源生成工具"></a>离线资源生成工具</h2><p>离线资源的生成，我们提供了一个工具可以打包出增量和全量升级包。原理是根据 <code>git diff</code> 去比较两次 <code>commit</code>，然后只关注 <code>offlineResource</code> (与 <code>dist</code> 目录平级，发布包需要把 <code>dist</code> 目录内容拷贝到 <code>offlineResource</code>) 目录下的两次提交的文件差别，从而打出增量包。全量包就是整个 <code>offlineResource</code> 目录。</p>
+<p><code>offlineh5</code> 安装方法：</p>
+<figure class="highlight cmake"><table><tr><td class="code"><pre><span class="line">npm <span class="keyword">install</span> -g offlineh5</span><br></pre></td></tr></table></figure>
+
+<p>使用方式：</p>
+<figure class="highlight groovy"><table><tr><td class="code"><pre><span class="line">offlineh5 -o <span class="keyword">package</span> -r  <span class="string">http:</span><span class="comment">//github.com/xxx.git -f e24b8f0bb9a85c93c6965a906c1ea0448342821a -u gitusername -p gitpassword -z activity</span></span><br></pre></td></tr></table></figure>
+
+<p>参数说明：</p>
+<blockquote>
+<p>-o 资源包输出路径<br>-r 仓库地址<br>-u git 用户名<br>-p git 用户密码<br>-f 从哪个 commit 导出增量包<br>-z 打出来的资源包前缀</p>
+</blockquote>
+<p>打出来的离线资源包需要放到七牛 cdn 存储：</p>
+<figure class="highlight awk"><table><tr><td class="code"><pre><span class="line">http:<span class="regexp">//</span>oq78hrbgk.bkl.clouddn.com<span class="regexp">/upgrade/</span>activity<span class="regexp">/activity.full_0.1.1.zip</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="前端协助"><a href="#前端协助" class="headerlink" title="前端协助"></a>前端协助</h2><h3 id="遇到的问题"><a href="#遇到的问题" class="headerlink" title="遇到的问题"></a>遇到的问题</h3><p>之前前端打包只把 <code>html</code>, <code>js</code>, <code>css</code> 导出到 <code>offlineResource</code> 目录下，没有图片，因为图片都放在 <code>cdn</code> 上，本地就没有任何的原始图片，这样导致三个问题：</p>
+<ol>
+<li><code>node</code> 脚本打出来的离线资源包并不包含图片。</li>
+<li>即使找到了原始图片，并不能保证原始图片的本地路径和cdn上的是一致的。</li>
+<li>线上现有 <code>cdn</code>一级路径比较混乱。</li>
+</ol>
+<p>线上现有路径。</p>
+<blockquote>
+<p><a href="http://cdn.leoao.com/le-activity/528/528-01.png" target="_blank" rel="noopener">http://cdn.leoao.com/le-activity/528/528-01.png</a><br><a href="http://cdn.leoao.com/activity/528/app.min.css" target="_blank" rel="noopener">http://cdn.leoao.com/activity/528/app.min.css</a><br><a href="http://cdn.leoao.com/activity/528/app.min.js" target="_blank" rel="noopener">http://cdn.leoao.com/activity/528/app.min.js</a></p>
+</blockquote>
+<h3 id="前端调整"><a href="#前端调整" class="headerlink" title="前端调整"></a>前端调整</h3><ol>
+<li>使用 <code>qtool</code> 脚本获取 <code>cdn</code> 上的所有图片，存放到本地作为原始图片，根据模块规范原始图片的路径。比如 <code>le-activity</code> 和 <code>activity</code> 需要统一成 <code>activity</code>。</li>
+<li>前端打包不仅输出 <code>html</code>, <code>js</code>, <code>css</code>，同时每次打包需要把原始图片拷贝到 <code>dist</code> 目录下。同时发布流程需要把 <code>dist</code> 目录内容拷贝到 <code>offlineResource</code>目录下。</li>
+<li>根据 <code>offlineResource</code> 目录，使用 <code>qtool</code> 脚本使用该目录下的所有资源路径作为 <code>cdn key</code>，然后把所有资源上传到 <code>cdn</code> 上。以后前端在打包之前开发的时候，完全可以使用本地的路劲作为相对路径提前配置路径，而不用考虑 <code>cdn</code> 的上传路径问题。</li>
+</ol>
+<p>调整后，<code>offlineh5</code> 打包脚本可以根据 <code>offlineResource</code> 目录下的不同的 <code>commit</code>，<code>diff</code> 出两个版本之间差别，从而打出增量包和全量包。</p>
+<h4 id="使用-qtool"><a href="#使用-qtool" class="headerlink" title="使用 qtool"></a>使用 qtool</h4><p><code>qtool</code> 安装方法：</p>
+<figure class="highlight cmake"><table><tr><td class="code"><pre><span class="line">npm <span class="keyword">install</span> -g qtool</span><br></pre></td></tr></table></figure>
+
+<p>上传资源:</p>
+<figure class="highlight stylus"><table><tr><td class="code"><pre><span class="line">qtool upload  -f uploadfolder -<span class="selector-tag">a</span> RSxpQIxNIS2vo0vuQR3HX701ddS9fdlUnQ5jV8ul -s xCLWczC5V5kyy7H85MNKNYcXT4wx9k5OzT7YDVFk -<span class="selector-tag">b</span> mybucket -k activity -h olf3t4olk<span class="selector-class">.bkt</span><span class="selector-class">.clouddn</span><span class="selector-class">.com</span></span><br></pre></td></tr></table></figure>
+
+<p>下载资源:</p>
+<figure class="highlight stylus"><table><tr><td class="code"><pre><span class="line">qtool download  -f downloadfolder -<span class="selector-tag">a</span> RSxpQIxNIS2vo0vuQR3HX701ddS9fdlUnQ5jV8ul -s xCLWczC5V5kyy7H85MNKNYcXT4wx9k5OzT7YDVFk -<span class="selector-tag">b</span> mybucket -k activity -h olf3t4olk<span class="selector-class">.bkt</span><span class="selector-class">.clouddn</span><span class="selector-class">.com</span></span><br></pre></td></tr></table></figure>
+
+<p>参数说明:</p>
+<figure class="highlight gauss"><table><tr><td class="code"><pre><span class="line">-f, --folder &lt;<span class="keyword">string</span>&gt; </span><br><span class="line">    上传和下载目录</span><br><span class="line">    </span><br><span class="line">-k, --keypreffix &lt;<span class="keyword">string</span>&gt; </span><br><span class="line">    上传的时候，前缀会插入到 <span class="built_in">key</span> 的前面。</span><br><span class="line">    下载的时候，前缀会被用于过滤七牛的cdn url。</span><br><span class="line">    </span><br><span class="line">-a, --accessKey &lt;<span class="keyword">string</span>&gt;</span><br><span class="line">    access <span class="built_in">Key</span> 七牛官网获取</span><br><span class="line">    </span><br><span class="line">-s, --secretKey &lt;<span class="keyword">string</span>&gt; </span><br><span class="line">    Secret <span class="built_in">Key</span> 七牛官网获取</span><br><span class="line">      </span><br><span class="line">-b, --bucket &lt;<span class="keyword">string</span>&gt;</span><br><span class="line">    上传和下载对象空间</span><br><span class="line">    </span><br><span class="line">-h, --hostUrl &lt;<span class="keyword">string</span>&gt;</span><br><span class="line">    七牛 host url，比如：http:<span class="comment">//cdn.xxx.com</span></span><br></pre></td></tr></table></figure>
+
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/hybird/" rel="tag"># hybird</a>
+          
+        </div>
+      
+
+      
+        
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/03/12/乐刻新人成长营/" rel="next" title="乐刻新人成长营">
+                <i class="fa fa-chevron-left"></i> 乐刻新人成长营
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/05/27/Hybird-后台接口和后台管理界面/" rel="prev" title="Hybird-后台接口和后台管理界面">
+                Hybird-后台接口和后台管理界面 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+          
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2017/05/27/Hybird-离线资源生成工具/" data-title="Hybird-离线资源生成工具" data-url="https://karosli.github.io/2017/05/27/Hybird-离线资源生成工具/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image" src="/images/avatar.jpeg" alt="KarosLi (卡洛斯)">
+          <p class="site-author-name" itemprop="name">KarosLi (卡洛斯)</p>
+          <p class="site-description motion-element" itemprop="description">正在修行的路上</p>
+        </div>
+        <nav class="site-state motion-element">
+        
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">20</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-categories">
+              
+                <span class="site-state-item-count">13</span>
+                <span class="site-state-item-name">分类</span>
+              
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">13</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+          <div class="links-of-blogroll motion-element links-of-blogroll-inline">
+            <div class="links-of-blogroll-title">
+              <i class="fa  fa-fw fa-globe"></i>
+              友情链接
+            </div>
+            <ul class="links-of-blogroll-list">
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://hexiaofei51.cn/" title="晓飞的博客" target="_blank">晓飞的博客</a>
+                </li>
+              
+            </ul>
+          </div>
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Hybird-离线资源生成工具"><span class="nav-number">1.</span> <span class="nav-text">Hybird-离线资源生成工具</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#目录"><span class="nav-number">1.1.</span> <span class="nav-text">目录</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#背景"><span class="nav-number">1.2.</span> <span class="nav-text">背景</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#离线资源生成工具"><span class="nav-number">1.3.</span> <span class="nav-text">离线资源生成工具</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#前端协助"><span class="nav-number">1.4.</span> <span class="nav-text">前端协助</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#遇到的问题"><span class="nav-number">1.4.1.</span> <span class="nav-text">遇到的问题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#前端调整"><span class="nav-number">1.4.2.</span> <span class="nav-text">前端调整</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#使用-qtool"><span class="nav-number">1.4.2.1.</span> <span class="nav-text">使用 qtool</span></a></li></ol></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">KarosLi (卡洛斯)</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<span> | </span><span id="busuanzi_container_site_pv">本站总访问量<span id="busuanzi_value_site_pv"></span>次</span>
+<span id="busuanzi_container_page_pv">
+  本文总阅读量<span id="busuanzi_value_page_pv"></span>次
+</span>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"karosli"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+    
+    <script src="/lib/ua-parser-js/dist/ua-parser.min.js?v=0.7.9"></script>
+    <script src="/js/src/hook-duoshuo.js"></script>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+
+</body>
+</html>

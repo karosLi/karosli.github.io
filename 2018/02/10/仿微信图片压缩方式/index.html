@@ -1,0 +1,782 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css">
+
+
+  <meta name="keywords" content="图片,">
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.0">
+
+
+
+
+
+
+<meta name="description" content="仿微信图片压缩方式现状目前公司 app 压缩图片，是压缩成一个固定大小的，比如把所有图片压缩成一个 120k 的图片，或者压缩成一个 300k的图片，这两种方式都不好，压缩成 120 会让原始图片质量太低，而显示模糊。 图片上传限定到 300k，也不是很对，这样会造成所有的图片都会以 300k 上传，这样会造成两个问题：  上传速度会很慢，也比较耗流量。9 张图一起上传会更慢。 300k 图片质量">
+<meta name="keywords" content="图片">
+<meta property="og:type" content="article">
+<meta property="og:title" content="仿微信图片压缩方式">
+<meta property="og:url" content="https://karosli.github.io/2018/02/10/仿微信图片压缩方式/index.html">
+<meta property="og:site_name" content="卡洛斯的博客">
+<meta property="og:description" content="仿微信图片压缩方式现状目前公司 app 压缩图片，是压缩成一个固定大小的，比如把所有图片压缩成一个 120k 的图片，或者压缩成一个 300k的图片，这两种方式都不好，压缩成 120 会让原始图片质量太低，而显示模糊。 图片上传限定到 300k，也不是很对，这样会造成所有的图片都会以 300k 上传，这样会造成两个问题：  上传速度会很慢，也比较耗流量。9 张图一起上传会更慢。 300k 图片质量">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://karosli.github.io/images/Test.jpg">
+<meta property="og:updated_time" content="2019-07-08T17:36:52.522Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="仿微信图片压缩方式">
+<meta name="twitter:description" content="仿微信图片压缩方式现状目前公司 app 压缩图片，是压缩成一个固定大小的，比如把所有图片压缩成一个 120k 的图片，或者压缩成一个 300k的图片，这两种方式都不好，压缩成 120 会让原始图片质量太低，而显示模糊。 图片上传限定到 300k，也不是很对，这样会造成所有的图片都会以 300k 上传，这样会造成两个问题：  上传速度会很慢，也比较耗流量。9 张图一起上传会更慢。 300k 图片质量">
+<meta name="twitter:image" content="https://karosli.github.io/images/Test.jpg">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://karosli.github.io/2018/02/10/仿微信图片压缩方式/">
+
+
+
+
+
+  <title> 仿微信图片压缩方式 | 卡洛斯的博客 </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?2c60eb726acae80a0bd58fe0229a46b8";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">卡洛斯的博客</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+    
+      <p class="site-subtitle"></p>
+    
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+  <link itemprop="mainEntityOfPage" href="https://karosli.github.io/2018/02/10/仿微信图片压缩方式/">
+
+  <span style="display:none" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <meta itemprop="name" content="KarosLi (卡洛斯)">
+    <meta itemprop="description" content>
+    <meta itemprop="image" content="/images/avatar.jpeg">
+  </span>
+
+  <span style="display:none" itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+    <meta itemprop="name" content="卡洛斯的博客">
+    <span style="display:none" itemprop="logo" itemscope itemtype="http://schema.org/ImageObject">
+      <img style="display:none;" itemprop="url image" alt="卡洛斯的博客" src>
+    </span>
+  </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                仿微信图片压缩方式
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-02-10T17:35:14+08:00">
+                2018-02-10
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/图片/" itemprop="url" rel="index">
+                    <span itemprop="name">图片</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2018/02/10/仿微信图片压缩方式/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2018/02/10/仿微信图片压缩方式/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="仿微信图片压缩方式"><a href="#仿微信图片压缩方式" class="headerlink" title="仿微信图片压缩方式"></a>仿微信图片压缩方式</h1><h3 id="现状"><a href="#现状" class="headerlink" title="现状"></a>现状</h3><p>目前公司 app 压缩图片，是压缩成一个固定大小的，比如把所有图片压缩成一个 120k 的图片，或者压缩成一个 300k的图片，这两种方式都不好，压缩成 120 会让原始图片质量太低，而显示模糊。</p>
+<p>图片上传限定到 300k，也不是很对，这样会造成所有的图片都会以 300k 上传，这样会造成两个问题：</p>
+<ol>
+<li>上传速度会很慢，也比较耗流量。9 张图一起上传会更慢。</li>
+<li>300k 图片质量其实和 150k 左右的图片看起来差不多，过多的图片空间占用意义不大。</li>
+</ol>
+<h3 id="参考微信"><a href="#参考微信" class="headerlink" title="参考微信"></a>参考微信</h3><p>因为发现微信的图片压缩后质量还不错，于是选择了 12 张不同大小不同尺寸的图片进行测试。</p>
+<p>发现微信客户端上的图片压缩后，基本是 90k~200k 这个范围。</p>
+<h3 id="代码实现"><a href="#代码实现" class="headerlink" title="代码实现"></a>代码实现</h3><p>本来一开始想试下鲁班算法，但是发现鲁班算法压缩后的图片大小跟微信的还是有些区别了，所以就放弃了。</p>
+<p>于是参考微信，简单实现 iOS 压缩方式如下：</p>
+<a id="more"></a>
+
+<figure class="highlight processing"><table><tr><td class="code"><pre><span class="line">+ (NSData *)smartCompressImage:(UIImage *)<span class="built_in">image</span> &#123;</span><br><span class="line">    <span class="comment">/** LUBAN 算法 **/</span></span><br><span class="line">    <span class="comment">// https://github.com/Curzibn/Luban/blob/master/library/src/main/java/top/zibin/luban/Engine.java</span></span><br><span class="line">    <span class="comment">//    int size = 1;</span></span><br><span class="line">    <span class="comment">//    float scale = ((float) shortSide / longSide);</span></span><br><span class="line">    <span class="comment">//    if (scale &lt;= 1 &amp;&amp; scale &gt; 0.5625) &#123;</span></span><br><span class="line">    <span class="comment">//        if (longSide &lt; 1664) &#123;</span></span><br><span class="line">    <span class="comment">//            size = 1;</span></span><br><span class="line">    <span class="comment">//        &#125; else if (longSide &gt;= 1664 &amp;&amp; longSide &lt; 4990) &#123;</span></span><br><span class="line">    <span class="comment">//            size = 2;</span></span><br><span class="line">    <span class="comment">//        &#125; else if (longSide &gt; 4990 &amp;&amp; longSide &lt; 10240) &#123;</span></span><br><span class="line">    <span class="comment">//            size = 4;</span></span><br><span class="line">    <span class="comment">//        &#125; else &#123;</span></span><br><span class="line">    <span class="comment">//            size = longSide / 1080 == 0 ? 1 : longSide / 1080;</span></span><br><span class="line">    <span class="comment">//        &#125;</span></span><br><span class="line">    <span class="comment">//    &#125; else if (scale &lt;= 0.5625 &amp;&amp; scale &gt; 0.5) &#123;</span></span><br><span class="line">    <span class="comment">//        size = longSide / 1080 == 0 ? 1 : longSide / 1080;</span></span><br><span class="line">    <span class="comment">//    &#125; else &#123;</span></span><br><span class="line">    <span class="comment">//        size = (int) ceil(longSide / (1080.0 / scale));</span></span><br><span class="line">    <span class="comment">//    &#125;</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment">//    CGSize compressSize = CGSizeMake(width / size, height / size);</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment">//    CGFloat compression = 1.0;</span></span><br><span class="line">    <span class="comment">//    CGFloat maxCompression = 0.1;</span></span><br><span class="line">    <span class="comment">//</span></span><br><span class="line">    <span class="comment">//    //We loop into the image data to compress accordingly to the compression ratio</span></span><br><span class="line">    <span class="comment">//    NSData *imageData = UIImageJPEGRepresentation(image, compression);</span></span><br><span class="line">    <span class="comment">//    while ([imageData length] &gt; 110 * 1024 &amp;&amp; compression &gt; maxCompression) &#123;</span></span><br><span class="line">    <span class="comment">//        compression -= 0.10;</span></span><br><span class="line">    <span class="comment">//        imageData = UIImageJPEGRepresentation(image, compression);</span></span><br><span class="line">    <span class="comment">//    &#125;</span></span><br><span class="line">    <span class="comment">//</span></span><br><span class="line">    <span class="comment">//    return imageData;</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment">/** 仿微信算法 **/</span></span><br><span class="line">    <span class="built_in">int</span> <span class="built_in">width</span> = (<span class="built_in">int</span>)<span class="built_in">image</span>.<span class="built_in">size</span>.<span class="built_in">width</span>;</span><br><span class="line">    <span class="built_in">int</span> <span class="built_in">height</span> = (<span class="built_in">int</span>)<span class="built_in">image</span>.<span class="built_in">size</span>.<span class="built_in">height</span>;</span><br><span class="line">    <span class="built_in">int</span> updateWidth = <span class="built_in">width</span>;</span><br><span class="line">    <span class="built_in">int</span> updateHeight = <span class="built_in">height</span>;</span><br><span class="line">    <span class="built_in">int</span> longSide = MAX(<span class="built_in">width</span>, <span class="built_in">height</span>);</span><br><span class="line">    <span class="built_in">int</span> shortSide = MIN(<span class="built_in">width</span>, <span class="built_in">height</span>);</span><br><span class="line">    <span class="built_in">float</span> <span class="built_in">scale</span> = ((<span class="built_in">float</span>) shortSide / longSide);</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 大小压缩</span></span><br><span class="line">    <span class="keyword">if</span> (shortSide &lt; <span class="number">1080</span> || longSide &lt; <span class="number">1080</span>) &#123; <span class="comment">// 如果宽高任何一边都小于 1080</span></span><br><span class="line">        updateWidth = <span class="built_in">width</span>;</span><br><span class="line">        updateHeight = <span class="built_in">height</span>;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123; <span class="comment">// 如果宽高都大于 1080</span></span><br><span class="line">        <span class="keyword">if</span> (<span class="built_in">width</span> &lt; <span class="built_in">height</span>) &#123; <span class="comment">// 说明短边是宽</span></span><br><span class="line">            updateWidth = <span class="number">1080</span>;</span><br><span class="line">            updateHeight = <span class="number">1080</span> / <span class="built_in">scale</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123; <span class="comment">// 说明短边是高</span></span><br><span class="line">            updateWidth = <span class="number">1080</span> / <span class="built_in">scale</span>;</span><br><span class="line">            updateHeight = <span class="number">1080</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    CGSize compressSize = CGSizeMake(updateWidth, updateHeight);</span><br><span class="line">    UIGraphicsBeginImageContext(compressSize);</span><br><span class="line">    [<span class="built_in">image</span> drawInRect:CGRectMake(<span class="number">0</span>,<span class="number">0</span>, compressSize.<span class="built_in">width</span>, compressSize.<span class="built_in">height</span>)];</span><br><span class="line">    UIImage *compressImage = UIGraphicsGetImageFromCurrentImageContext();</span><br><span class="line">    UIGraphicsEndImageContext();</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 质量压缩 50%</span></span><br><span class="line">    NSData *compressData = UIImageJPEGRepresentation(compressImage, <span class="number">0.5</span>);</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> compressData;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="测试结果"><a href="#测试结果" class="headerlink" title="测试结果"></a>测试结果</h3><p>总测试结果，基本上和微信的压缩结果比较接近了。<br><img src="/images/Test.jpg" alt></p>
+<h4 id="图片一"><a href="#图片一" class="headerlink" title="图片一"></a>图片一</h4><p>原图：1_640 × 1135_108 KB<br>![1_640 × 1135_108 KB](<a href="http://olf3t4omk.bkt.clouddn.com/1_640" target="_blank" rel="noopener">http://olf3t4omk.bkt.clouddn.com/1_640</a> × 1135_108 KB.jpg)</p>
+<p>微信压缩：1_640 × 1135_94 KB_wechat<br>![1_640 × 1135_94 KB_wechat](<a href="http://olf3t4omk.bkt.clouddn.com/1_640" target="_blank" rel="noopener">http://olf3t4omk.bkt.clouddn.com/1_640</a> × 1135_94 KB_wechat.jpg)</p>
+<p>代码实现效果：1_640 × 1135_94 KB_me<br>![1_640 × 1135_94 KB_me](<a href="http://olf3t4omk.bkt.clouddn.com/1_640" target="_blank" rel="noopener">http://olf3t4omk.bkt.clouddn.com/1_640</a> × 1135_94 KB_me.jpeg)</p>
+<h4 id="图片二"><a href="#图片二" class="headerlink" title="图片二"></a>图片二</h4><p>原图：2_900 × 1600_168 KB<br>![2_900 × 1600_168 KB](<a href="http://olf3t4omk.bkt.clouddn.com/2_900" target="_blank" rel="noopener">http://olf3t4omk.bkt.clouddn.com/2_900</a> × 1600_168 KB.jpg)</p>
+<p>微信：2_900 × 1600_99 KB_wechat<br>![2_900 × 1600_99 KB_wechat](<a href="http://olf3t4omk.bkt.clouddn.com/2_900" target="_blank" rel="noopener">http://olf3t4omk.bkt.clouddn.com/2_900</a> × 1600_99 KB_wechat.jpg)</p>
+<p>代码实现效果：2_900 × 1600_93 KB_me<br>![2_900 × 1600_93 KB_me](<a href="http://olf3t4omk.bkt.clouddn.com/2_900" target="_blank" rel="noopener">http://olf3t4omk.bkt.clouddn.com/2_900</a> × 1600_93 KB_me.jpeg)</p>
+<h4 id="图片三"><a href="#图片三" class="headerlink" title="图片三"></a>图片三</h4><p>原图：3_1080 × 1920_269 KB<br>![3_1080 × 1920_269 KB](<a href="http://olf3t4omk.bkt.clouddn.com/3_1080" target="_blank" rel="noopener">http://olf3t4omk.bkt.clouddn.com/3_1080</a> × 1920_269 KB.jpg)</p>
+<p>微信：3_1080 × 1920_255 KB_wechat<br>![3_1080 × 1920_255 KB_wechat](<a href="http://olf3t4omk.bkt.clouddn.com/3_1080" target="_blank" rel="noopener">http://olf3t4omk.bkt.clouddn.com/3_1080</a> × 1920_255 KB_wechat.jpg)</p>
+<p>代码实现效果：3_1080 × 1920_251 KB_me<br>![3_1080 × 1920_251 KB_me](<a href="http://olf3t4omk.bkt.clouddn.com/3_1080" target="_blank" rel="noopener">http://olf3t4omk.bkt.clouddn.com/3_1080</a> × 1920_251 KB_me.jpeg)</p>
+<h4 id="图片四"><a href="#图片四" class="headerlink" title="图片四"></a>图片四</h4><p>原图：4_1242 × 2484_388 KB<br>![4_1242 × 2484_388 KB](<a href="http://olf3t4omk.bkt.clouddn.com/4_1242" target="_blank" rel="noopener">http://olf3t4omk.bkt.clouddn.com/4_1242</a> × 2484_388 KB.jpg)</p>
+<p>微信：4_1080 × 2160_204 KB_wechat<br>![4_1080 × 2160_204 KB_wechat](<a href="http://olf3t4omk.bkt.clouddn.com/4_1080" target="_blank" rel="noopener">http://olf3t4omk.bkt.clouddn.com/4_1080</a> × 2160_204 KB_wechat.jpg)</p>
+<p>代码实现效果：4_1080 × 2160_197 KB_me<br>![4_1080 × 2160_197 KB_me](<a href="http://olf3t4omk.bkt.clouddn.com/4_1080" target="_blank" rel="noopener">http://olf3t4omk.bkt.clouddn.com/4_1080</a> × 2160_197 KB_me.jpeg)</p>
+<h4 id="图片五"><a href="#图片五" class="headerlink" title="图片五"></a>图片五</h4><p>原图：5_1876 × 2812_635 KB<br>![5_1876 × 2812_635 KB](<a href="http://olf3t4omk.bkt.clouddn.com/5_1876" target="_blank" rel="noopener">http://olf3t4omk.bkt.clouddn.com/5_1876</a> × 2812_635 KB.jpg)</p>
+<p>微信：5_1079 × 1618_237 KB_wechat<br>![5_1079 × 1618_237 KB_wechat](<a href="http://olf3t4omk.bkt.clouddn.com/5_1079" target="_blank" rel="noopener">http://olf3t4omk.bkt.clouddn.com/5_1079</a> × 1618_237 KB_wechat.jpg)</p>
+<p>代码实现效果：5_1079 × 1618_239 KB_me<br>![5_1079 × 1618_239 KB_me](<a href="http://olf3t4omk.bkt.clouddn.com/5_1079" target="_blank" rel="noopener">http://olf3t4omk.bkt.clouddn.com/5_1079</a> × 1618_239 KB_me.jpeg)</p>
+<h4 id="图片六"><a href="#图片六" class="headerlink" title="图片六"></a>图片六</h4><p>原图：6_1920 × 1080_296 KB<br>![6_1920 × 1080_296 KB](<a href="http://olf3t4omk.bkt.clouddn.com/6_1920" target="_blank" rel="noopener">http://olf3t4omk.bkt.clouddn.com/6_1920</a> × 1080_296 KB.jpg)</p>
+<p>微信：6_1920 × 1080_298 KB_wechat<br>![6_1920 × 1080_298 KB_wechat](<a href="http://olf3t4omk.bkt.clouddn.com/6_1920" target="_blank" rel="noopener">http://olf3t4omk.bkt.clouddn.com/6_1920</a> × 1080_298 KB_wechat.jpg)</p>
+<p>代码实现效果：6_1920 × 1080_300 KB_me<br>![6_1920 × 1080_300 KB_me](<a href="http://olf3t4omk.bkt.clouddn.com/6_1920" target="_blank" rel="noopener">http://olf3t4omk.bkt.clouddn.com/6_1920</a> × 1080_300 KB_me.jpeg)</p>
+<h4 id="图片七"><a href="#图片七" class="headerlink" title="图片七"></a>图片七</h4><p>原图：7_2160 × 3840_677 KB<br>![7_2160 × 3840_677 KB](<a href="http://olf3t4omk.bkt.clouddn.com/7_2160" target="_blank" rel="noopener">http://olf3t4omk.bkt.clouddn.com/7_2160</a> × 3840_677 KB.jpg)</p>
+<p>微信：7_1080 × 1920_192 KB_wechat<br>![7_1080 × 1920_192 KB_wechat](<a href="http://olf3t4omk.bkt.clouddn.com/7_1080" target="_blank" rel="noopener">http://olf3t4omk.bkt.clouddn.com/7_1080</a> × 1920_192 KB_wechat.jpg)</p>
+<p>代码实现效果：7_1080 × 1920_192 KB_me<br>![7_1080 × 1920_192 KB_me](<a href="http://olf3t4omk.bkt.clouddn.com/7_1080" target="_blank" rel="noopener">http://olf3t4omk.bkt.clouddn.com/7_1080</a> × 1920_192 KB_me.jpeg)</p>
+<h4 id="图片八"><a href="#图片八" class="headerlink" title="图片八"></a>图片八</h4><p>原图：8_2160 × 3840_335 KB<br>![8_2160 × 3840_335 KB](<a href="http://olf3t4omk.bkt.clouddn.com/8_2160" target="_blank" rel="noopener">http://olf3t4omk.bkt.clouddn.com/8_2160</a> × 3840_335 KB.jpg)</p>
+<p>微信：8_1080 × 1920_163 KB_wechat<br>![8_1080 × 1920_163 KB_wechat](<a href="http://olf3t4omk.bkt.clouddn.com/8_1080" target="_blank" rel="noopener">http://olf3t4omk.bkt.clouddn.com/8_1080</a> × 1920_163 KB_wechat.jpg)</p>
+<p>代码实现效果：8_1080 × 1920_153 KB_me<br>![8_1080 × 1920_153 KB_me](<a href="http://olf3t4omk.bkt.clouddn.com/8_1080" target="_blank" rel="noopener">http://olf3t4omk.bkt.clouddn.com/8_1080</a> × 1920_153 KB_me.jpeg)</p>
+<h4 id="图片九"><a href="#图片九" class="headerlink" title="图片九"></a>图片九</h4><p>原图：9_3500 × 2424_596 KB<br>![9_3500 × 2424_596 KB](<a href="http://olf3t4omk.bkt.clouddn.com/9_3500" target="_blank" rel="noopener">http://olf3t4omk.bkt.clouddn.com/9_3500</a> × 2424_596 KB.jpg)</p>
+<p>微信：9_1559 × 1079_208 KB_wechat<br>![9_1559 × 1079_208 KB_wechat](<a href="http://olf3t4omk.bkt.clouddn.com/9_1559" target="_blank" rel="noopener">http://olf3t4omk.bkt.clouddn.com/9_1559</a> × 1079_208 KB_wechat.jpg)</p>
+<p>代码实现效果：9_1559 × 1079_208 KB_me<br>![9_1559 × 1079_208 KB_me](<a href="http://olf3t4omk.bkt.clouddn.com/9_1559" target="_blank" rel="noopener">http://olf3t4omk.bkt.clouddn.com/9_1559</a> × 1079_208 KB_me.jpeg)</p>
+<h4 id="图片十"><a href="#图片十" class="headerlink" title="图片十"></a>图片十</h4><p>原图：10_3024 x 4032_3.6 MB<br>![10_3024 x 4032_3.6 MB](<a href="http://olf3t4omk.bkt.clouddn.com/10_3024" target="_blank" rel="noopener">http://olf3t4omk.bkt.clouddn.com/10_3024</a> x 4032_3.6 MB.jpg)</p>
+<p>微信：10_1080 × 1440_231 KB_wechat<br>![10_1080 × 1440_231 KB_wechat](<a href="http://olf3t4omk.bkt.clouddn.com/10_1080" target="_blank" rel="noopener">http://olf3t4omk.bkt.clouddn.com/10_1080</a> × 1440_231 KB_wechat.jpg)</p>
+<p>代码实现效果：10_1080 × 1440_248 KB_me<br>![10_1080 × 1440_248 KB_me](<a href="http://olf3t4omk.bkt.clouddn.com/10_1080" target="_blank" rel="noopener">http://olf3t4omk.bkt.clouddn.com/10_1080</a> × 1440_248 KB_me.jpeg)</p>
+<h4 id="图片十一"><a href="#图片十一" class="headerlink" title="图片十一"></a>图片十一</h4><p>原图：11_3024 x 4032_2.4 MB<br>![11_3024 x 4032_2.4 MB](<a href="http://olf3t4omk.bkt.clouddn.com/11_3024" target="_blank" rel="noopener">http://olf3t4omk.bkt.clouddn.com/11_3024</a> x 4032_2.4 MB.jpg)</p>
+<p>微信：11_1080 × 1440_172 KB_wechat<br>![11_1080 × 1440_172 KB_wechat](<a href="http://olf3t4omk.bkt.clouddn.com/11_1080" target="_blank" rel="noopener">http://olf3t4omk.bkt.clouddn.com/11_1080</a> × 1440_172 KB_wechat.jpg)</p>
+<p>代码实现效果：11_1080 × 1440_183 KB_me<br>![11_1080 × 1440_183 KB_me](<a href="http://olf3t4omk.bkt.clouddn.com/11_1080" target="_blank" rel="noopener">http://olf3t4omk.bkt.clouddn.com/11_1080</a> × 1440_183 KB_me.jpeg)</p>
+<h4 id="图片十二"><a href="#图片十二" class="headerlink" title="图片十二"></a>图片十二</h4><p>原图：12_3024 x 4032_4 MB<br>![12_3024 x 4032_4 MB](<a href="http://olf3t4omk.bkt.clouddn.com/12_3024" target="_blank" rel="noopener">http://olf3t4omk.bkt.clouddn.com/12_3024</a> x 4032_4 MB.jpg)</p>
+<p>微信：12_1080 × 1440_191 KB_wechat<br>![12_1080 × 1440_191 KB_wechat](<a href="http://olf3t4omk.bkt.clouddn.com/12_1080" target="_blank" rel="noopener">http://olf3t4omk.bkt.clouddn.com/12_1080</a> × 1440_191 KB_wechat.jpg)</p>
+<p>代码实现效果：12_1080 × 1440_248 KB_me<br>![12_1080 × 1440_248 KB_me](<a href="http://olf3t4omk.bkt.clouddn.com/12_1080" target="_blank" rel="noopener">http://olf3t4omk.bkt.clouddn.com/12_1080</a> × 1440_248 KB_me.jpeg)</p>
+<h3 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h3><p><a href="https://github.com/Curzibn/Luban/blob/master/DESCRIPTION.md" target="_blank" rel="noopener">https://github.com/Curzibn/Luban/blob/master/DESCRIPTION.md</a><br><a href="https://www.jianshu.com/p/5b77da571a5c?utm_campaign=maleskine" target="_blank" rel="noopener">https://www.jianshu.com/p/5b77da571a5c?utm_campaign=maleskine</a><br><a href="https://github.com/IcaliaLabs/UIImage-ImageCompress/blob/master/UIImage%2BImageCompress.m" target="_blank" rel="noopener">https://github.com/IcaliaLabs/UIImage-ImageCompress/blob/master/UIImage%2BImageCompress.m</a><br><a href="https://github.com/hucool/WXImageCompress/blob/master/Pod/Classes/WXImageCompress.swift" target="_blank" rel="noopener">https://github.com/hucool/WXImageCompress/blob/master/Pod/Classes/WXImageCompress.swift</a></p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/图片/" rel="tag"># 图片</a>
+          
+        </div>
+      
+
+      
+        
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/02/10/iOS界面开发需要用Point乘以屏幕效果的比例吗/" rel="next" title="iOS界面开发需要用Point乘以屏幕比例系数吗">
+                <i class="fa fa-chevron-left"></i> iOS界面开发需要用Point乘以屏幕比例系数吗
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/02/27/YYWebImage-SDWebImage和PINRemoteImage比较/" rel="prev" title="YYWebImage,SDWebImage和PINRemoteImage比较">
+                YYWebImage,SDWebImage和PINRemoteImage比较 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+          
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2018/02/10/仿微信图片压缩方式/" data-title="仿微信图片压缩方式" data-url="https://karosli.github.io/2018/02/10/仿微信图片压缩方式/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image" src="/images/avatar.jpeg" alt="KarosLi (卡洛斯)">
+          <p class="site-author-name" itemprop="name">KarosLi (卡洛斯)</p>
+          <p class="site-description motion-element" itemprop="description">正在修行的路上</p>
+        </div>
+        <nav class="site-state motion-element">
+        
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">20</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-categories">
+              
+                <span class="site-state-item-count">13</span>
+                <span class="site-state-item-name">分类</span>
+              
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">13</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+          <div class="links-of-blogroll motion-element links-of-blogroll-inline">
+            <div class="links-of-blogroll-title">
+              <i class="fa  fa-fw fa-globe"></i>
+              友情链接
+            </div>
+            <ul class="links-of-blogroll-list">
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://hexiaofei51.cn/" title="晓飞的博客" target="_blank">晓飞的博客</a>
+                </li>
+              
+            </ul>
+          </div>
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#仿微信图片压缩方式"><span class="nav-number">1.</span> <span class="nav-text">仿微信图片压缩方式</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#现状"><span class="nav-number">1.0.1.</span> <span class="nav-text">现状</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#参考微信"><span class="nav-number">1.0.2.</span> <span class="nav-text">参考微信</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#代码实现"><span class="nav-number">1.0.3.</span> <span class="nav-text">代码实现</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#测试结果"><span class="nav-number">1.0.4.</span> <span class="nav-text">测试结果</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#图片一"><span class="nav-number">1.0.4.1.</span> <span class="nav-text">图片一</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#图片二"><span class="nav-number">1.0.4.2.</span> <span class="nav-text">图片二</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#图片三"><span class="nav-number">1.0.4.3.</span> <span class="nav-text">图片三</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#图片四"><span class="nav-number">1.0.4.4.</span> <span class="nav-text">图片四</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#图片五"><span class="nav-number">1.0.4.5.</span> <span class="nav-text">图片五</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#图片六"><span class="nav-number">1.0.4.6.</span> <span class="nav-text">图片六</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#图片七"><span class="nav-number">1.0.4.7.</span> <span class="nav-text">图片七</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#图片八"><span class="nav-number">1.0.4.8.</span> <span class="nav-text">图片八</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#图片九"><span class="nav-number">1.0.4.9.</span> <span class="nav-text">图片九</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#图片十"><span class="nav-number">1.0.4.10.</span> <span class="nav-text">图片十</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#图片十一"><span class="nav-number">1.0.4.11.</span> <span class="nav-text">图片十一</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#图片十二"><span class="nav-number">1.0.4.12.</span> <span class="nav-text">图片十二</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#参考"><span class="nav-number">1.0.5.</span> <span class="nav-text">参考</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">KarosLi (卡洛斯)</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<span> | </span><span id="busuanzi_container_site_pv">本站总访问量<span id="busuanzi_value_site_pv"></span>次</span>
+<span id="busuanzi_container_page_pv">
+  本文总阅读量<span id="busuanzi_value_page_pv"></span>次
+</span>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"karosli"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+    
+    <script src="/lib/ua-parser-js/dist/ua-parser.min.js?v=0.7.9"></script>
+    <script src="/js/src/hook-duoshuo.js"></script>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+
+</body>
+</html>

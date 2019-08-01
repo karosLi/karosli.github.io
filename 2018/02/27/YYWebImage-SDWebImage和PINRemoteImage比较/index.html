@@ -1,0 +1,839 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css">
+
+
+  <meta name="keywords" content="WebImage,">
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.0">
+
+
+
+
+
+
+<meta name="description" content="YYWebImage,SDWebImage和PINRemoteImage比较共同的特性 以类别 api 下载远程图片。 图片缓存 图片提前解码 其他  图片框架比较图片后处理根据下面的比较，可以看出图片后处理方面，PINRemoteImage &amp;gt; YYWebImage &amp;gt; SDWebImage  YYWebImage:  支持不带标记的后处理。 /** Set the view&apos;s `">
+<meta name="keywords" content="WebImage">
+<meta property="og:type" content="article">
+<meta property="og:title" content="YYWebImage,SDWebImage和PINRemoteImage比较">
+<meta property="og:url" content="https://karosli.github.io/2018/02/27/YYWebImage-SDWebImage和PINRemoteImage比较/index.html">
+<meta property="og:site_name" content="卡洛斯的博客">
+<meta property="og:description" content="YYWebImage,SDWebImage和PINRemoteImage比较共同的特性 以类别 api 下载远程图片。 图片缓存 图片提前解码 其他  图片框架比较图片后处理根据下面的比较，可以看出图片后处理方面，PINRemoteImage &amp;gt; YYWebImage &amp;gt; SDWebImage  YYWebImage:  支持不带标记的后处理。 /** Set the view&apos;s `">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2018-02-28T12:46:49.731Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="YYWebImage,SDWebImage和PINRemoteImage比较">
+<meta name="twitter:description" content="YYWebImage,SDWebImage和PINRemoteImage比较共同的特性 以类别 api 下载远程图片。 图片缓存 图片提前解码 其他  图片框架比较图片后处理根据下面的比较，可以看出图片后处理方面，PINRemoteImage &amp;gt; YYWebImage &amp;gt; SDWebImage  YYWebImage:  支持不带标记的后处理。 /** Set the view&apos;s `">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://karosli.github.io/2018/02/27/YYWebImage-SDWebImage和PINRemoteImage比较/">
+
+
+
+
+
+  <title> YYWebImage,SDWebImage和PINRemoteImage比较 | 卡洛斯的博客 </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?2c60eb726acae80a0bd58fe0229a46b8";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">卡洛斯的博客</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+    
+      <p class="site-subtitle"></p>
+    
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+  <link itemprop="mainEntityOfPage" href="https://karosli.github.io/2018/02/27/YYWebImage-SDWebImage和PINRemoteImage比较/">
+
+  <span style="display:none" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <meta itemprop="name" content="KarosLi (卡洛斯)">
+    <meta itemprop="description" content>
+    <meta itemprop="image" content="/images/avatar.jpeg">
+  </span>
+
+  <span style="display:none" itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+    <meta itemprop="name" content="卡洛斯的博客">
+    <span style="display:none" itemprop="logo" itemscope itemtype="http://schema.org/ImageObject">
+      <img style="display:none;" itemprop="url image" alt="卡洛斯的博客" src>
+    </span>
+  </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                YYWebImage,SDWebImage和PINRemoteImage比较
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-02-27T10:18:53+08:00">
+                2018-02-27
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/WebImage/" itemprop="url" rel="index">
+                    <span itemprop="name">WebImage</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2018/02/27/YYWebImage-SDWebImage和PINRemoteImage比较/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2018/02/27/YYWebImage-SDWebImage和PINRemoteImage比较/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="YYWebImage-SDWebImage和PINRemoteImage比较"><a href="#YYWebImage-SDWebImage和PINRemoteImage比较" class="headerlink" title="YYWebImage,SDWebImage和PINRemoteImage比较"></a>YYWebImage,SDWebImage和PINRemoteImage比较</h1><h3 id="共同的特性"><a href="#共同的特性" class="headerlink" title="共同的特性"></a>共同的特性</h3><ol>
+<li>以类别 api 下载远程图片。</li>
+<li>图片缓存</li>
+<li>图片提前解码</li>
+<li>其他</li>
+</ol>
+<h3 id="图片框架比较"><a href="#图片框架比较" class="headerlink" title="图片框架比较"></a>图片框架比较</h3><h4 id="图片后处理"><a href="#图片后处理" class="headerlink" title="图片后处理"></a>图片后处理</h4><p>根据下面的比较，可以看出图片后处理方面，PINRemoteImage &gt; YYWebImage &gt; SDWebImage</p>
+<ul>
+<li><p>YYWebImage:</p>
+<ul>
+<li><p>支持不带标记的后处理。</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> Set the view's `image` with a specified URL.</span></span><br><span class="line"><span class="comment"> </span></span><br><span class="line"><span class="comment"> <span class="doctag">@param</span> imageURL    The image url (remote or local file path).</span></span><br><span class="line"><span class="comment"> <span class="doctag">@param</span> placeholder he image to be set initially, until the image request finishes.</span></span><br><span class="line"><span class="comment"> <span class="doctag">@param</span> options     The options to use when request the image.</span></span><br><span class="line"><span class="comment"> <span class="doctag">@param</span> manager     The manager to create image request operation.</span></span><br><span class="line"><span class="comment"> <span class="doctag">@param</span> progress    The block invoked (on main thread) during image request.</span></span><br><span class="line"><span class="comment"> <span class="doctag">@param</span> transform   The block invoked (on background thread) to do additional image process.</span></span><br><span class="line"><span class="comment"> <span class="doctag">@param</span> completion  The block invoked (on main thread) when image request completed.</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line">- (void)yy_setImageWithURL:(nullable NSURL *)imageURL</span><br><span class="line">               placeholder:(nullable UIImage *)placeholder</span><br><span class="line">                   options:(YYWebImageOptions)options</span><br><span class="line">                   manager:(nullable YYWebImageManager *)manager</span><br><span class="line">                  progress:(nullable YYWebImageProgressBlock)progress</span><br><span class="line">                 transform:(nullable YYWebImageTransformBlock)transform</span><br><span class="line">                completion:(nullable YYWebImageCompletionBlock)completion;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+<li><p>SDWebImage: 不支持图片后处理。</p>
+</li>
+<li><p>PINRemoteImage:</p>
+<ul>
+<li><p>支持带标记的图片后处理。对于同一张图片，当需要不同的后处理方式时（a 界面需要正圆角，b 界面需要小幅度的圆角），尤为有用。</p>
+<figure class="highlight applescript"><table><tr><td class="code"><pre><span class="line">    /**</span><br><span class="line"> Set placeholder <span class="keyword">on</span> view <span class="keyword">and</span> retrieve <span class="keyword">the</span> image <span class="keyword">from</span> <span class="keyword">the</span> <span class="keyword">given</span> URL, process <span class="keyword">it</span> using <span class="keyword">the</span> passed <span class="keyword">in</span> processor block <span class="keyword">and</span> <span class="keyword">set</span> <span class="literal">result</span> <span class="keyword">on</span> view. Call completion <span class="keyword">after</span> image has been fetched, processed <span class="keyword">and</span> <span class="keyword">set</span> <span class="keyword">on</span> view.</span><br><span class="line"> </span><br><span class="line"> @param url NSURL <span class="keyword">to</span> fetch <span class="keyword">from</span>.</span><br><span class="line"> @param placeholderImage PINImage <span class="keyword">to</span> <span class="keyword">set</span> <span class="keyword">on</span> <span class="keyword">the</span> view <span class="keyword">while</span> <span class="keyword">the</span> image <span class="keyword">at</span> URL <span class="keyword">is</span> being retrieved.</span><br><span class="line"> @param processorKey NSString key <span class="keyword">to</span> uniquely identify processor. Used <span class="keyword">in</span> caching.</span><br><span class="line"> @param processor PINRemoteImageManagerImageProcessor processor block which should <span class="literal">return</span> <span class="keyword">the</span> processed image.</span><br><span class="line"> @param completion Called when url has been retrieved <span class="keyword">and</span> <span class="keyword">set</span> <span class="keyword">on</span> view.</span><br><span class="line"> */</span><br><span class="line">- (void)pin_setImageFromURL:(nullable NSURL *)url placeholderImage:(nullable PINImage *)placeholderImage processorKey:(nullable NSString *)processorKey processor:(nullable PINRemoteImageManagerImageProcessor)processor completion:(nullable PINRemoteImageManagerImageCompletion)completion;</span><br></pre></td></tr></table></figure>
+
+
+
+</li>
+</ul>
+</li>
+</ul>
+<a id="more"></a>
+
+<h4 id="图片格式支持"><a href="#图片格式支持" class="headerlink" title="图片格式支持"></a>图片格式支持</h4><p>根据下面的比较，可以看出图片格式支持方面，YYWebImage = SDWebImage = PINRemoteImage</p>
+<p>另外对于 WebP 的支持，需要下载 google 的 libwebp pod，这就需要先配置命令行代理了，才能安装此 pod，命令行代理的配置就不在此说明了。</p>
+<p>而 YYImage 是提前先把编译 webp 的源码，并打包成了 framework，直接引入到了项目里了，避免了配置代理的繁琐工作。编译 webp 成 framework 可以参考<a href="http://www.cnblogs.com/damiao/p/4562186.html" target="_blank" rel="noopener">此文</a>。</p>
+<ul>
+<li><p>YYWebImage:</p>
+<ul>
+<li>GIF: <a href="https://github.com/ibireme/YYImage" target="_blank" rel="noopener">YYImage</a></li>
+<li>WebP: <a href="https://chromium.googlesource.com/webm/libwebp" target="_blank" rel="noopener">libwebp</a></li>
+</ul>
+</li>
+<li><p>SDWebImage:</p>
+<ul>
+<li>GIF: <a href="https://github.com/Flipboard/FLAnimatedImage" target="_blank" rel="noopener">FLAnimatedImage</a></li>
+<li>WebP: <a href="https://chromium.googlesource.com/webm/libwebp" target="_blank" rel="noopener">libwebp</a></li>
+</ul>
+</li>
+<li><p>PINRemoteImage:</p>
+<ul>
+<li>GIF: <a href="https://github.com/Flipboard/FLAnimatedImage" target="_blank" rel="noopener">FLAnimatedImage</a></li>
+<li>WebP: <a href="https://chromium.googlesource.com/webm/libwebp" target="_blank" rel="noopener">libwebp</a></li>
+</ul>
+</li>
+</ul>
+<h4 id="图片解码控制"><a href="#图片解码控制" class="headerlink" title="图片解码控制:"></a>图片解码控制:</h4><p>根据下面的比较，可以看出图片解码控制方面，PINRemoteImage &gt; YYWebImage &gt; SDWebImage</p>
+<ul>
+<li><p>YYWebImage: </p>
+<ul>
+<li><p>下载完图片，会自动解码，可根据参数  <code>YYWebImageOptionIgnoreImageDecoding</code> 来控制不解码。</p>
+  <figure class="highlight mipsasm"><table><tr><td class="code"><pre><span class="line">代码位置：</span><br><span class="line">YYWebImageOperation(connectionDidFinishLoading:)</span><br><span class="line"></span><br><span class="line"><span class="keyword">BOOL </span><span class="keyword">shouldDecode </span>= (self.options &amp; YYWebImageOptionIgnoreImageDecoding) == <span class="number">0</span><span class="comment">;</span></span><br><span class="line"><span class="keyword">BOOL </span>allowAnimation = (self.options &amp; YYWebImageOptionIgnoreAnimatedImage) == <span class="number">0</span><span class="comment">;</span></span><br><span class="line">UIImage *image<span class="comment">;</span></span><br><span class="line"><span class="keyword">BOOL </span>hasAnimation = NO<span class="comment">;</span></span><br><span class="line">if (allowAnimation) &#123;</span><br><span class="line">    image = [[YYImage alloc] initWithData:self<span class="meta">.data</span> <span class="keyword">scale:[UIScreen </span>mainScreen].<span class="keyword">scale];</span></span><br><span class="line"><span class="keyword"> </span>   if (<span class="keyword">shouldDecode) </span>image = [image yy_imageByDecoded]<span class="comment">;</span></span><br><span class="line">    if ([((YYImage *)image) animatedImageFrameCount] &gt; <span class="number">1</span>) &#123;</span><br><span class="line">        hasAnimation = YES<span class="comment">;</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125; else &#123;</span><br><span class="line">    YYImageDecoder *decoder = [YYImageDecoder decoderWithData:self<span class="meta">.data</span> <span class="keyword">scale:[UIScreen </span>mainScreen].<span class="keyword">scale];</span></span><br><span class="line"><span class="keyword"> </span>   image = [decoder frameAtIndex:<span class="number">0</span> decodeForDisplay:<span class="keyword">shouldDecode].image;</span></span><br><span class="line"><span class="keyword">&#125;</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>当我们在传入 YYWebImageOptionIgnoreImageDecoding，是期望图片不被解码，确实图片在下载完成的时候，不会被解码，但是当把图片存入到内存缓存的时候，图片还是一样会被解码一次并存入到缓存。代码 <code>[_cache setImage:image imageData:data forKey:_cacheKey withType:YYImageCacheTypeAll];</code> 会针对没有解码的图片，进行一次解码，并存入缓存。所以对于大图的解码，还是会占用很大的内存。</p>
+<figure class="highlight sqf"><table><tr><td class="code"><pre><span class="line">  代码位置：</span><br><span class="line">  YYWebImageOperation(<span class="variable">_didReceiveImageFromWeb</span>:)</span><br><span class="line">        </span><br><span class="line">  - (void)<span class="variable">_didReceiveImageFromWeb</span>:(UIImage *)<span class="built_in">image</span> &#123;</span><br><span class="line">    @autoreleasepool &#123;</span><br><span class="line">        [<span class="variable">_lock</span> <span class="built_in">lock</span>];</span><br><span class="line">        <span class="keyword">if</span> (![self isCancelled]) &#123;</span><br><span class="line">            <span class="keyword">if</span> (<span class="variable">_cache</span>) &#123;</span><br><span class="line">                <span class="keyword">if</span> (<span class="built_in">image</span> || (<span class="variable">_options</span> &amp; YYWebImageOptionRefreshImageCache)) &#123;</span><br><span class="line">                    NSData *data = <span class="variable">_data</span>;</span><br><span class="line">                    dispatch_async([YYWebImageOperation <span class="variable">_imageQueue</span>], ^&#123;</span><br><span class="line">                        <span class="comment">// 保存图片到缓存中</span></span><br><span class="line">                        [<span class="variable">_cache</span> setImage:<span class="built_in">image</span> imageData:data forKey:<span class="variable">_cacheKey</span> withType:YYImageCacheTypeAll];</span><br><span class="line">                    &#125;);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="variable">_data</span> = <span class="literal">nil</span>;</span><br><span class="line">            NSError *error = <span class="literal">nil</span>;</span><br><span class="line">            <span class="keyword">if</span> (!<span class="built_in">image</span>) &#123;</span><br><span class="line">                error = [NSError errorWithDomain:@<span class="string">"com.ibireme.image"</span> code:-<span class="number">1</span> userInfo:@&#123; NSLocalizedDescriptionKey : @<span class="string">"Web image decode fail."</span> &#125;];</span><br><span class="line">                <span class="keyword">if</span> (<span class="variable">_options</span> &amp; YYWebImageOptionIgnoreFailedURL) &#123;</span><br><span class="line">                    <span class="keyword">if</span> (URLBlackListContains(<span class="variable">_request</span>.URL)) &#123;</span><br><span class="line">                        error = [NSError errorWithDomain:NSURLErrorDomain code:NSURLErrorFileDoesNotExist userInfo:@&#123; NSLocalizedDescriptionKey : @<span class="string">"Failed to load URL, blacklisted."</span> &#125;];</span><br><span class="line">                    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                        URLInBlackListAdd(<span class="variable">_request</span>.URL);</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">if</span> (<span class="variable">_completion</span>) <span class="variable">_completion</span>(<span class="built_in">image</span>, <span class="variable">_request</span>.URL, YYWebImageFromRemote, YYWebImageStageFinished, error);</span><br><span class="line">            [self <span class="variable">_finish</span>];</span><br><span class="line">        &#125;</span><br><span class="line">        [<span class="variable">_lock</span> unlock];</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+
+</li>
+</ul>
+</li>
+</ul>
+<pre><code><figure class="highlight objectivec"><table><tr><td class="code"><pre><span class="line">代码位置：</span><br><span class="line">YYImageCache(setImage:imageData:)</span><br><span class="line"></span><br><span class="line">- (<span class="keyword">void</span>)setImage:(<span class="built_in">UIImage</span> *)image imageData:(<span class="built_in">NSData</span> *)imageData forKey:(<span class="built_in">NSString</span> *)key withType:(YYImageCacheType)type &#123;</span><br><span class="line">    <span class="keyword">if</span> (!key || (image == <span class="literal">nil</span> &amp;&amp; imageData.length == <span class="number">0</span>)) <span class="keyword">return</span>;</span><br><span class="line">    </span><br><span class="line">    __<span class="keyword">weak</span> <span class="keyword">typeof</span>(<span class="keyword">self</span>) _<span class="keyword">self</span> = <span class="keyword">self</span>;</span><br><span class="line">    <span class="keyword">if</span> (type &amp; YYImageCacheTypeMemory) &#123; <span class="comment">// add to memory cache</span></span><br><span class="line">        <span class="keyword">if</span> (image) &#123;</span><br><span class="line">            <span class="keyword">if</span> (image.yy_isDecodedForDisplay) &#123;</span><br><span class="line">                [_memoryCache setObject:image forKey:key withCost:[_<span class="keyword">self</span> imageCost:image]];</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                <span class="comment">// 如果没有解码过，解码图片，并保存到内存缓存 </span></span><br><span class="line">                <span class="built_in">dispatch_async</span>(YYImageCacheDecodeQueue(), ^&#123;</span><br><span class="line">                    __<span class="keyword">strong</span> <span class="keyword">typeof</span>(_<span class="keyword">self</span>) <span class="keyword">self</span> = _<span class="keyword">self</span>;</span><br><span class="line">                    <span class="keyword">if</span> (!<span class="keyword">self</span>) <span class="keyword">return</span>;</span><br><span class="line">                    [<span class="keyword">self</span>.memoryCache setObject:[image yy_imageByDecoded] forKey:key withCost:[<span class="keyword">self</span> imageCost:image]];</span><br><span class="line">                &#125;);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (imageData) &#123;</span><br><span class="line">            <span class="built_in">dispatch_async</span>(YYImageCacheDecodeQueue(), ^&#123;</span><br><span class="line">                __<span class="keyword">strong</span> <span class="keyword">typeof</span>(_<span class="keyword">self</span>) <span class="keyword">self</span> = _<span class="keyword">self</span>;</span><br><span class="line">                <span class="keyword">if</span> (!<span class="keyword">self</span>) <span class="keyword">return</span>;</span><br><span class="line">                <span class="built_in">UIImage</span> *newImage = [<span class="keyword">self</span> imageFromData:imageData];</span><br><span class="line">                [<span class="keyword">self</span>.memoryCache setObject:newImage forKey:key withCost:[<span class="keyword">self</span> imageCost:newImage]];</span><br><span class="line">            &#125;);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (type &amp; YYImageCacheTypeDisk) &#123; <span class="comment">// add to disk cache</span></span><br><span class="line">        <span class="keyword">if</span> (imageData) &#123;</span><br><span class="line">            <span class="keyword">if</span> (image) &#123;</span><br><span class="line">                [YYDiskCache setExtendedData:[<span class="built_in">NSKeyedArchiver</span> archivedDataWithRootObject:@(image.scale)] toObject:imageData];</span><br><span class="line">            &#125;</span><br><span class="line">            [_diskCache setObject:imageData forKey:key];</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (image) &#123;</span><br><span class="line">            <span class="built_in">dispatch_async</span>(YYImageCacheIOQueue(), ^&#123;</span><br><span class="line">                __<span class="keyword">strong</span> <span class="keyword">typeof</span>(_<span class="keyword">self</span>) <span class="keyword">self</span> = _<span class="keyword">self</span>;</span><br><span class="line">                <span class="keyword">if</span> (!<span class="keyword">self</span>) <span class="keyword">return</span>;</span><br><span class="line">                <span class="built_in">NSData</span> *data = [image yy_imageDataRepresentation];</span><br><span class="line">                [YYDiskCache setExtendedData:[<span class="built_in">NSKeyedArchiver</span> archivedDataWithRootObject:@(image.scale)] toObject:data];</span><br><span class="line">                [<span class="keyword">self</span>.diskCache setObject:data forKey:key];</span><br><span class="line">            &#125;);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></code></pre><ul>
+<li><p>SDWebImage: 下载完图片，会自动解码，没有 api 暴露去控制是否解码下载的图片。所以对于大图的解码，还是会占用很大的内存。</p>
+</li>
+<li><p>PINRemoteImage: </p>
+<ul>
+<li><p>下载完图片，会自动解码，可根据参数  <code>PINRemoteImageManagerDownloadOptionsSkipDecode</code> 来控制不解码。并且在不解码时缓存不解码的图片数据，解码时缓存解码的图片数据。可以根据场景来决定是否需要提前解码图片。</p>
+<figure class="highlight objectivec"><table><tr><td class="code"><pre><span class="line">代码位置：</span><br><span class="line">PINRemoteImageManager(materializeAndCacheObject:(<span class="keyword">id</span>)object</span><br><span class="line">                  cacheInDisk:(<span class="built_in">NSData</span> *)diskData</span><br><span class="line">               additionalCost:(<span class="built_in">NSUInteger</span>)additionalCost</span><br><span class="line">                          url:(<span class="built_in">NSURL</span> *)url</span><br><span class="line">                          key:(<span class="built_in">NSString</span> *)key</span><br><span class="line">                      options:(PINRemoteImageManagerDownloadOptions)options</span><br><span class="line">                     outImage:(PINImage **)outImage</span><br><span class="line">                    outAltRep:(<span class="keyword">id</span> *)outAlternateRepresentation)</span><br><span class="line">   </span><br><span class="line"><span class="comment">//takes the object from the cache and returns an image or animated image.</span></span><br><span class="line"><span class="comment">//if it's a non-alternative representation and skipDecode is not set it also decompresses the image.</span></span><br><span class="line">- (<span class="built_in">BOOL</span>)materializeAndCacheObject:(<span class="keyword">id</span>)object</span><br><span class="line">                      cacheInDisk:(<span class="built_in">NSData</span> *)diskData</span><br><span class="line">                   additionalCost:(<span class="built_in">NSUInteger</span>)additionalCost</span><br><span class="line">                              url:(<span class="built_in">NSURL</span> *)url</span><br><span class="line">                              key:(<span class="built_in">NSString</span> *)key</span><br><span class="line">                          options:(PINRemoteImageManagerDownloadOptions)options</span><br><span class="line">                         outImage:(PINImage **)outImage</span><br><span class="line">                        outAltRep:(<span class="keyword">id</span> *)outAlternateRepresentation</span><br><span class="line">&#123;</span><br><span class="line">    <span class="built_in">NSAssert</span>(object != <span class="literal">nil</span>, <span class="string">@"Object should not be nil."</span>);</span><br><span class="line">    <span class="keyword">if</span> (object == <span class="literal">nil</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">NO</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">BOOL</span> alternateRepresentationsAllowed = (PINRemoteImageManagerDisallowAlternateRepresentations &amp; options) == <span class="number">0</span>;</span><br><span class="line">    <span class="built_in">BOOL</span> skipDecode = (options &amp; PINRemoteImageManagerDownloadOptionsSkipDecode) != <span class="number">0</span>;</span><br><span class="line">    __block <span class="keyword">id</span> alternateRepresentation = <span class="literal">nil</span>;</span><br><span class="line">    __block PINImage *image = <span class="literal">nil</span>;</span><br><span class="line">    __block <span class="built_in">NSData</span> *data = <span class="literal">nil</span>;</span><br><span class="line">    __block <span class="built_in">BOOL</span> updateMemoryCache = <span class="literal">NO</span>;</span><br><span class="line">    </span><br><span class="line">    PINRemoteImageMemoryContainer *container = <span class="literal">nil</span>;</span><br><span class="line">    <span class="keyword">if</span> ([object isKindOfClass:[PINRemoteImageMemoryContainer <span class="keyword">class</span>]]) &#123;</span><br><span class="line">        container = (PINRemoteImageMemoryContainer *)object;</span><br><span class="line">        [container.lock lockWithBlock:^&#123;</span><br><span class="line">            data = container.data;</span><br><span class="line">        &#125;];</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="comment">// 缓存图片原始数据</span></span><br><span class="line">        updateMemoryCache = <span class="literal">YES</span>;</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// don't need to lock the container here because we just init it.</span></span><br><span class="line">        container = [[PINRemoteImageMemoryContainer alloc] init];</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">if</span> ([object isKindOfClass:[PINImage <span class="keyword">class</span>]]) &#123;</span><br><span class="line">            data = diskData;</span><br><span class="line">            container.image = (PINImage *)object;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> ([object isKindOfClass:[<span class="built_in">NSData</span> <span class="keyword">class</span>]]) &#123;</span><br><span class="line">            data = (<span class="built_in">NSData</span> *)object;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="comment">//invalid item in cache</span></span><br><span class="line">            updateMemoryCache = <span class="literal">NO</span>;</span><br><span class="line">            data = <span class="literal">nil</span>;</span><br><span class="line">            container = <span class="literal">nil</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        container.data = data;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">if</span> (alternateRepresentationsAllowed) &#123;</span><br><span class="line">        alternateRepresentation = [_alternateRepProvider alternateRepresentationWithData:data options:options];</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">if</span> (alternateRepresentation == <span class="literal">nil</span>) &#123;</span><br><span class="line">        <span class="comment">//we need the image</span></span><br><span class="line">        [container.lock lockWithBlock:^&#123;</span><br><span class="line">            image = container.image;</span><br><span class="line">        &#125;];</span><br><span class="line">        <span class="keyword">if</span> (image == <span class="literal">nil</span> &amp;&amp; container.data) &#123;</span><br><span class="line">            image = [PINImage pin_decodedImageWithData:container.data skipDecodeIfPossible:skipDecode];</span><br><span class="line">            </span><br><span class="line">            <span class="keyword">if</span> (url != <span class="literal">nil</span>) &#123;</span><br><span class="line">                image = [PINImage pin_scaledImageForImage:image withKey:key];</span><br><span class="line">            &#125;</span><br><span class="line">            </span><br><span class="line">            <span class="keyword">if</span> (skipDecode == <span class="literal">NO</span>) &#123;</span><br><span class="line">                [container.lock lockWithBlock:^&#123;</span><br><span class="line">            </span><br><span class="line">            <span class="comment">// 需要缓存图片解码后的数据        updateMemoryCache = YES;</span></span><br><span class="line">                    container.image = image;</span><br><span class="line">                &#125;];</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">if</span> (updateMemoryCache) &#123;</span><br><span class="line">        [container.lock lockWithBlock:^&#123;</span><br><span class="line">            <span class="built_in">NSUInteger</span> cacheCost = additionalCost;</span><br><span class="line">            cacheCost += [container.data length];</span><br><span class="line">            <span class="built_in">CGImageRef</span> imageRef = container.image.CGImage;</span><br><span class="line">            <span class="built_in">NSAssert</span>(container.image == <span class="literal">nil</span> || imageRef != <span class="literal">NULL</span>, <span class="string">@"We only cache a decompressed image if we decompressed it ourselves. In that case, it should be backed by a CGImageRef."</span>);</span><br><span class="line">            <span class="keyword">if</span> (imageRef) &#123;</span><br><span class="line">                cacheCost += <span class="built_in">CGImageGetHeight</span>(imageRef) * <span class="built_in">CGImageGetBytesPerRow</span>(imageRef);</span><br><span class="line">            &#125;</span><br><span class="line">            [<span class="keyword">self</span>.cache setObjectInMemory:container forKey:key withCost:cacheCost];</span><br><span class="line">        &#125;];</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">if</span> (diskData) &#123;</span><br><span class="line">    <span class="comment">// 缓存原始图片数据到磁盘</span></span><br><span class="line">        [<span class="keyword">self</span>.cache setObjectOnDisk:diskData forKey:key];</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">if</span> (outImage) &#123;</span><br><span class="line">        *outImage = image;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">if</span> (outAlternateRepresentation) &#123;</span><br><span class="line">        *outAlternateRepresentation = alternateRepresentation;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">if</span> (image == <span class="literal">nil</span> &amp;&amp; alternateRepresentation == <span class="literal">nil</span>) &#123;</span><br><span class="line">        PINLog(<span class="string">@"Invalid item in cache"</span>);</span><br><span class="line">        [<span class="keyword">self</span>.cache removeObjectForKey:key completion:<span class="literal">nil</span>];</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">NO</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">YES</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+</li>
+</ul>
+<h4 id="网络请求："><a href="#网络请求：" class="headerlink" title="网络请求："></a>网络请求：</h4><p>根据下面的比较，可以看出网络请求方面，PINRemoteImage = SDWebImage &gt; YYWebImage </p>
+<ul>
+<li><p>YYWebImage: 使用还是老的网络请求对象 <code>NSURLConnection</code></p>
+</li>
+<li><p>SDWebImage: 使用的是新的网络请求对象 <code>NSURLSession</code></p>
+</li>
+<li><p>PINRemoteImage: 使用的是新的网络请求对象 <code>NSURLSession</code></p>
+</li>
+</ul>
+<h4 id="性能比较"><a href="#性能比较" class="headerlink" title="性能比较"></a>性能比较</h4><p>关于性能比较，只是简单的使用 FPS 工具，在列表页面，分别使用三种图片库去看效果，滑动效果比较结果如下：<br>YYWebImage &gt; SDWebImage ~= PINRemoteImage</p>
+<p>使用 YYWebImage 加载图片时的滑动效果是最好的。SDWebImage 和 PINRemoteImage 加载图片时的滑动效果是差不多的。</p>
+<h4 id="遇到的问题"><a href="#遇到的问题" class="headerlink" title="遇到的问题"></a>遇到的问题</h4><p>由于想要尝试使用 ASDisplayKit 去做局部列表页面的优化，但是这个库使用的图片库是 PINRemoteImage 库，而项目中使用的是 YYWebImage 库去加载图片的，这样的话就会有两套图片库，所以为了统一就需要让ASNetworkImageNode<br>也要使用 YYWebImage 库去加载图片。这也是我为什么要做这个比较的原因。</p>
+<p>代码如下：</p>
+<figure class="highlight objectivec"><table><tr><td class="code"><pre><span class="line"><span class="meta">#import <span class="meta-string">&lt;AsyncDisplayKit/AsyncDisplayKit.h&gt;</span></span></span><br><span class="line"><span class="meta">#import <span class="meta-string">&lt;YYWebImage/YYWebImage.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">@interface</span> <span class="title">YYWebImageManager</span>(<span class="title">ASNetworkImageNode</span>)&lt;<span class="title">ASImageCacheProtocol</span>, <span class="title">ASImageDownloaderProtocol</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">@end</span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">@implementation</span> <span class="title">YYWebImageManager</span>(<span class="title">ASNetworkImageNode</span>)</span></span><br><span class="line"></span><br><span class="line">- (<span class="keyword">nullable</span> <span class="keyword">id</span>)downloadImageWithURL:(<span class="built_in">NSURL</span> *)URL</span><br><span class="line">                      callbackQueue:(<span class="built_in">dispatch_queue_t</span>)callbackQueue</span><br><span class="line">                   downloadProgress:(<span class="keyword">nullable</span> ASImageDownloaderProgress)downloadProgress</span><br><span class="line">                         completion:(ASImageDownloaderCompletion)completion &#123;</span><br><span class="line">                         <span class="comment">// 这里传入的  YYWebImageOptionIgnoreImageDecoding，是期望图片不需要解码，因为 ASNetworkImageNode 内部自己会在合适的时机进行解码的。但是正如我上面说的，YYWebImage 不能很好的控制解码，所以这个参数是不起作用的。    </span></span><br><span class="line">                         __<span class="keyword">weak</span> <span class="keyword">typeof</span>(YYWebImageOperation) *operation = <span class="literal">nil</span>;</span><br><span class="line">    operation = [<span class="keyword">self</span> requestImageWithURL:URL options:YYWebImageOptionIgnoreImageDecoding progress:^(<span class="built_in">NSInteger</span> receivedSize, <span class="built_in">NSInteger</span> expectedSize) &#123;</span><br><span class="line">        <span class="built_in">dispatch_async</span>(callbackQueue, ^&#123;</span><br><span class="line">            <span class="built_in">CGFloat</span> progress = expectedSize == <span class="number">0</span> ? <span class="number">0.0</span> : (<span class="built_in">CGFloat</span>)receivedSize / expectedSize;</span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span> (downloadProgress) &#123;</span><br><span class="line">                downloadProgress(progress);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line">    &#125; transform:<span class="literal">nil</span> completion:^(<span class="built_in">UIImage</span> * _Nullable image, <span class="built_in">NSURL</span> * _Nonnull url, YYWebImageFromType from, YYWebImageStage stage, <span class="built_in">NSError</span> * _Nullable error) &#123;</span><br><span class="line">        <span class="built_in">dispatch_async</span>(callbackQueue, ^&#123;</span><br><span class="line">            <span class="keyword">if</span> (completion) &#123;</span><br><span class="line">                completion(image, error, operation);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line">    &#125;];</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> operation;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (<span class="keyword">void</span>)cancelImageDownloadForIdentifier:(<span class="keyword">id</span>)downloadIdentifier &#123;</span><br><span class="line">    <span class="keyword">if</span> ([downloadIdentifier isKindOfClass:[YYWebImageOperation <span class="keyword">class</span>]]) &#123;</span><br><span class="line">        [(YYWebImageOperation *)downloadIdentifier cancel];</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (<span class="keyword">void</span>)cancelImageDownloadWithResumePossibilityForIdentifier:(<span class="keyword">id</span>)downloadIdentifier</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">if</span> ([downloadIdentifier isKindOfClass:[YYWebImageOperation <span class="keyword">class</span>]]) &#123;</span><br><span class="line">        [(YYWebImageOperation *)downloadIdentifier cancel];</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (<span class="keyword">void</span>)clearFetchedImageFromCacheWithURL:(<span class="built_in">NSURL</span> *)URL</span><br><span class="line">&#123;</span><br><span class="line">    YYImageCache *cache = <span class="keyword">self</span>.cache;</span><br><span class="line">    <span class="built_in">dispatch_async</span>(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, <span class="number">0</span>), ^&#123;</span><br><span class="line">        <span class="built_in">NSString</span> *key = [<span class="keyword">self</span> cacheKeyForURL:URL transformKey:<span class="literal">nil</span>];</span><br><span class="line">        [cache.memoryCache removeObjectForKey:key];</span><br><span class="line">    &#125;);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (<span class="keyword">void</span>)cachedImageWithURL:(<span class="built_in">NSURL</span> *)URL</span><br><span class="line">             callbackQueue:(<span class="built_in">dispatch_queue_t</span>)callbackQueue</span><br><span class="line">                completion:(ASImageCacherCompletion)completion &#123;</span><br><span class="line">    [<span class="keyword">self</span>.cache getImageForKey:[<span class="keyword">self</span> cacheKeyForURL:URL transformKey:<span class="literal">nil</span>] withType:YYImageCacheTypeAll withBlock:^(<span class="built_in">UIImage</span> * _Nullable image, YYImageCacheType type) &#123;</span><br><span class="line">        <span class="built_in">dispatch_async</span>(callbackQueue, ^&#123;</span><br><span class="line">            <span class="keyword">if</span> (completion) &#123;</span><br><span class="line">                completion(image);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line">    &#125;];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">@end</span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">@interface</span> <span class="title">ASNetworkImageNode</span>(<span class="title">YYWebImageManager</span>)</span></span><br><span class="line"></span><br><span class="line">+ (ASNetworkImageNode *)lk_imageNode;</span><br><span class="line"></span><br><span class="line"><span class="keyword">@end</span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">@implementation</span> <span class="title">ASNetworkImageNode</span>(<span class="title">YYWebImageManager</span>)</span></span><br><span class="line"></span><br><span class="line">+ (ASNetworkImageNode *)lk_imageNode &#123;</span><br><span class="line">    <span class="keyword">return</span> [[ASNetworkImageNode alloc] initWithCache:[YYWebImageManager sharedManager] downloader:[YYWebImageManager sharedManager]];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">@end</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 使用方式如下：</span></span><br><span class="line">ASNetworkImageNode *node = [ASNetworkImageNode lk_imageNode];</span><br><span class="line">node.URL = [<span class="built_in">NSURL</span> URLWithString:<span class="string">@""</span>];</span><br></pre></td></tr></table></figure>
+
+<p>可以看到我在下载的回调方法里传入了  YYWebImageOptionIgnoreImageDecoding，是期望图片不需要解码，因为 ASNetworkImageNode 内部自己会在合适的时机进行解码的。但是正如我上面说的，YYWebImage 不能很好的控制解码，所以这个参数是不起作用的。</p>
+<p>由于这个不能控制解码的问题，会导致在快速滑动的过程中，几十张图片同时解码，内存会飙升，YYMemoryCache 的内存警告也来不及回收，最终很容易引起 OOM 而让 app 崩溃。</p>
+<p>所以针对这个问题，目前还是保留使用两套图片库。</p>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>这里只是可用度方面进行了比较，并没有做全面的评估，所以实际项目还是需要根据自己的需求来决定。</p>
+<h3 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h3><ul>
+<li><p><a href="https://github.com/ibireme/YYImage/blob/master/YYImage.podspec" target="_blank" rel="noopener">本地编译WebP库并添加其他到工程中
+</a></p>
+</li>
+<li><p><a href="http://www.cnblogs.com/damiao/p/4562186.html" target="_blank" rel="noopener">本地编译WebP库并添加其他到工程中1</a></p>
+</li>
+<li><p><a href="http://blog.devzeng.com/blog/ios-webp-usage.html" target="_blank" rel="noopener">UIWebView 使用 WebP
+</a></p>
+</li>
+</ul>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/WebImage/" rel="tag"># WebImage</a>
+          
+        </div>
+      
+
+      
+        
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/02/10/仿微信图片压缩方式/" rel="next" title="仿微信图片压缩方式">
+                <i class="fa fa-chevron-left"></i> 仿微信图片压缩方式
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/03/05/Mac上使用Privoxy将socks5转换为http代理/" rel="prev" title="Mac上使用Privoxy将socks5转换为http代理">
+                Mac上使用Privoxy将socks5转换为http代理 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+          
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2018/02/27/YYWebImage-SDWebImage和PINRemoteImage比较/" data-title="YYWebImage,SDWebImage和PINRemoteImage比较" data-url="https://karosli.github.io/2018/02/27/YYWebImage-SDWebImage和PINRemoteImage比较/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image" src="/images/avatar.jpeg" alt="KarosLi (卡洛斯)">
+          <p class="site-author-name" itemprop="name">KarosLi (卡洛斯)</p>
+          <p class="site-description motion-element" itemprop="description">正在修行的路上</p>
+        </div>
+        <nav class="site-state motion-element">
+        
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">20</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-categories">
+              
+                <span class="site-state-item-count">13</span>
+                <span class="site-state-item-name">分类</span>
+              
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">13</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+          <div class="links-of-blogroll motion-element links-of-blogroll-inline">
+            <div class="links-of-blogroll-title">
+              <i class="fa  fa-fw fa-globe"></i>
+              友情链接
+            </div>
+            <ul class="links-of-blogroll-list">
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://hexiaofei51.cn/" title="晓飞的博客" target="_blank">晓飞的博客</a>
+                </li>
+              
+            </ul>
+          </div>
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#YYWebImage-SDWebImage和PINRemoteImage比较"><span class="nav-number">1.</span> <span class="nav-text">YYWebImage,SDWebImage和PINRemoteImage比较</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#共同的特性"><span class="nav-number">1.0.1.</span> <span class="nav-text">共同的特性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#图片框架比较"><span class="nav-number">1.0.2.</span> <span class="nav-text">图片框架比较</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#图片后处理"><span class="nav-number">1.0.2.1.</span> <span class="nav-text">图片后处理</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#图片格式支持"><span class="nav-number">1.0.2.2.</span> <span class="nav-text">图片格式支持</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#图片解码控制"><span class="nav-number">1.0.2.3.</span> <span class="nav-text">图片解码控制:</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#网络请求："><span class="nav-number">1.0.2.4.</span> <span class="nav-text">网络请求：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#性能比较"><span class="nav-number">1.0.2.5.</span> <span class="nav-text">性能比较</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#遇到的问题"><span class="nav-number">1.0.2.6.</span> <span class="nav-text">遇到的问题</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#总结"><span class="nav-number">1.0.3.</span> <span class="nav-text">总结</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#参考"><span class="nav-number">1.0.4.</span> <span class="nav-text">参考</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">KarosLi (卡洛斯)</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<span> | </span><span id="busuanzi_container_site_pv">本站总访问量<span id="busuanzi_value_site_pv"></span>次</span>
+<span id="busuanzi_container_page_pv">
+  本文总阅读量<span id="busuanzi_value_page_pv"></span>次
+</span>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"karosli"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+    
+    <script src="/lib/ua-parser-js/dist/ua-parser.min.js?v=0.7.9"></script>
+    <script src="/js/src/hook-duoshuo.js"></script>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+
+</body>
+</html>

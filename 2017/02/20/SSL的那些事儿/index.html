@@ -1,0 +1,897 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css">
+
+
+  <meta name="keywords" content="安全,">
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.0">
+
+
+
+
+
+
+<meta name="description" content="SSL的那些事儿 Https，SSL 平时我们都听的挺多，知道它是用来加密的，但是对于里面的工作原理不是很清楚，所以在这里我也总结下 SSL 的工作原理，希望大家能够帮助到大家。">
+<meta name="keywords" content="安全">
+<meta property="og:type" content="article">
+<meta property="og:title" content="SSL的那些事儿">
+<meta property="og:url" content="https://karosli.github.io/2017/02/20/SSL的那些事儿/index.html">
+<meta property="og:site_name" content="卡洛斯的博客">
+<meta property="og:description" content="SSL的那些事儿 Https，SSL 平时我们都听的挺多，知道它是用来加密的，但是对于里面的工作原理不是很清楚，所以在这里我也总结下 SSL 的工作原理，希望大家能够帮助到大家。">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://olf3t4omk.bkt.clouddn.com/timg-2.jpeg">
+<meta property="og:image" content="http://olf3t4omk.bkt.clouddn.com/SSL-TLSpic.003.jpeg">
+<meta property="og:image" content="http://olf3t4omk.bkt.clouddn.com/SSL:TLSpic.004.jpeg">
+<meta property="og:image" content="http://olf3t4omk.bkt.clouddn.com/SSL-TLSpic.009.jpeg">
+<meta property="og:image" content="http://olf3t4omk.bkt.clouddn.com/SSL-TLSpic.011.jpeg">
+<meta property="og:image" content="http://olf3t4omk.bkt.clouddn.com/14876882434183.jpg">
+<meta property="og:image" content="http://olf3t4omk.bkt.clouddn.com/14876890600941.jpg">
+<meta property="og:image" content="http://olf3t4omk.bkt.clouddn.com/SSL-TLSpic.016.jpeg">
+<meta property="og:image" content="http://olf3t4omk.bkt.clouddn.com/SSL-TLSpic.018.jpeg">
+<meta property="og:image" content="http://olf3t4omk.bkt.clouddn.com/SSL-TLSpic.020.jpeg">
+<meta property="og:image" content="http://olf3t4omk.bkt.clouddn.com/SSL-TLSpic.022.jpeg">
+<meta property="og:image" content="http://olf3t4omk.bkt.clouddn.com/SSL:TLSpic.025.jpeg">
+<meta property="og:updated_time" content="2017-02-22T16:41:59.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="SSL的那些事儿">
+<meta name="twitter:description" content="SSL的那些事儿 Https，SSL 平时我们都听的挺多，知道它是用来加密的，但是对于里面的工作原理不是很清楚，所以在这里我也总结下 SSL 的工作原理，希望大家能够帮助到大家。">
+<meta name="twitter:image" content="http://olf3t4omk.bkt.clouddn.com/timg-2.jpeg">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://karosli.github.io/2017/02/20/SSL的那些事儿/">
+
+
+
+
+
+  <title> SSL的那些事儿 | 卡洛斯的博客 </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?2c60eb726acae80a0bd58fe0229a46b8";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">卡洛斯的博客</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+    
+      <p class="site-subtitle"></p>
+    
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+  <link itemprop="mainEntityOfPage" href="https://karosli.github.io/2017/02/20/SSL的那些事儿/">
+
+  <span style="display:none" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <meta itemprop="name" content="KarosLi (卡洛斯)">
+    <meta itemprop="description" content>
+    <meta itemprop="image" content="/images/avatar.jpeg">
+  </span>
+
+  <span style="display:none" itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+    <meta itemprop="name" content="卡洛斯的博客">
+    <span style="display:none" itemprop="logo" itemscope itemtype="http://schema.org/ImageObject">
+      <img style="display:none;" itemprop="url image" alt="卡洛斯的博客" src>
+    </span>
+  </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                SSL的那些事儿
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-02-20T16:19:20+08:00">
+                2017-02-20
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/安全/" itemprop="url" rel="index">
+                    <span itemprop="name">安全</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2017/02/20/SSL的那些事儿/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2017/02/20/SSL的那些事儿/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="SSL的那些事儿"><a href="#SSL的那些事儿" class="headerlink" title="SSL的那些事儿"></a>SSL的那些事儿</h1><p><img src="http://olf3t4omk.bkt.clouddn.com/timg-2.jpeg" alt="timg-2"></p>
+<p><code>Https</code>，<code>SSL</code> 平时我们都听的挺多，知道它是用来加密的，但是对于里面的工作原理不是很清楚，所以在这里我也总结下 <code>SSL</code> 的工作原理，希望大家能够帮助到大家。</p>
+<a id="more"></a>
+
+<blockquote>
+<p>PS：其实这篇文章写了很久了，是在一次公司的内部培训准备的，写了几天PPT，也看了好多资料，虽然讲完了，但是一直放在自己的iCloud里了，最近又突然看到它了，想到毕竟也是花了时间在上面，还是想整理下发出来，和大家一起学习探讨。</p>
+</blockquote>
+<h3 id="目录"><a href="#目录" class="headerlink" title="目录"></a>目录</h3><blockquote>
+<ol>
+<li>不安全的Case</li>
+<li>SSL出现的背景</li>
+<li>SSL的演进</li>
+<li>SSL的工作流程</li>
+<li>小结</li>
+</ol>
+</blockquote>
+<h3 id="一，不安全的Case"><a href="#一，不安全的Case" class="headerlink" title="一，不安全的Case"></a>一，不安全的Case</h3><h4 id="明文传输"><a href="#明文传输" class="headerlink" title="明文传输"></a>明文传输</h4><p>众所周知，明文传输肯定是不安全的。下面这个例子里，<code>A</code> 告诉 <code>B</code> 的每一句话，都会被 <code>C</code> 看到。</p>
+<p><img src="http://olf3t4omk.bkt.clouddn.com/SSL-TLSpic.003.jpeg" alt="SSL-TLSpic.003"></p>
+<h4 id="密文传输"><a href="#密文传输" class="headerlink" title="密文传输"></a>密文传输</h4><p>这种对称加密传输的过程是需要通信双方都能提前知道加密密钥，然后才能读懂双方发送的密文。一旦双方其中有一方泄露了加密密钥，整个通信过程就会有危险了。下面这个例子，如果 <code>C</code> 不管通过什么途径获取到了加密密钥，那么 <code>C</code> 就能看到 <code>A</code> 和 <code>B</code> 之间的通信内容了。</p>
+<p><img src="http://olf3t4omk.bkt.clouddn.com/SSL:TLSpic.004.jpeg" alt="SSL:TLSpic.004"></p>
+<h3 id="二，SSL出现的背景"><a href="#二，SSL出现的背景" class="headerlink" title="二，SSL出现的背景"></a>二，SSL出现的背景</h3><p>基于万维网的电子商务和网上银行等新兴应用，极大地方便了人们的日常生活，受到人们的青睐。由于这些应用都需要在网络上进行在线交易，它们对网络通信的安全性提出了更高的要求。传统的万维网协议HTTP不具备安全机制——采用明文的形式传输数据、不能验证通信双方的身份、无法防止传输的数据被篡改等，导致HTTP无法满足电子商务和网上银行等应用的安全性要求。</p>
+<p>与此同时，所有行业都面临着如下三大风险：</p>
+<blockquote>
+<ul>
+<li>窃听风险（eavesdropping）：第三方可以获知通信内容。</li>
+<li>篡改风险（tampering）：第三方可以修改通信内容。</li>
+<li>冒充风险（pretending）：第三方可以冒充他人身份参与通信。</li>
+</ul>
+</blockquote>
+<p>那么什么是SSL呢？相信大家都会有这个疑问。</p>
+<blockquote>
+<ul>
+<li><p>SSL(Secure Socket Layer)是netscape公司设计的主要用以保障在Internet上数据传输安全，利用数据加密(Encryption)技术，可确保数据在网络上之传输过程中不会被截取及窃听。一般通用之规格为40 bit之安全标准，美国则已推出128 bit之更高安全标准，但限制出境。当前版本为3.0。它已被广泛地用于Web浏览器与服务器之间的身份认证和加密数据传输。</p>
+</li>
+<li><p>IETF(<a href="http://www.ietf.org)将SSL作了标准化，即RFC2246,并将其称为TLS（Transport" target="_blank" rel="noopener">www.ietf.org)将SSL作了标准化，即RFC2246,并将其称为TLS（Transport</a> Layer Security），从技术上讲，TLS1.0与SSL3.0的差别非常微小。</p>
+</li>
+<li><p>在WAP的环境下，由于手机及手持设备的处理和存储能力有限，wap论坛（<a href="http://www.wapforum.org）在TLS的基础上做了简化，提出了WTLS协议（Wireless" target="_blank" rel="noopener">www.wapforum.org）在TLS的基础上做了简化，提出了WTLS协议（Wireless</a> Transport Layer Security），以适应无线的特殊环境。</p>
+</li>
+</ul>
+</blockquote>
+<h3 id="三，SSL的演进"><a href="#三，SSL的演进" class="headerlink" title="三，SSL的演进"></a>三，SSL的演进</h3><p>在讲到SSL演进之前，还是先跟大家讲下我们的对称加密和非对称加密。</p>
+<p>对称加密 <code>symmetric cryptographic</code></p>
+<blockquote>
+<ul>
+<li>简单的说就是加密和解密用的同一个密钥。常见的有DES，RC5。</li>
+</ul>
+</blockquote>
+<blockquote>
+<ul>
+<li>优点：加解密速度快。缺点：容易暴露密钥。</li>
+</ul>
+</blockquote>
+<blockquote>
+<ul>
+<li>公式：E(msg, key) = emsg， D(emsg, key) = msg。</li>
+</ul>
+</blockquote>
+<p>非对称加密 <code>asymmetric cryptographic</code></p>
+<blockquote>
+<ul>
+<li>是指一对加密密钥与解密密钥，这两个密钥是数学相关，用某用户密钥加密后所得的信息，只能用该用户的解密密钥才能解密。如果知道了其中一个，并不能计算出另外一个。因此如果公开了一对密钥中的一个，并不会危害到另外一个的秘密性质。称公开的密钥为公钥；不公开的密钥为私钥。</li>
+</ul>
+</blockquote>
+<blockquote>
+<ul>
+<li>简单的说就是加密密钥与解密密钥不同，分私钥和公钥。这种方法大多用于密钥交换，RSA便是一个我们熟知的例子。</li>
+</ul>
+</blockquote>
+<blockquote>
+<ul>
+<li>优点：安全性高，不用暴露私钥。缺点：加解密速度慢。</li>
+</ul>
+</blockquote>
+<blockquote>
+<ul>
+<li>公式：E(msg, publickey) = emsg， D(emsg, publickey) != msg， D(emsg, privatekey) = msg。</li>
+</ul>
+</blockquote>
+<h4 id="公钥加密和私钥解密"><a href="#公钥加密和私钥解密" class="headerlink" title="公钥加密和私钥解密"></a>公钥加密和私钥解密</h4><p>下面这个图例子里，其实是有两个场景：</p>
+<blockquote>
+<ol>
+<li><code>B</code> 手上是有一对密钥的，一个公钥和一个私钥，然后在 <code>A</code> 和 <code>B</code> 通信的过程中，<code>B</code> 把公钥交给 <code>A</code>，私钥是自己保管的，然后 <code>A</code> 就可以拿着这个公钥去加密谈话内容了，而且这个加密的内容只能是 <code>B</code> 才能解密的。</li>
+<li>流程是 <code>1</code> 里面是一样的，主要是加密的内容换成了一个对称密钥，然后用对称密钥去保证通信安全。 </li>
+</ol>
+</blockquote>
+<p><img src="http://olf3t4omk.bkt.clouddn.com/SSL-TLSpic.009.jpeg" alt="SSL-TLSpic.009"></p>
+<p><strong>但是</strong>，如果只是提供公钥和私钥，任何人都可以是 <code>B</code>，只要跟 <code>C</code> 谎称自己就是那个 <code>B</code>，然后提供公钥代替 <code>B</code> 的公钥，这样的导致的结果是 A 根本不知道自己是在跟一个假 <code>B</code> 在聊天，后果很严重。</p>
+<p><img src="http://olf3t4omk.bkt.clouddn.com/SSL-TLSpic.011.jpeg" alt="SSL-TLSpic.011"></p>
+<h4 id="证书"><a href="#证书" class="headerlink" title="证书"></a>证书</h4><p>由于存在上面的身份不确认的问题，这里我们引入了证书来帮助证明 <code>B</code> 就是 <code>B</code>，而不是假 <code>B</code>。</p>
+<p>那么什么是证书呢？ 简单的理解证书是一个包含身份ID（类似我们的身份证），和公钥信息的一个数字文件。</p>
+<blockquote>
+<p>数字证书就是互联网通讯中标志通讯各方身份信息的一串数字，提供了一种在Internet上验证通信实体身份的方式，其作用类似于司机的驾驶执照或日常生活中的身份证。它是由一个由权威机构—–CA机构，又称为证书授权（Certificate Authority）中心发行的，人们可以在网上用它来识别对方的身份。数字证书是一个经证书授权中心数字签名的包含公开密钥拥有者信息以及公开密钥的文件。最简单的证书包含一个公开密钥、名称以及证书授权中心的数字签名</p>
+</blockquote>
+<p>目前数字证书的格式普遍采用的是X.509V3国际标准，一个标准的X.509数字证书包含以下一些内容：</p>
+<p><img src="http://olf3t4omk.bkt.clouddn.com/14876882434183.jpg" alt></p>
+<p>刚才上面有讲，证书其实是由 <code>CA</code> 发放的，这里就会牵扯到 <code>CA</code> 的概念了。简单点讲，<code>CA</code> 是一个信任中心，可以理解是跟央行一样，央行发行的纸，你信吗？ 这个纸，你当然不信，但是你信任央行啊，信任政府啊，自然这个纸它就值钱了。所以同理，<code>CA</code> 发放的证书自然也是真实可靠的。</p>
+<blockquote>
+<ul>
+<li>CA机构，又称为证书授证（Certificate Authority）中心，作为电子商务交易中受信任的第三方，承担公钥体系中公钥的合法性检验的责任。CA中心为每个使用公开密钥的用户发放一个数字证书，数字证书的作用是证明证书中列出的用户合法拥有证书中列出的公开密钥。CA机构的数字签名使得攻击者不能伪造和篡改证书。它负责产生、分配并管理所有参与网上交易的个体所需的数字证书，因此是安全电子交易的核心环节。由此可见，建设证书授权（CA）中心，是开拓和规范电子商务市场必不可少的一步。为保证用户之间在网上传递信息的安全性、真实性、可靠性、完整性和不可抵赖性，不仅需要对用户的身份真实性进行验证，也需要有一个具有权威性、公正性、唯一性的机构，负责向电子商务的各个主体颁发并管理符合国内、国际安全电子交易协议标准的电子商务安全证书。</li>
+</ul>
+</blockquote>
+<blockquote>
+<ul>
+<li>数字证书颁发过程一般为：管理员只需生成“证书请求”（后缀大多为.csr），它包含你的个人信息和公钥，然后把这份请求交给诸如Globlesign，verisign等有CA服务公司（当然，连同几百美金），你的证书请求经验证后，CA用它的私钥签名，形成正式的证书发还给你。管理员再在server上导入这个证书就行了。</li>
+</ul>
+</blockquote>
+<p>下图就是 <code>CA</code> 到 <code>用户证书</code> 的一个组织结构：<br><img src="http://olf3t4omk.bkt.clouddn.com/14876890600941.jpg" alt></p>
+<p>所以，只要引入了证书，那相当于，客户端会去获取到服务器的证书，然后会去判断这个证书是否是我们的 <code>CA</code> 所发放的，自然就校验了证书的合法性。最后的结构就是我们的 <code>B</code> 小伙终于可以证明自己了，而不用哭晕在厕所里了。</p>
+<p><img src="http://olf3t4omk.bkt.clouddn.com/SSL-TLSpic.016.jpeg" alt="SSL-TLSpic.016"></p>
+<p>说到这里，可能有的小伙伴会问，由于商业证书都是要买的，没有钱怎么办？或者是说我们的服务都是内网的，不用考虑太多。那有什么可以满足这种诉求吗？ 既然有我们的 <code>CA</code>，那有没有不是 <code>CA</code> 的呢？ 答案是有的。就是我们可以自己来当这个非官方 <code>CA</code>，相当于搭建一个私服，自己玩，自己嗨。</p>
+<blockquote>
+<p>Self-signed certificate：由自己的私钥签名而非第三方CA签发的证书。如果你不想花那笔钱，可以自己做CA，现在有一些工具（openssl，keynote）可以帮助生成自定义的CA，服务器的证书和自签名。当服务器端安装好有自定义CA签名的证书时，这个时候客户端是需要导入自定义的CA证书，意味着客户端“信任”这个CA签署的证书）。而商业CA的一般不用，因为它们已经内置在系统中了。</p>
+</blockquote>
+<p>但是建议商业服务器还是要买个证书来保证安全。</p>
+<h4 id="数字签名"><a href="#数字签名" class="headerlink" title="数字签名"></a>数字签名</h4><p>由于公钥加密只能协商出一个会话密钥，通过会话密钥可以保证通信的机密性。但是不能保证通信的完整性。简单的说就是证书能够保证通信的内容不被破解，但是不能保证内容被篡改。</p>
+<p>在下面的例子里，<code>A</code> 小伙和 <code>B</code> 小伙通过一段时间的沟通已经互有好感，此时 <code>B</code> 小伙想要告诉 <code>A</code> 小伙：”我喜欢你”。但是居心叵测的 <code>C</code> 非要过来插一脚，在后面补一句变成了：”我喜欢你 我去年买了个表”，可想而知，从此世界少了一对，不知道 <code>C</code> 是出于什么心态啊。不管怎么样，<code>C</code> 成功篡改了通信内容。</p>
+<p><img src="http://olf3t4omk.bkt.clouddn.com/SSL-TLSpic.018.jpeg" alt="SSL-TLSpic.018"></p>
+<p>那么问题来了，有什么办法可以让 <code>A</code> 小伙和 <code>B</code> 小伙在一起呢。</p>
+<p>duang，duang，duang，数字签名来了。数字签名就是为了解决信息被篡改的干活。</p>
+<blockquote>
+<p>数字签名是指用原文进行HASH运算得到摘要信息并用发送者的私钥加密，与原文一起传送给接收者。接收者只有用发送者的公钥才能解密被加密的摘要信息，然后用HASH函数对收到的原文产生一个摘要信息，与解密的摘要信息对比。如果相同，则说明收到的信息是完整的，在传输过程中没有被修改，否则说明信息被修改过，因此数字签名能够验证信息的完整性。</p>
+</blockquote>
+<p><img src="http://olf3t4omk.bkt.clouddn.com/SSL-TLSpic.020.jpeg" alt="SSL-TLSpic.020"></p>
+<p>有了数字签名的帮助，谁都无法阻止 <code>A</code> 和 <code>B</code> 在一起了。而这一切都是 <code>SSL</code> 自动帮我们做了，就是这么自然，但是了解里面的原理还是很有必要的。</p>
+<p><img src="http://olf3t4omk.bkt.clouddn.com/SSL-TLSpic.022.jpeg" alt="SSL-TLSpic.022"></p>
+<h3 id="四，SSL的工作流程"><a href="#四，SSL的工作流程" class="headerlink" title="四，SSL的工作流程"></a>四，SSL的工作流程</h3><p>首先来说下它的架构，SSL是一个介于HTTP协议与TCP之间的一个可选层。</p>
+<p>－－－－－－－－－<br>|    HTTP      |<br>－－－－－－－－－<br>|    SSL       |<br>－－－－－－－－－<br>|    TCP       |<br>－－－－－－－－－<br>|    IP        |<br>－－－－－－－－－</p>
+<blockquote>
+<ul>
+<li>SSL层: 借助SSL层协议的的信道安全的协商出一份加密密钥，并用此密钥来加密HTTP请求，SSL在TCP之上建立了一个加密通道，通过这一层的数据经过了加密，因此达到保密的效果</li>
+</ul>
+</blockquote>
+<blockquote>
+<ul>
+<li>TCP层：与web server的443端口建立连接，传递SSL处理后的数据。</li>
+</ul>
+</blockquote>
+<blockquote>
+<ul>
+<li>SSL协议可分为部分： SSL记录协议（SSL Record Protocol）：它建立在可靠的传输协议（如TCP）之上，为高层协议提供数据封装、压缩、加密等基本功能的支持。 SSL握手协议（SSL Handshake Protocol）：它建立在SSL记录协议之上，用于在实际的数据传输开始前，通讯双方进行身份认证、协商加密算法、交换加密密钥等。</li>
+</ul>
+</blockquote>
+<h4 id="握手的过程"><a href="#握手的过程" class="headerlink" title="握手的过程"></a>握手的过程</h4><p>简单的说客户端会发出一个 <code>ClientHello</code> 来发起握手，这个消息里面包含了自己可实现的算法列表和其它一些需要的消息，服务器端会回应一个 <code>ServerHello</code>，这里面确定了这次通信所需要的算法，然后发过去自己的证书（里面包含了身份和自己的公钥）。客户端在收到这个消息后会生成一个秘密消息，用服务器的公钥加密后传过去，然后服务器端用自己的私钥解密后，会话密钥协商成功，双方可以用同一份会话密钥来安全通信了。</p>
+<p><img src="http://olf3t4omk.bkt.clouddn.com/SSL:TLSpic.025.jpeg" alt="SSL:TLSpic.025"></p>
+<p>举个更形象的例子：</p>
+<blockquote>
+<pre><code>我们假设A与B通信，A是SSL客户端，B是SSL服务器端，加密后的消息放在方括号[]里，以突出明文消息的区别。双方的处理动作的说明用圆括号（）括起。</code></pre><p>A：我想和你安全的通话，我这里的对称加密算法有DES,RC5,密钥交换算法有RSA和DH，摘要算法有MD5和SHA。<br>B：我们用DES－RSA－SHA这对组合好了。这是我的证书，里面有我的名字和公钥，你拿去验证一下我的身份（把证书发给A）。目前没有别的可说的了。<br>A：（查看证书上B的名字是否无误，并通过手头早已有的CA的证书验证了B的证书的真实性，如果其中一项有误，发出警告并断开连接，这一步保证了B的公钥的真实性）产生一份秘密消息，这份秘密消息处理后将用作加密密钥，加密初始化向量和hmac的密钥。将这份秘密消息-协议中称为per_master_secret-用B的公钥加密，封装成称作ClientKeyExchange的消息。由于用了B的公钥，保证了第三方无法窃听）<br>   我生成了一份秘密消息，并用你的公钥加密了，给你（把ClientKeyExchange发给B）<br>   注意，下面我就要用加密的办法给你发消息了！<br>   （将秘密消息进行处理，生成加密密钥，加密初始化向量和hmac的密钥）<br>   [我说完了]<br>B：（用自己的私钥将ClientKeyExchange中的秘密消息解密出来，然后将秘密消息进行处理，生成加密密钥，加密初始化向量和hmac的密钥，这时双方已经安全的协商出一套加密办法了）<br>   注意，我也要开始用加密的办法给你发消息了！<br>   [我说完了]<br>A: [我的秘密是…]<br>B: [其它人不会听到的…]   </p>
+</blockquote>
+<h3 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h3><p>自此，我们终于拨开了 <code>SSL</code> 的迷雾，<code>SSL</code> 一个看似简单的东西，里面涵盖了对称加密，非对称加密，证书 和 数字签名。对 <code>SSL</code> 感兴趣的小伙伴了解下这些还是有好处的，至少都是和我们学习工作息息相关的。</p>
+<h3 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h3><ul>
+<li><a href="http://tools.ietf.org/html/rfc5246" target="_blank" rel="noopener">http://tools.ietf.org/html/rfc5246</a></li>
+<li><a href="http://3layer.blog.51cto.com/57448/20430/" target="_blank" rel="noopener">http://3layer.blog.51cto.com/57448/20430/</a></li>
+<li><a href="http://netsecurity.51cto.com/art/201108/287971.htm" target="_blank" rel="noopener">http://netsecurity.51cto.com/art/201108/287971.htm</a></li>
+<li><a href="http://www.educity.cn/labs/568700.html" target="_blank" rel="noopener">http://www.educity.cn/labs/568700.html</a></li>
+<li><a href="http://hi.baidu.com/cqs2006123/item/70af9d46d9d3153efb896049" target="_blank" rel="noopener">http://hi.baidu.com/cqs2006123/item/70af9d46d9d3153efb896049</a></li>
+</ul>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/安全/" rel="tag"># 安全</a>
+          
+        </div>
+      
+
+      
+        
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/02/16/工欲善其事-必先利其器之终端/" rel="next" title="工欲善其事-必先利其器之终端">
+                <i class="fa fa-chevron-left"></i> 工欲善其事-必先利其器之终端
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/02/23/从杭州印象到自己的感想/" rel="prev" title="从杭州印象到自己的感想">
+                从杭州印象到自己的感想 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+          
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2017/02/20/SSL的那些事儿/" data-title="SSL的那些事儿" data-url="https://karosli.github.io/2017/02/20/SSL的那些事儿/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image" src="/images/avatar.jpeg" alt="KarosLi (卡洛斯)">
+          <p class="site-author-name" itemprop="name">KarosLi (卡洛斯)</p>
+          <p class="site-description motion-element" itemprop="description">正在修行的路上</p>
+        </div>
+        <nav class="site-state motion-element">
+        
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">20</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-categories">
+              
+                <span class="site-state-item-count">13</span>
+                <span class="site-state-item-name">分类</span>
+              
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">13</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+          <div class="links-of-blogroll motion-element links-of-blogroll-inline">
+            <div class="links-of-blogroll-title">
+              <i class="fa  fa-fw fa-globe"></i>
+              友情链接
+            </div>
+            <ul class="links-of-blogroll-list">
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://hexiaofei51.cn/" title="晓飞的博客" target="_blank">晓飞的博客</a>
+                </li>
+              
+            </ul>
+          </div>
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#SSL的那些事儿"><span class="nav-number">1.</span> <span class="nav-text">SSL的那些事儿</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#目录"><span class="nav-number">1.0.1.</span> <span class="nav-text">目录</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#一，不安全的Case"><span class="nav-number">1.0.2.</span> <span class="nav-text">一，不安全的Case</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#明文传输"><span class="nav-number">1.0.2.1.</span> <span class="nav-text">明文传输</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#密文传输"><span class="nav-number">1.0.2.2.</span> <span class="nav-text">密文传输</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#二，SSL出现的背景"><span class="nav-number">1.0.3.</span> <span class="nav-text">二，SSL出现的背景</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#三，SSL的演进"><span class="nav-number">1.0.4.</span> <span class="nav-text">三，SSL的演进</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#公钥加密和私钥解密"><span class="nav-number">1.0.4.1.</span> <span class="nav-text">公钥加密和私钥解密</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#证书"><span class="nav-number">1.0.4.2.</span> <span class="nav-text">证书</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#数字签名"><span class="nav-number">1.0.4.3.</span> <span class="nav-text">数字签名</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#四，SSL的工作流程"><span class="nav-number">1.0.5.</span> <span class="nav-text">四，SSL的工作流程</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#握手的过程"><span class="nav-number">1.0.5.1.</span> <span class="nav-text">握手的过程</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#小结"><span class="nav-number">1.0.6.</span> <span class="nav-text">小结</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#参考"><span class="nav-number">1.0.7.</span> <span class="nav-text">参考</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">KarosLi (卡洛斯)</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<span> | </span><span id="busuanzi_container_site_pv">本站总访问量<span id="busuanzi_value_site_pv"></span>次</span>
+<span id="busuanzi_container_page_pv">
+  本文总阅读量<span id="busuanzi_value_page_pv"></span>次
+</span>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"karosli"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+    
+    <script src="/lib/ua-parser-js/dist/ua-parser.min.js?v=0.7.9"></script>
+    <script src="/js/src/hook-duoshuo.js"></script>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+
+</body>
+</html>

@@ -1,0 +1,808 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css">
+
+
+  <meta name="keywords" content="hybird,">
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.0">
+
+
+
+
+
+
+<meta name="description" content="Hybird-App离线缓存系统目录  背景 接口格式 离线资源包格式 离线资源下发 离线资源缓存   背景由于线上乐刻客户端 App 第一次打开平台 H5 需要几秒的加载时间，这个体验对用户来说并不友好，为了让用户跳转 H5 和跳转到原生一样的用户体验，就需要把 H5 相关的离线资源包下发给客户端，客户端就可以使用离线资源来代替实际网络请求，节省用户等待时间和流量消耗。并且随着业务的发展，不同的">
+<meta name="keywords" content="hybird">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Hybird-App离线缓存系统">
+<meta property="og:url" content="https://karosli.github.io/2017/05/27/Hybird-App离线缓存系统/index.html">
+<meta property="og:site_name" content="卡洛斯的博客">
+<meta property="og:description" content="Hybird-App离线缓存系统目录  背景 接口格式 离线资源包格式 离线资源下发 离线资源缓存   背景由于线上乐刻客户端 App 第一次打开平台 H5 需要几秒的加载时间，这个体验对用户来说并不友好，为了让用户跳转 H5 和跳转到原生一样的用户体验，就需要把 H5 相关的离线资源包下发给客户端，客户端就可以使用离线资源来代替实际网络请求，节省用户等待时间和流量消耗。并且随着业务的发展，不同的">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://olf3t4omk.bkt.clouddn.com/hybird_app_offline_flow.png">
+<meta property="og:updated_time" content="2017-05-27T16:14:06.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Hybird-App离线缓存系统">
+<meta name="twitter:description" content="Hybird-App离线缓存系统目录  背景 接口格式 离线资源包格式 离线资源下发 离线资源缓存   背景由于线上乐刻客户端 App 第一次打开平台 H5 需要几秒的加载时间，这个体验对用户来说并不友好，为了让用户跳转 H5 和跳转到原生一样的用户体验，就需要把 H5 相关的离线资源包下发给客户端，客户端就可以使用离线资源来代替实际网络请求，节省用户等待时间和流量消耗。并且随着业务的发展，不同的">
+<meta name="twitter:image" content="http://olf3t4omk.bkt.clouddn.com/hybird_app_offline_flow.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://karosli.github.io/2017/05/27/Hybird-App离线缓存系统/">
+
+
+
+
+
+  <title> Hybird-App离线缓存系统 | 卡洛斯的博客 </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?2c60eb726acae80a0bd58fe0229a46b8";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">卡洛斯的博客</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+    
+      <p class="site-subtitle"></p>
+    
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+  <link itemprop="mainEntityOfPage" href="https://karosli.github.io/2017/05/27/Hybird-App离线缓存系统/">
+
+  <span style="display:none" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <meta itemprop="name" content="KarosLi (卡洛斯)">
+    <meta itemprop="description" content>
+    <meta itemprop="image" content="/images/avatar.jpeg">
+  </span>
+
+  <span style="display:none" itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+    <meta itemprop="name" content="卡洛斯的博客">
+    <span style="display:none" itemprop="logo" itemscope itemtype="http://schema.org/ImageObject">
+      <img style="display:none;" itemprop="url image" alt="卡洛斯的博客" src>
+    </span>
+  </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                Hybird-App离线缓存系统
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-05-27T23:42:20+08:00">
+                2017-05-27
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/hybird/" itemprop="url" rel="index">
+                    <span itemprop="name">hybird</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2017/05/27/Hybird-App离线缓存系统/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2017/05/27/Hybird-App离线缓存系统/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="Hybird-App离线缓存系统"><a href="#Hybird-App离线缓存系统" class="headerlink" title="Hybird-App离线缓存系统"></a>Hybird-App离线缓存系统</h1><h2 id="目录"><a href="#目录" class="headerlink" title="目录"></a>目录</h2><blockquote>
+<ul>
+<li>背景</li>
+<li>接口格式</li>
+<li>离线资源包格式</li>
+<li>离线资源下发</li>
+<li>离线资源缓存</li>
+</ul>
+</blockquote>
+<h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>由于线上乐刻客户端 <code>App</code> 第一次打开平台 <code>H5</code> 需要几秒的加载时间，这个体验对用户来说并不友好，为了让用户跳转 <code>H5</code> 和跳转到原生一样的用户体验，就需要把 <code>H5</code> 相关的离线资源包下发给客户端，客户端就可以使用离线资源来代替实际网络请求，节省用户等待时间和流量消耗。并且随着业务的发展，不同的业务升级进度不一样，就需要 <code>App</code> 支持模块化升级。</p>
+<a id="more"></a>
+
+<h2 id="接口格式"><a href="#接口格式" class="headerlink" title="接口格式"></a>接口格式</h2><p><code>offlineResourceInfo</code> 接口请求方法: <code>POST</code></p>
+<p><code>offlineResourceInfo</code> 接口请求参数:</p>
+<p>Json 形式：</p>
+<figure class="highlight clojure"><table><tr><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    //<span class="string">"appVersion"</span>: <span class="string">"2.4.0"</span>, 可以去掉，因为请求头会包含</span><br><span class="line">    <span class="string">"resourceversionList"</span>: [&#123;</span><br><span class="line">    	<span class="string">"name"</span>: <span class="string">"m"</span>,</span><br><span class="line">    	<span class="string">"version"</span>: <span class="string">"1.0.0"</span></span><br><span class="line">    &#125;,&#123;</span><br><span class="line">    	<span class="string">"name"</span>: <span class="string">"coach"</span>,</span><br><span class="line">    	<span class="string">"version"</span>: <span class="string">"1.0.0"</span></span><br><span class="line">    &#125;,&#123;</span><br><span class="line">    	<span class="string">"name"</span>: <span class="string">"activity"</span>,</span><br><span class="line">    	<span class="string">"version"</span>: <span class="string">"1.0.0"</span></span><br><span class="line">    &#125;]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Form 表单形式：</p>
+<figure class="highlight lsl"><table><tr><td class="code"><pre><span class="line">resourceNames=m,coach,activity&amp;resourceVersions=<span class="number">1.0</span><span class="number">.0</span>,<span class="number">1.0</span><span class="number">.0</span>,<span class="number">1.0</span><span class="number">.0</span></span><br></pre></td></tr></table></figure>
+
+<p><code>offlineResourceInfo</code> 接口返回结构体:</p>
+<figure class="highlight json"><table><tr><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="attr">"data"</span>: &#123;</span><br><span class="line">    	<span class="attr">"resourceList"</span>: [&#123;</span><br><span class="line">    			<span class="attr">"name"</span>: <span class="string">"m"</span>,</span><br><span class="line">    			<span class="attr">"version"</span>: <span class="string">"1.0.1"</span>,</span><br><span class="line">    			<span class="attr">"url"</span>: <span class="string">"http://cdn.xxx.com/resource/m/m_update_1.0.0_1.0.1.zip"</span>,</span><br><span class="line">    			<span class="attr">"md5"</span>: <span class="string">"a4d7feecbcae8e2ccba3b5ba90aa8a83"</span>,</span><br><span class="line">    			<span class="attr">"isfull"</span>: <span class="literal">false</span></span><br><span class="line">    		&#125;,&#123;</span><br><span class="line">    			<span class="attr">"name"</span>: <span class="string">"coach"</span>,</span><br><span class="line">    			<span class="attr">"version"</span>: <span class="string">"1.0.1"</span>,</span><br><span class="line">    			<span class="attr">"url"</span>:  <span class="string">"http://cdn.xxx.com/resource/coach/coach_full_1.0.1.zip"</span>,</span><br><span class="line">    			<span class="attr">"md5"</span>: <span class="string">"a4d7feecbcae8e2ccba3b5ba90aa8a83"</span>,</span><br><span class="line">    			<span class="attr">"isfull"</span>: <span class="literal">true</span></span><br><span class="line">    		&#125;</span><br><span class="line">    	]</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>参数说明：</p>
+<figure class="highlight q"><table><tr><td class="code"><pre><span class="line"><span class="string">"name"</span>: 模块名</span><br><span class="line"><span class="string">"version"</span>: 升级版本</span><br><span class="line"><span class="string">"url"</span>: 资源包下载地址</span><br><span class="line"><span class="string">"md5"</span>: 资源包 <span class="built_in">md5</span></span><br><span class="line"><span class="string">"isfull"</span>: 是否是全量升级包</span><br></pre></td></tr></table></figure>
+
+<h2 id="离线资源包格式"><a href="#离线资源包格式" class="headerlink" title="离线资源包格式"></a>离线资源包格式</h2><p>增量和全量升级包拥有同样的结构，包含 <code>config.json</code> 文件和资源文件。</p>
+<p><code>config.json</code> 格式如下，<code>version</code> 记录的是下发的资源版本号，<code>validate</code> 记录的是所有文件的路劲和相应的 <code>md5 hash</code> 值。</p>
+<figure class="highlight json"><table><tr><td class="code"><pre><span class="line">&#123;</span><br><span class="line">	<span class="attr">"version"</span>: <span class="string">"1.0.1"</span>,</span><br><span class="line">	<span class="attr">"validate"</span>: [&#123;</span><br><span class="line">	   <span class="attr">"path"</span>: <span class="string">"528/app.min.cs"</span>,</span><br><span class="line">	   <span class="attr">"md5"</span>: <span class="string">"md5($cssFileContent)"</span></span><br><span class="line">	&#125;,&#123;</span><br><span class="line">	   <span class="attr">"path"</span>: <span class="string">"528/app.min.js"</span>,</span><br><span class="line">	   <span class="attr">"md5"</span>: <span class="string">"md5($jsFileContent)"</span></span><br><span class="line">	&#125;]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>具体的资源与 <code>config.json</code> 平级。</p>
+<figure class="highlight stylus"><table><tr><td class="code"><pre><span class="line">--[<span class="number">528</span>]</span><br><span class="line">----app<span class="selector-class">.min</span><span class="selector-class">.css</span></span><br><span class="line">----app<span class="selector-class">.min</span><span class="selector-class">.js</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="离线资源下发"><a href="#离线资源下发" class="headerlink" title="离线资源下发"></a>离线资源下发</h2><h3 id="下发时机"><a href="#下发时机" class="headerlink" title="下发时机"></a>下发时机</h3><p><code>App</code> 启动时<del>设置定时器定时器</del>-&gt; <code>wifi</code> 环境下 -&gt; 请求服务器接口获取 <code>offlineResourceinfo</code> 接口 <code>response</code>，根据<code>resourceList</code> 的结果来决定是否需要更新，需要更新的模块可以下载 <code>zip</code> 文件</p>
+<h3 id="资源包存放目录"><a href="#资源包存放目录" class="headerlink" title="资源包存放目录"></a>资源包存放目录</h3><p>按模块目录存放资源包。其中目录 <code>moduleszip</code> 用于存放资源压缩包的路径，目录 <code>modules</code> 用于存放解压后的压缩包路径。</p>
+<p>所以每次请求 <code>offlineResourceInfo</code> 接口的时候，也需要遍历所有模块目录下的 <code>config.json</code> 去获取资源版本号。所以第一次请求的话，由于本地目录是空的，对于接口 <code>offlineResourceInfo</code> 的参数 <code>resourceversionList</code> 也是空的。</p>
+<figure class="highlight css"><table><tr><td class="code"><pre><span class="line"><span class="selector-tag">--</span><span class="selector-attr">[offlineResource]</span></span><br><span class="line"><span class="selector-tag">----</span><span class="selector-attr">[moduleszip]</span></span><br><span class="line"><span class="selector-tag">------</span><span class="selector-attr">[m]</span></span><br><span class="line"><span class="selector-tag">--------</span><span class="selector-attr">[zip]</span></span><br><span class="line"><span class="selector-tag">----------m</span><span class="selector-class">.update</span><span class="selector-class">.1</span><span class="selector-class">.0</span><span class="selector-class">.0_1</span><span class="selector-class">.0</span><span class="selector-class">.1</span><span class="selector-class">.zip</span></span><br><span class="line"><span class="selector-tag">----------m</span><span class="selector-class">.full</span><span class="selector-class">.1</span><span class="selector-class">.0</span><span class="selector-class">.1</span><span class="selector-class">.zip</span></span><br><span class="line"><span class="selector-tag">--------</span><span class="selector-attr">[temp]</span> 解压临时目录</span><br><span class="line"><span class="selector-tag">--------</span><span class="selector-attr">[backup]</span> 原有资源备份目录</span><br><span class="line"></span><br><span class="line"><span class="selector-tag">------</span><span class="selector-attr">[coach]</span></span><br><span class="line"><span class="selector-tag">--------</span><span class="selector-attr">[zip]</span></span><br><span class="line"><span class="selector-tag">----------coach</span><span class="selector-class">.update</span><span class="selector-class">.1</span><span class="selector-class">.0</span><span class="selector-class">.0_1</span><span class="selector-class">.0</span><span class="selector-class">.1</span><span class="selector-class">.zip</span></span><br><span class="line"><span class="selector-tag">----------coach</span><span class="selector-class">.full</span><span class="selector-class">.1</span><span class="selector-class">.0</span><span class="selector-class">.1</span><span class="selector-class">.zip</span></span><br><span class="line"><span class="selector-tag">--------</span><span class="selector-attr">[temp]</span> 解压临时目录</span><br><span class="line"><span class="selector-tag">--------</span><span class="selector-attr">[backup]</span> 原有资源备份目录</span><br><span class="line"></span><br><span class="line"><span class="selector-tag">----</span><span class="selector-attr">[modules]</span></span><br><span class="line"><span class="selector-tag">------</span><span class="selector-attr">[m]</span></span><br><span class="line"><span class="selector-tag">--------config</span><span class="selector-class">.json</span></span><br><span class="line"><span class="selector-tag">--------</span>其他资源文件</span><br><span class="line"></span><br><span class="line"><span class="selector-tag">------</span><span class="selector-attr">[coach]</span></span><br><span class="line"><span class="selector-tag">--------config</span><span class="selector-class">.json</span></span><br><span class="line"><span class="selector-tag">--------</span>其他资源文件</span><br><span class="line"></span><br><span class="line"><span class="selector-tag">----</span><span class="selector-attr">[modulesflag]</span></span><br><span class="line"><span class="selector-tag">------</span><span class="selector-attr">[m]</span></span><br><span class="line"><span class="selector-tag">--------flag</span><span class="selector-class">.json</span></span><br><span class="line"></span><br><span class="line"><span class="selector-tag">------</span><span class="selector-attr">[coach]</span></span><br><span class="line"><span class="selector-tag">--------flag</span><span class="selector-class">.json</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="资源包解压"><a href="#资源包解压" class="headerlink" title="资源包解压"></a>资源包解压</h3><h4 id="解压"><a href="#解压" class="headerlink" title="解压"></a>解压</h4><p>当下载完资源包，解压之前需要根据接口返回的 <code>md5</code> 值来校验资源包的合法性。</p>
+<p>校验子文件过程：需要结合 <code>config.json</code> 和资源来校验每个文件的合法性，如果不合法，<del>就不添加该资源文件</del> 就不保留整个资源包。</p>
+<h4 id="更新资源"><a href="#更新资源" class="headerlink" title="更新资源"></a>更新资源</h4><p>增量更新：文件的替换和增加。而且需要合并新老 <code>config.json</code>。<br>全量更新：覆盖模块目录。</p>
+<p>模块资源包更新之前，需要先备份之前的模块资源。例如：拷贝目录 <code>offlineResource/modules/m</code> 到目录<code>offlineResource/moduleszip/m/backup</code> 来进行备份。</p>
+<h4 id="容错处理"><a href="#容错处理" class="headerlink" title="容错处理"></a>容错处理</h4><p>需要设置标志位，并持久化到 <code>flag.json</code>:</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="string">&#123;</span></span><br><span class="line"><span class="attr">    "doingUpgradeFlag":</span> <span class="literal">false</span><span class="string">,</span> <span class="string">//</span> <span class="literal">false</span><span class="string">,</span> <span class="string">表示升级过程正常，否则升级过程有错误。</span></span><br><span class="line"><span class="attr">    "doingBackupFlag":</span> <span class="literal">false</span> <span class="string">//</span> <span class="literal">false</span><span class="string">,</span> <span class="string">表示备份过程正常，否则备份过程有错误。</span></span><br><span class="line"><span class="string">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>正在升级标志位 (总标志位)</li>
+<li>正在备份标志位 (是正在升级标志位的一个子集)</li>
+</ul>
+<p>正在升级的过程包括， <code>md5</code> 校验资源包，<code>md5</code> 校验每个资源文件，备份和更新过程。</p>
+<p>如果整个升级过程中发生普通错误，恢复所有标志位，然后结束升级流程。</p>
+<p>如果整个升级过程中发生崩溃或者被杀掉进程，App 再次启动后。此时 <code>正在升级标志位</code> 没有复位 (升级失败)，有以下几种情况需要做容错处理:</p>
+<ol>
+<li>如果 <code>正在备份标志位</code> 也没有复位 (备份失败)，此时并不会影响目标模块资源，直接恢复所有标志位。</li>
+<li>如果 <code>正在备份标志位</code> 已经复位 (备份成功)，先清空目标模块资源，然后做回滚操作：<ul>
+<li>回滚成功，直接复位所有标志位。</li>
+<li>回滚失败，先清空目标模块资源：<ol>
+<li>正常失败，恢复所有标志位。</li>
+<li>App 崩溃或被杀掉进程，Nothing To Do.</li>
+</ol>
+</li>
+</ul>
+</li>
+</ol>
+<h4 id="容错副作用"><a href="#容错副作用" class="headerlink" title="容错副作用"></a>容错副作用</h4><p>当 <code>正在升级标志位</code> 没有复位时。此时 <code>App webview</code> 请求不走缓存系统。<br>否则 <code>App webview</code> 可以继续使用缓存系统。</p>
+<h4 id="升级流程图"><a href="#升级流程图" class="headerlink" title="升级流程图"></a>升级流程图</h4><p><img src="http://olf3t4omk.bkt.clouddn.com/hybird_app_offline_flow.png" alt></p>
+<h2 id="离线资源缓存"><a href="#离线资源缓存" class="headerlink" title="离线资源缓存"></a>离线资源缓存</h2><h3 id="使用缓存时机"><a href="#使用缓存时机" class="headerlink" title="使用缓存时机"></a>使用缓存时机</h3><p>只针对 <code>webview</code> 的以 <code>xxx.com</code> 为主域名的请求进行拦截，然后根据请求链接，找到具体文件缓存。</p>
+<p>找具体文件缓存的方式：</p>
+<blockquote>
+<ul>
+<li>遍历所有模块下的 <code>config.json</code> 文件，看能否找到具体的资源文件。这样效率会比较慢，但是更适合现有的场景。</li>
+<li><del>根据链接的一级路径找到对应模块下的 <code>config.json</code> 文件，看能否找到具体的资源文件。这样效率会比较高，但是目前链接的一级路径并不规范。</del></li>
+<li>直接根据请求 <code>URL</code> 的 <code>PATH</code> 去本地查找是否存在具体的资源文件。<code>PATH</code> 的一级路径代表模块名，剩余部分代表资源路径。</li>
+</ul>
+</blockquote>
+<p>App 这里会使用第二种方式去找缓存文件，这样的话就需要前端小伙伴规范链接路径。</p>
+<p><del>拿到缓存文件之后，需要再次校验缓存文件的合法性，合法则使用缓存，不合法就需要下面的容错处理。</del></p>
+<h3 id="使用缓存容错处理"><a href="#使用缓存容错处理" class="headerlink" title="使用缓存容错处理"></a>使用缓存容错处理</h3><p><del>如果找到的缓存文件已经损坏或者不存在（解压过程被中断，杀掉进程或者 <code>crash</code>），此时需要继续走网络，并且把网络结果进行 <code>md5</code> 校验，如果合法，需要把该结果保存到缓存系统，如果不合法，不做处理。</del></p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/hybird/" rel="tag"># hybird</a>
+          
+        </div>
+      
+
+      
+        
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/05/27/Hybird-后台接口和后台管理界面/" rel="next" title="Hybird-后台接口和后台管理界面">
+                <i class="fa fa-chevron-left"></i> Hybird-后台接口和后台管理界面
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/12/09/jenkins-fastlane持续集成和自动化打包/" rel="prev" title="jenkins-fastlane持续集成和自动化打包">
+                jenkins-fastlane持续集成和自动化打包 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+          
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2017/05/27/Hybird-App离线缓存系统/" data-title="Hybird-App离线缓存系统" data-url="https://karosli.github.io/2017/05/27/Hybird-App离线缓存系统/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image" src="/images/avatar.jpeg" alt="KarosLi (卡洛斯)">
+          <p class="site-author-name" itemprop="name">KarosLi (卡洛斯)</p>
+          <p class="site-description motion-element" itemprop="description">正在修行的路上</p>
+        </div>
+        <nav class="site-state motion-element">
+        
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">20</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-categories">
+              
+                <span class="site-state-item-count">13</span>
+                <span class="site-state-item-name">分类</span>
+              
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">13</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+          <div class="links-of-blogroll motion-element links-of-blogroll-inline">
+            <div class="links-of-blogroll-title">
+              <i class="fa  fa-fw fa-globe"></i>
+              友情链接
+            </div>
+            <ul class="links-of-blogroll-list">
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://hexiaofei51.cn/" title="晓飞的博客" target="_blank">晓飞的博客</a>
+                </li>
+              
+            </ul>
+          </div>
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Hybird-App离线缓存系统"><span class="nav-number">1.</span> <span class="nav-text">Hybird-App离线缓存系统</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#目录"><span class="nav-number">1.1.</span> <span class="nav-text">目录</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#背景"><span class="nav-number">1.2.</span> <span class="nav-text">背景</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#接口格式"><span class="nav-number">1.3.</span> <span class="nav-text">接口格式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#离线资源包格式"><span class="nav-number">1.4.</span> <span class="nav-text">离线资源包格式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#离线资源下发"><span class="nav-number">1.5.</span> <span class="nav-text">离线资源下发</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#下发时机"><span class="nav-number">1.5.1.</span> <span class="nav-text">下发时机</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#资源包存放目录"><span class="nav-number">1.5.2.</span> <span class="nav-text">资源包存放目录</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#资源包解压"><span class="nav-number">1.5.3.</span> <span class="nav-text">资源包解压</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#解压"><span class="nav-number">1.5.3.1.</span> <span class="nav-text">解压</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#更新资源"><span class="nav-number">1.5.3.2.</span> <span class="nav-text">更新资源</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#容错处理"><span class="nav-number">1.5.3.3.</span> <span class="nav-text">容错处理</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#容错副作用"><span class="nav-number">1.5.3.4.</span> <span class="nav-text">容错副作用</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#升级流程图"><span class="nav-number">1.5.3.5.</span> <span class="nav-text">升级流程图</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#离线资源缓存"><span class="nav-number">1.6.</span> <span class="nav-text">离线资源缓存</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#使用缓存时机"><span class="nav-number">1.6.1.</span> <span class="nav-text">使用缓存时机</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#使用缓存容错处理"><span class="nav-number">1.6.2.</span> <span class="nav-text">使用缓存容错处理</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">KarosLi (卡洛斯)</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<span> | </span><span id="busuanzi_container_site_pv">本站总访问量<span id="busuanzi_value_site_pv"></span>次</span>
+<span id="busuanzi_container_page_pv">
+  本文总阅读量<span id="busuanzi_value_page_pv"></span>次
+</span>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"karosli"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+    
+    <script src="/lib/ua-parser-js/dist/ua-parser.min.js?v=0.7.9"></script>
+    <script src="/js/src/hook-duoshuo.js"></script>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+
+</body>
+</html>
