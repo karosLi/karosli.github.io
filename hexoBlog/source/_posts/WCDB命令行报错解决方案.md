@@ -159,7 +159,9 @@ xcodebuild: error: The workspace named "App" does not contain a scheme named "xx
 ```
 
 然后尝试方案二，打出的包可以引入工程，代码编译没有错，但是一运行就报错了。
-![](http://olf3t4omk.bkt.clouddn.com/15160901483602.jpg)
+
+
+{% asset_img "15160901483602.jpg" %}
 
 真是懵逼，百思不得解，后来想想，我现在打开的工程是 WCDB 的 master 分支，而 pod repo 里面的是 1.0.6 的 tag，所以就切换到 1.0.6 上重新进行方案二。
 

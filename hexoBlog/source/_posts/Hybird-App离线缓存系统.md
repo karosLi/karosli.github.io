@@ -199,8 +199,7 @@ resourceNames=m,coach,activity&resourceVersions=1.0.0,1.0.0,1.0.0
 
 #### 升级流程图
 
-![](http://olf3t4omk.bkt.clouddn.com/hybird_app_offline_flow.png)
-
+{% asset_img hybird_app_offline_flow.png %}
 
 ## 离线资源缓存
 ### 使用缓存时机

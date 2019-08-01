@@ -52,10 +52,12 @@ imageView.frame = CGRectMake(20 * Point(), 0, 140 * Point(), 140 * Point());
 然后用 ps 工具对 7p 上的截图做了尺寸获取，并与 5s 上的 reveal 界面进行对比。发现这两个机型下，九宫格图片距离屏幕左边都是 9 个点，九宫格图片之间的距离都是 3 个点，包括头像左右，上下，还有头像大小都是一样的。
 
 iPhone 5s：
-![优酷_5s](http://olf3t4omk.bkt.clouddn.com/优酷_5s.png)
+
+{% asset_img 优酷_5s.png %}
 
 iPhone 7 Plus：
-![优酷_7p_结论就是不管屏幕尺寸还是按点去布局](http://olf3t4omk.bkt.clouddn.com/优酷_7p_结论就是不管屏幕尺寸还是按点去布局.png)
+
+{% asset_img 优酷_7p_结论就是不管屏幕尺寸还是按点去布局.png %}
 
 
 ### 淘宝用的是什么方式呢？
@@ -65,19 +67,23 @@ iPhone 7 Plus：
 淘宝对比的结果跟优酷一样的，在间距上都是用的点。图片的大小都是 140 点。图片上下的间距都是 6 点。
 
 iPhone 5s：
-![淘宝_5s_标题是14号字体](http://olf3t4omk.bkt.clouddn.com/淘宝_5s_标题是14号字体.png)
+
+{% asset_img 淘宝_5s_标题是14号字体.png %}
 
 iPhone 7 Plus：
-![淘宝_7p_结论就是不管屏幕尺寸还是按点去布局](http://olf3t4omk.bkt.clouddn.com/淘宝_7p_结论就是不管屏幕尺寸还是按点去布局.png)
+
+{% asset_img 淘宝_7p_结论就是不管屏幕尺寸还是按点去布局.png %}
 
 
 我来看看淘宝在 5s 上的字号与 7p 上字号是否一致。
 
 iPhone 5s 上标题的字号是 14。
-![淘宝截图1](http://olf3t4omk.bkt.clouddn.com/淘宝截图1.jpg)
+
+{% asset_img 淘宝截图1.jpg %}
 
 iPhone 7 Plus 上的字号也是 14，字号与 5s 上的是一样的。
-![淘宝_7p_结论是标题在大小屏幕是14号字体](http://olf3t4omk.bkt.clouddn.com/淘宝_7p_结论是标题在大小屏幕是14号字体.png)
+
+{% asset_img 淘宝_7p_结论是标题在大小屏幕是14号字体.png %}
 
 
 ### 总结

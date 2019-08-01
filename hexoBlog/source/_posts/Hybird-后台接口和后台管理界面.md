@@ -70,13 +70,15 @@ categories: hybird
 
 ## 管理界面
 ### 添加升级资源包
-![](http://olf3t4omk.bkt.clouddn.com/add_deupgrade_offline_package.png)
+
+{% asset_img add_upgrade_offline_package.png %}
 
 资源包需上传到七牛空间 `offlineh5`, 路径为 `http://cdn.xxx.com/upgrade/[模块名]/activity.full_1.0.0.zip`
 
 
 ### 添加降级资源包
-![](http://olf3t4omk.bkt.clouddn.com/add_upgrade_offline_package.png)
+{% asset_img add_deupgrade_offline_package.png %}
+
 
 资源包需上传到七牛空间 `offlineh5`, 路径为 `http://cdn.xxx.com/degrade/[模块名]/activity.full_1.0.0.zip`
 

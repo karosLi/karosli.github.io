@@ -8,7 +8,8 @@ categories: UI
 # iOS 循环滚动视图，包含文字滚动，banner 滚动
 
 ### 效果图：
-![Demo.gif](http://upload-images.jianshu.io/upload_images/1423834-3558c88e2ce25c69.gif?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+{% asset_img 1423834-3558c88e2ce25c69.gif %}
 
 demo 地址：
 https://github.com/karosLi/KLRecycleScrollView

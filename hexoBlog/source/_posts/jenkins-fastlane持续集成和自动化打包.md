@@ -94,7 +94,8 @@ java -jar jenkins.war
 2. 配置 Git 仓库地址，并添加 git 账号。
 
 3. 配置构建脚本
-![](http://olf3t4omk.bkt.clouddn.com/jenkins_build_commnd.jpg)
+
+{% asset_img build_commnd.jpg %}
 
 4. 完成配置后就可以添加构建任务
 
