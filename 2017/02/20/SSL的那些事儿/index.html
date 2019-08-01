@@ -87,31 +87,28 @@
 
 
 
-<meta name="description" content="SSL的那些事儿 Https，SSL 平时我们都听的挺多，知道它是用来加密的，但是对于里面的工作原理不是很清楚，所以在这里我也总结下 SSL 的工作原理，希望大家能够帮助到大家。">
+<meta name="description" content="SSL的那些事儿   Https，SSL 平时我们都听的挺多，知道它是用来加密的，但是对于里面的工作原理不是很清楚，所以在这里我也总结下 SSL 的工作原理，希望大家能够帮助到大家。">
 <meta name="keywords" content="安全">
 <meta property="og:type" content="article">
 <meta property="og:title" content="SSL的那些事儿">
 <meta property="og:url" content="https://karosli.github.io/2017/02/20/SSL的那些事儿/index.html">
 <meta property="og:site_name" content="卡洛斯的博客">
-<meta property="og:description" content="SSL的那些事儿 Https，SSL 平时我们都听的挺多，知道它是用来加密的，但是对于里面的工作原理不是很清楚，所以在这里我也总结下 SSL 的工作原理，希望大家能够帮助到大家。">
+<meta property="og:description" content="SSL的那些事儿   Https，SSL 平时我们都听的挺多，知道它是用来加密的，但是对于里面的工作原理不是很清楚，所以在这里我也总结下 SSL 的工作原理，希望大家能够帮助到大家。">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="http://olf3t4omk.bkt.clouddn.com/timg-2.jpeg">
-<meta property="og:image" content="http://olf3t4omk.bkt.clouddn.com/SSL-TLSpic.003.jpeg">
-<meta property="og:image" content="http://olf3t4omk.bkt.clouddn.com/SSL:TLSpic.004.jpeg">
-<meta property="og:image" content="http://olf3t4omk.bkt.clouddn.com/SSL-TLSpic.009.jpeg">
-<meta property="og:image" content="http://olf3t4omk.bkt.clouddn.com/SSL-TLSpic.011.jpeg">
-<meta property="og:image" content="http://olf3t4omk.bkt.clouddn.com/14876882434183.jpg">
-<meta property="og:image" content="http://olf3t4omk.bkt.clouddn.com/14876890600941.jpg">
-<meta property="og:image" content="http://olf3t4omk.bkt.clouddn.com/SSL-TLSpic.016.jpeg">
-<meta property="og:image" content="http://olf3t4omk.bkt.clouddn.com/SSL-TLSpic.018.jpeg">
-<meta property="og:image" content="http://olf3t4omk.bkt.clouddn.com/SSL-TLSpic.020.jpeg">
-<meta property="og:image" content="http://olf3t4omk.bkt.clouddn.com/SSL-TLSpic.022.jpeg">
-<meta property="og:image" content="http://olf3t4omk.bkt.clouddn.com/SSL:TLSpic.025.jpeg">
-<meta property="og:updated_time" content="2017-02-22T16:41:59.000Z">
+<meta property="og:image" content="https://karosli.github.io/2017/02/20/SSL的那些事儿/timg-2.jpeg">
+<meta property="og:image" content="https://karosli.github.io/2017/02/20/SSL的那些事儿/SSL-TLSpic.003.jpeg">
+<meta property="og:image" content="https://karosli.github.io/2017/02/20/SSL的那些事儿/SSL-TLSpic.011.jpeg">
+<meta property="og:image" content="https://karosli.github.io/2017/02/20/SSL的那些事儿/14876882434183.jpg">
+<meta property="og:image" content="https://karosli.github.io/2017/02/20/SSL的那些事儿/14876890600941.jpg">
+<meta property="og:image" content="https://karosli.github.io/2017/02/20/SSL的那些事儿/SSL-TLSpic.016.jpeg">
+<meta property="og:image" content="https://karosli.github.io/2017/02/20/SSL的那些事儿/SSL-TLSpic.018.jpeg">
+<meta property="og:image" content="https://karosli.github.io/2017/02/20/SSL的那些事儿/SSL-TLSpic.020.jpeg">
+<meta property="og:image" content="https://karosli.github.io/2017/02/20/SSL的那些事儿/SSL-TLSpic.022.jpeg">
+<meta property="og:updated_time" content="2019-08-01T17:44:17.868Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="SSL的那些事儿">
-<meta name="twitter:description" content="SSL的那些事儿 Https，SSL 平时我们都听的挺多，知道它是用来加密的，但是对于里面的工作原理不是很清楚，所以在这里我也总结下 SSL 的工作原理，希望大家能够帮助到大家。">
-<meta name="twitter:image" content="http://olf3t4omk.bkt.clouddn.com/timg-2.jpeg">
+<meta name="twitter:description" content="SSL的那些事儿   Https，SSL 平时我们都听的挺多，知道它是用来加密的，但是对于里面的工作原理不是很清楚，所以在这里我也总结下 SSL 的工作原理，希望大家能够帮助到大家。">
+<meta name="twitter:image" content="https://karosli.github.io/2017/02/20/SSL的那些事儿/timg-2.jpeg">
 
 
 
@@ -379,7 +376,9 @@
       
 
       
-        <h1 id="SSL的那些事儿"><a href="#SSL的那些事儿" class="headerlink" title="SSL的那些事儿"></a>SSL的那些事儿</h1><p><img src="http://olf3t4omk.bkt.clouddn.com/timg-2.jpeg" alt="timg-2"></p>
+        <h1 id="SSL的那些事儿"><a href="#SSL的那些事儿" class="headerlink" title="SSL的那些事儿"></a>SSL的那些事儿</h1><img src="/2017/02/20/SSL的那些事儿/timg-2.jpeg">
+
+
 <p><code>Https</code>，<code>SSL</code> 平时我们都听的挺多，知道它是用来加密的，但是对于里面的工作原理不是很清楚，所以在这里我也总结下 <code>SSL</code> 的工作原理，希望大家能够帮助到大家。</p>
 <a id="more"></a>
 
@@ -396,9 +395,14 @@
 </ol>
 </blockquote>
 <h3 id="一，不安全的Case"><a href="#一，不安全的Case" class="headerlink" title="一，不安全的Case"></a>一，不安全的Case</h3><h4 id="明文传输"><a href="#明文传输" class="headerlink" title="明文传输"></a>明文传输</h4><p>众所周知，明文传输肯定是不安全的。下面这个例子里，<code>A</code> 告诉 <code>B</code> 的每一句话，都会被 <code>C</code> 看到。</p>
-<p><img src="http://olf3t4omk.bkt.clouddn.com/SSL-TLSpic.003.jpeg" alt="SSL-TLSpic.003"></p>
+<img src="/2017/02/20/SSL的那些事儿/SSL-TLSpic.003.jpeg">
+
 <h4 id="密文传输"><a href="#密文传输" class="headerlink" title="密文传输"></a>密文传输</h4><p>这种对称加密传输的过程是需要通信双方都能提前知道加密密钥，然后才能读懂双方发送的密文。一旦双方其中有一方泄露了加密密钥，整个通信过程就会有危险了。下面这个例子，如果 <code>C</code> 不管通过什么途径获取到了加密密钥，那么 <code>C</code> 就能看到 <code>A</code> 和 <code>B</code> 之间的通信内容了。</p>
-<p><img src="http://olf3t4omk.bkt.clouddn.com/SSL:TLSpic.004.jpeg" alt="SSL:TLSpic.004"></p>
+
+
+
+
+
 <h3 id="二，SSL出现的背景"><a href="#二，SSL出现的背景" class="headerlink" title="二，SSL出现的背景"></a>二，SSL出现的背景</h3><p>基于万维网的电子商务和网上银行等新兴应用，极大地方便了人们的日常生活，受到人们的青睐。由于这些应用都需要在网络上进行在线交易，它们对网络通信的安全性提出了更高的要求。传统的万维网协议HTTP不具备安全机制——采用明文的形式传输数据、不能验证通信双方的身份、无法防止传输的数据被篡改等，导致HTTP无法满足电子商务和网上银行等应用的安全性要求。</p>
 <p>与此同时，所有行业都面临着如下三大风险：</p>
 <blockquote>
@@ -464,16 +468,19 @@
 <li>流程是 <code>1</code> 里面是一样的，主要是加密的内容换成了一个对称密钥，然后用对称密钥去保证通信安全。 </li>
 </ol>
 </blockquote>
-<p><img src="http://olf3t4omk.bkt.clouddn.com/SSL-TLSpic.009.jpeg" alt="SSL-TLSpic.009"></p>
+
+
 <p><strong>但是</strong>，如果只是提供公钥和私钥，任何人都可以是 <code>B</code>，只要跟 <code>C</code> 谎称自己就是那个 <code>B</code>，然后提供公钥代替 <code>B</code> 的公钥，这样的导致的结果是 A 根本不知道自己是在跟一个假 <code>B</code> 在聊天，后果很严重。</p>
-<p><img src="http://olf3t4omk.bkt.clouddn.com/SSL-TLSpic.011.jpeg" alt="SSL-TLSpic.011"></p>
+<img src="/2017/02/20/SSL的那些事儿/SSL-TLSpic.011.jpeg">
+
 <h4 id="证书"><a href="#证书" class="headerlink" title="证书"></a>证书</h4><p>由于存在上面的身份不确认的问题，这里我们引入了证书来帮助证明 <code>B</code> 就是 <code>B</code>，而不是假 <code>B</code>。</p>
 <p>那么什么是证书呢？ 简单的理解证书是一个包含身份ID（类似我们的身份证），和公钥信息的一个数字文件。</p>
 <blockquote>
 <p>数字证书就是互联网通讯中标志通讯各方身份信息的一串数字，提供了一种在Internet上验证通信实体身份的方式，其作用类似于司机的驾驶执照或日常生活中的身份证。它是由一个由权威机构—–CA机构，又称为证书授权（Certificate Authority）中心发行的，人们可以在网上用它来识别对方的身份。数字证书是一个经证书授权中心数字签名的包含公开密钥拥有者信息以及公开密钥的文件。最简单的证书包含一个公开密钥、名称以及证书授权中心的数字签名</p>
 </blockquote>
 <p>目前数字证书的格式普遍采用的是X.509V3国际标准，一个标准的X.509数字证书包含以下一些内容：</p>
-<p><img src="http://olf3t4omk.bkt.clouddn.com/14876882434183.jpg" alt></p>
+<img src="/2017/02/20/SSL的那些事儿/14876882434183.jpg">
+
 <p>刚才上面有讲，证书其实是由 <code>CA</code> 发放的，这里就会牵扯到 <code>CA</code> 的概念了。简单点讲，<code>CA</code> 是一个信任中心，可以理解是跟央行一样，央行发行的纸，你信吗？ 这个纸，你当然不信，但是你信任央行啊，信任政府啊，自然这个纸它就值钱了。所以同理，<code>CA</code> 发放的证书自然也是真实可靠的。</p>
 <blockquote>
 <ul>
@@ -485,9 +492,12 @@
 <li>数字证书颁发过程一般为：管理员只需生成“证书请求”（后缀大多为.csr），它包含你的个人信息和公钥，然后把这份请求交给诸如Globlesign，verisign等有CA服务公司（当然，连同几百美金），你的证书请求经验证后，CA用它的私钥签名，形成正式的证书发还给你。管理员再在server上导入这个证书就行了。</li>
 </ul>
 </blockquote>
-<p>下图就是 <code>CA</code> 到 <code>用户证书</code> 的一个组织结构：<br><img src="http://olf3t4omk.bkt.clouddn.com/14876890600941.jpg" alt></p>
+<p>下图就是 <code>CA</code> 到 <code>用户证书</code> 的一个组织结构：</p>
+<img src="/2017/02/20/SSL的那些事儿/14876890600941.jpg">
+
 <p>所以，只要引入了证书，那相当于，客户端会去获取到服务器的证书，然后会去判断这个证书是否是我们的 <code>CA</code> 所发放的，自然就校验了证书的合法性。最后的结构就是我们的 <code>B</code> 小伙终于可以证明自己了，而不用哭晕在厕所里了。</p>
-<p><img src="http://olf3t4omk.bkt.clouddn.com/SSL-TLSpic.016.jpeg" alt="SSL-TLSpic.016"></p>
+<img src="/2017/02/20/SSL的那些事儿/SSL-TLSpic.016.jpeg">
+
 <p>说到这里，可能有的小伙伴会问，由于商业证书都是要买的，没有钱怎么办？或者是说我们的服务都是内网的，不用考虑太多。那有什么可以满足这种诉求吗？ 既然有我们的 <code>CA</code>，那有没有不是 <code>CA</code> 的呢？ 答案是有的。就是我们可以自己来当这个非官方 <code>CA</code>，相当于搭建一个私服，自己玩，自己嗨。</p>
 <blockquote>
 <p>Self-signed certificate：由自己的私钥签名而非第三方CA签发的证书。如果你不想花那笔钱，可以自己做CA，现在有一些工具（openssl，keynote）可以帮助生成自定义的CA，服务器的证书和自签名。当服务器端安装好有自定义CA签名的证书时，这个时候客户端是需要导入自定义的CA证书，意味着客户端“信任”这个CA签署的证书）。而商业CA的一般不用，因为它们已经内置在系统中了。</p>
@@ -495,15 +505,18 @@
 <p>但是建议商业服务器还是要买个证书来保证安全。</p>
 <h4 id="数字签名"><a href="#数字签名" class="headerlink" title="数字签名"></a>数字签名</h4><p>由于公钥加密只能协商出一个会话密钥，通过会话密钥可以保证通信的机密性。但是不能保证通信的完整性。简单的说就是证书能够保证通信的内容不被破解，但是不能保证内容被篡改。</p>
 <p>在下面的例子里，<code>A</code> 小伙和 <code>B</code> 小伙通过一段时间的沟通已经互有好感，此时 <code>B</code> 小伙想要告诉 <code>A</code> 小伙：”我喜欢你”。但是居心叵测的 <code>C</code> 非要过来插一脚，在后面补一句变成了：”我喜欢你 我去年买了个表”，可想而知，从此世界少了一对，不知道 <code>C</code> 是出于什么心态啊。不管怎么样，<code>C</code> 成功篡改了通信内容。</p>
-<p><img src="http://olf3t4omk.bkt.clouddn.com/SSL-TLSpic.018.jpeg" alt="SSL-TLSpic.018"></p>
+<img src="/2017/02/20/SSL的那些事儿/SSL-TLSpic.018.jpeg">
+
 <p>那么问题来了，有什么办法可以让 <code>A</code> 小伙和 <code>B</code> 小伙在一起呢。</p>
 <p>duang，duang，duang，数字签名来了。数字签名就是为了解决信息被篡改的干活。</p>
 <blockquote>
 <p>数字签名是指用原文进行HASH运算得到摘要信息并用发送者的私钥加密，与原文一起传送给接收者。接收者只有用发送者的公钥才能解密被加密的摘要信息，然后用HASH函数对收到的原文产生一个摘要信息，与解密的摘要信息对比。如果相同，则说明收到的信息是完整的，在传输过程中没有被修改，否则说明信息被修改过，因此数字签名能够验证信息的完整性。</p>
 </blockquote>
-<p><img src="http://olf3t4omk.bkt.clouddn.com/SSL-TLSpic.020.jpeg" alt="SSL-TLSpic.020"></p>
+<img src="/2017/02/20/SSL的那些事儿/SSL-TLSpic.020.jpeg">
+
 <p>有了数字签名的帮助，谁都无法阻止 <code>A</code> 和 <code>B</code> 在一起了。而这一切都是 <code>SSL</code> 自动帮我们做了，就是这么自然，但是了解里面的原理还是很有必要的。</p>
-<p><img src="http://olf3t4omk.bkt.clouddn.com/SSL-TLSpic.022.jpeg" alt="SSL-TLSpic.022"></p>
+<img src="/2017/02/20/SSL的那些事儿/SSL-TLSpic.022.jpeg">
+
 <h3 id="四，SSL的工作流程"><a href="#四，SSL的工作流程" class="headerlink" title="四，SSL的工作流程"></a>四，SSL的工作流程</h3><p>首先来说下它的架构，SSL是一个介于HTTP协议与TCP之间的一个可选层。</p>
 <p>－－－－－－－－－<br>|    HTTP      |<br>－－－－－－－－－<br>|    SSL       |<br>－－－－－－－－－<br>|    TCP       |<br>－－－－－－－－－<br>|    IP        |<br>－－－－－－－－－</p>
 <blockquote>
@@ -522,7 +535,9 @@
 </ul>
 </blockquote>
 <h4 id="握手的过程"><a href="#握手的过程" class="headerlink" title="握手的过程"></a>握手的过程</h4><p>简单的说客户端会发出一个 <code>ClientHello</code> 来发起握手，这个消息里面包含了自己可实现的算法列表和其它一些需要的消息，服务器端会回应一个 <code>ServerHello</code>，这里面确定了这次通信所需要的算法，然后发过去自己的证书（里面包含了身份和自己的公钥）。客户端在收到这个消息后会生成一个秘密消息，用服务器的公钥加密后传过去，然后服务器端用自己的私钥解密后，会话密钥协商成功，双方可以用同一份会话密钥来安全通信了。</p>
-<p><img src="http://olf3t4omk.bkt.clouddn.com/SSL:TLSpic.025.jpeg" alt="SSL:TLSpic.025"></p>
+
+
+
 <p>举个更形象的例子：</p>
 <blockquote>
 <pre><code>我们假设A与B通信，A是SSL客户端，B是SSL服务器端，加密后的消息放在方括号[]里，以突出明文消息的区别。双方的处理动作的说明用圆括号（）括起。</code></pre><p>A：我想和你安全的通话，我这里的对称加密算法有DES,RC5,密钥交换算法有RSA和DH，摘要算法有MD5和SHA。<br>B：我们用DES－RSA－SHA这对组合好了。这是我的证书，里面有我的名字和公钥，你拿去验证一下我的身份（把证书发给A）。目前没有别的可说的了。<br>A：（查看证书上B的名字是否无误，并通过手头早已有的CA的证书验证了B的证书的真实性，如果其中一项有误，发出警告并断开连接，这一步保证了B的公钥的真实性）产生一份秘密消息，这份秘密消息处理后将用作加密密钥，加密初始化向量和hmac的密钥。将这份秘密消息-协议中称为per_master_secret-用B的公钥加密，封装成称作ClientKeyExchange的消息。由于用了B的公钥，保证了第三方无法窃听）<br>   我生成了一份秘密消息，并用你的公钥加密了，给你（把ClientKeyExchange发给B）<br>   注意，下面我就要用加密的办法给你发消息了！<br>   （将秘密消息进行处理，生成加密密钥，加密初始化向量和hmac的密钥）<br>   [我说完了]<br>B：（用自己的私钥将ClientKeyExchange中的秘密消息解密出来，然后将秘密消息进行处理，生成加密密钥，加密初始化向量和hmac的密钥，这时双方已经安全的协商出一套加密办法了）<br>   注意，我也要开始用加密的办法给你发消息了！<br>   [我说完了]<br>A: [我的秘密是…]<br>B: [其它人不会听到的…]   </p>
