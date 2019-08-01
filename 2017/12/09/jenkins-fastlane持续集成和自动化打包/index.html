@@ -95,12 +95,12 @@
 <meta property="og:site_name" content="卡洛斯的博客">
 <meta property="og:description" content="jenkins-fastlane 持续集成和自动化打包目录  背景 自动化打包脚本 配置 Jenkins   背景先看下目前都有哪些打包方式： 方式一debug 包：直接 build 出一个 app，放到 itunes 里，然后上传 fir 或者 蒲公英。release 包：archive 出一个 ipa，通过 application loader 上传到 itunes。 方式二自动化脚本，一键打">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="http://olf3t4omk.bkt.clouddn.com/jenkins_build_commnd.jpg">
-<meta property="og:updated_time" content="2017-12-09T07:04:32.811Z">
+<meta property="og:image" content="https://karosli.github.io/2017/12/09/jenkins-fastlane持续集成和自动化打包/build_commnd.jpg">
+<meta property="og:updated_time" content="2019-08-01T17:28:53.279Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="jenkins-fastlane持续集成和自动化打包">
 <meta name="twitter:description" content="jenkins-fastlane 持续集成和自动化打包目录  背景 自动化打包脚本 配置 Jenkins   背景先看下目前都有哪些打包方式： 方式一debug 包：直接 build 出一个 app，放到 itunes 里，然后上传 fir 或者 蒲公英。release 包：archive 出一个 ipa，通过 application loader 上传到 itunes。 方式二自动化脚本，一键打">
-<meta name="twitter:image" content="http://olf3t4omk.bkt.clouddn.com/jenkins_build_commnd.jpg">
+<meta name="twitter:image" content="https://karosli.github.io/2017/12/09/jenkins-fastlane持续集成和自动化打包/build_commnd.jpg">
 
 
 
@@ -417,10 +417,13 @@
 </li>
 <li><p>配置 Git 仓库地址，并添加 git 账号。</p>
 </li>
-<li><p>配置构建脚本<br><img src="http://olf3t4omk.bkt.clouddn.com/jenkins_build_commnd.jpg" alt></p>
+<li><p>配置构建脚本</p>
 </li>
-<li><p>完成配置后就可以添加构建任务</p>
-</li>
+</ol>
+<img src="/2017/12/09/jenkins-fastlane持续集成和自动化打包/build_commnd.jpg">
+
+<ol start="4">
+<li>完成配置后就可以添加构建任务</li>
 </ol>
 <p>如果在构建的时候，出现连不上 github 的错误，可能是由于没有关闭 vpn 的引起的，也有可能是没有配置 Cocoapod plugin 引起的。</p>
 <h4 id="关于代码签名"><a href="#关于代码签名" class="headerlink" title="关于代码签名"></a>关于代码签名</h4><p>这里我没有下载配置 provision file 的插件，因为我使用的是自动签名管理，如果你也使用的是自动签名管理，发现没有起作用，可以先清空 provision file 目录 (/Users/xxx/Library/MobileDevice/Provisioning Profiles)，然后打开工程，取消勾选 Automatically manage signing，重新再选中它，然后重新选择 Team，就可以重新开始构建任务了。</p>
@@ -467,8 +470,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2017/05/27/Hybird-App离线缓存系统/" rel="next" title="Hybird-App离线缓存系统">
-                <i class="fa fa-chevron-left"></i> Hybird-App离线缓存系统
+              <a href="/2017/05/27/Hybird-后台接口和后台管理界面/" rel="next" title="Hybird-后台接口和后台管理界面">
+                <i class="fa fa-chevron-left"></i> Hybird-后台接口和后台管理界面
               </a>
             
           </div>
@@ -550,7 +553,7 @@
           
             <div class="site-state-item site-state-posts">
               <a href="/archives">
-                <span class="site-state-item-count">20</span>
+                <span class="site-state-item-count">18</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>

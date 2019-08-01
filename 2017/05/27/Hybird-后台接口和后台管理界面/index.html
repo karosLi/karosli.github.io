@@ -95,13 +95,13 @@
 <meta property="og:site_name" content="卡洛斯的博客">
 <meta property="og:description" content="Hybird-后台接口和后台管理界面目录  背景 接口格式 管理界面 后台逻辑   背景由于线上乐刻客户端 App 第一次打开平台 H5 需要几秒的加载时间，这个体验对用户来说并不友好，为了让用户跳转 H5 和跳转到原生一样的用户体验，就需要把 H5 相关的离线资源包下发给客户端，客户端就可以使用离线资源来代替实际网络请求，节省用户等待时间和流量消耗。这里就需要后台来负责离线资源包的管理和下发。">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="http://olf3t4omk.bkt.clouddn.com/add_deupgrade_offline_package.png">
-<meta property="og:image" content="http://olf3t4omk.bkt.clouddn.com/add_upgrade_offline_package.png">
-<meta property="og:updated_time" content="2017-05-27T15:44:02.000Z">
+<meta property="og:image" content="https://karosli.github.io/2017/05/27/Hybird-后台接口和后台管理界面/add_upgrade_offline_package.png">
+<meta property="og:image" content="https://karosli.github.io/2017/05/27/Hybird-后台接口和后台管理界面/add_deupgrade_offline_package.png">
+<meta property="og:updated_time" content="2019-08-01T16:51:08.991Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Hybird-后台接口和后台管理界面">
 <meta name="twitter:description" content="Hybird-后台接口和后台管理界面目录  背景 接口格式 管理界面 后台逻辑   背景由于线上乐刻客户端 App 第一次打开平台 H5 需要几秒的加载时间，这个体验对用户来说并不友好，为了让用户跳转 H5 和跳转到原生一样的用户体验，就需要把 H5 相关的离线资源包下发给客户端，客户端就可以使用离线资源来代替实际网络请求，节省用户等待时间和流量消耗。这里就需要后台来负责离线资源包的管理和下发。">
-<meta name="twitter:image" content="http://olf3t4omk.bkt.clouddn.com/add_deupgrade_offline_package.png">
+<meta name="twitter:image" content="https://karosli.github.io/2017/05/27/Hybird-后台接口和后台管理界面/add_upgrade_offline_package.png">
 
 
 
@@ -389,9 +389,12 @@
 <p>参数说明：</p>
 <figure class="highlight q"><table><tr><td class="code"><pre><span class="line"><span class="string">"name"</span>: 模块名</span><br><span class="line"><span class="string">"version"</span>: 升级版本</span><br><span class="line"><span class="string">"url"</span>: 资源包下载地址</span><br><span class="line"><span class="string">"md5"</span>: 资源包 <span class="built_in">md5</span></span><br><span class="line"><span class="string">"isfull"</span>: 是否是全量升级包</span><br></pre></td></tr></table></figure>
 
-<h2 id="管理界面"><a href="#管理界面" class="headerlink" title="管理界面"></a>管理界面</h2><h3 id="添加升级资源包"><a href="#添加升级资源包" class="headerlink" title="添加升级资源包"></a>添加升级资源包</h3><p><img src="http://olf3t4omk.bkt.clouddn.com/add_deupgrade_offline_package.png" alt></p>
+<h2 id="管理界面"><a href="#管理界面" class="headerlink" title="管理界面"></a>管理界面</h2><h3 id="添加升级资源包"><a href="#添加升级资源包" class="headerlink" title="添加升级资源包"></a>添加升级资源包</h3><img src="/2017/05/27/Hybird-后台接口和后台管理界面/add_upgrade_offline_package.png">
+
 <p>资源包需上传到七牛空间 <code>offlineh5</code>, 路径为 <code>http://cdn.xxx.com/upgrade/[模块名]/activity.full_1.0.0.zip</code></p>
-<h3 id="添加降级资源包"><a href="#添加降级资源包" class="headerlink" title="添加降级资源包"></a>添加降级资源包</h3><p><img src="http://olf3t4omk.bkt.clouddn.com/add_upgrade_offline_package.png" alt></p>
+<h3 id="添加降级资源包"><a href="#添加降级资源包" class="headerlink" title="添加降级资源包"></a>添加降级资源包</h3><img src="/2017/05/27/Hybird-后台接口和后台管理界面/add_deupgrade_offline_package.png">
+
+
 <p>资源包需上传到七牛空间 <code>offlineh5</code>, 路径为 <code>http://cdn.xxx.com/degrade/[模块名]/activity.full_1.0.0.zip</code></p>
 <h2 id="后台逻辑"><a href="#后台逻辑" class="headerlink" title="后台逻辑"></a>后台逻辑</h2><h4 id="App-启动"><a href="#App-启动" class="headerlink" title="App 启动"></a>App 启动</h4><p><code>App</code> 第一次请求时， <code>resourceVersionList</code> 为空，服务器需要返回所有模块最新的全量资源。</p>
 <h4 id="App-升级逻辑"><a href="#App-升级逻辑" class="headerlink" title="App 升级逻辑"></a>App 升级逻辑</h4><p><code>App</code> 后续请求都会带上本地最新的<code>resourceVersionList</code>，服务器遍历<code>resourceVersionList</code>，并和服务器上配置的所有升级模块最新版本进行比较，</p>
@@ -451,8 +454,8 @@
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2017/05/27/Hybird-App离线缓存系统/" rel="prev" title="Hybird-App离线缓存系统">
-                Hybird-App离线缓存系统 <i class="fa fa-chevron-right"></i>
+              <a href="/2017/12/09/jenkins-fastlane持续集成和自动化打包/" rel="prev" title="jenkins-fastlane持续集成和自动化打包">
+                jenkins-fastlane持续集成和自动化打包 <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
@@ -524,7 +527,7 @@
           
             <div class="site-state-item site-state-posts">
               <a href="/archives">
-                <span class="site-state-item-count">20</span>
+                <span class="site-state-item-count">18</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>

@@ -95,17 +95,17 @@
 <meta property="og:site_name" content="卡洛斯的博客">
 <meta property="og:description" content="iOS界面开发需要用Point乘以屏幕比例系数吗现状由于公司给 app 设计的效果图是基于 iPhone 6 的，效果图的宽度是 375 point。为了适应大小屏幕，我们专门封装了一个函数来获取一个适配的点。 inline CGFloat Point(void)&amp;#123;    static CGFloat point;    static dispatch_once_t onceToken;">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="http://olf3t4omk.bkt.clouddn.com/%E4%BC%98%E9%85%B7_5s.png">
-<meta property="og:image" content="http://olf3t4omk.bkt.clouddn.com/%E4%BC%98%E9%85%B7_7p_%E7%BB%93%E8%AE%BA%E5%B0%B1%E6%98%AF%E4%B8%8D%E7%AE%A1%E5%B1%8F%E5%B9%95%E5%B0%BA%E5%AF%B8%E8%BF%98%E6%98%AF%E6%8C%89%E7%82%B9%E5%8E%BB%E5%B8%83%E5%B1%80.png">
-<meta property="og:image" content="http://olf3t4omk.bkt.clouddn.com/%E6%B7%98%E5%AE%9D_5s_%E6%A0%87%E9%A2%98%E6%98%AF14%E5%8F%B7%E5%AD%97%E4%BD%93.png">
-<meta property="og:image" content="http://olf3t4omk.bkt.clouddn.com/%E6%B7%98%E5%AE%9D_7p_%E7%BB%93%E8%AE%BA%E5%B0%B1%E6%98%AF%E4%B8%8D%E7%AE%A1%E5%B1%8F%E5%B9%95%E5%B0%BA%E5%AF%B8%E8%BF%98%E6%98%AF%E6%8C%89%E7%82%B9%E5%8E%BB%E5%B8%83%E5%B1%80.png">
-<meta property="og:image" content="http://olf3t4omk.bkt.clouddn.com/%E6%B7%98%E5%AE%9D%E6%88%AA%E5%9B%BE1.jpg">
-<meta property="og:image" content="http://olf3t4omk.bkt.clouddn.com/%E6%B7%98%E5%AE%9D_7p_%E7%BB%93%E8%AE%BA%E6%98%AF%E6%A0%87%E9%A2%98%E5%9C%A8%E5%A4%A7%E5%B0%8F%E5%B1%8F%E5%B9%95%E6%98%AF14%E5%8F%B7%E5%AD%97%E4%BD%93.png">
-<meta property="og:updated_time" content="2018-02-10T09:09:10.110Z">
+<meta property="og:image" content="https://karosli.github.io/2018/02/10/iOS界面开发需要用Point乘以屏幕效果的比例吗/优酷_5s.png">
+<meta property="og:image" content="https://karosli.github.io/2018/02/10/iOS界面开发需要用Point乘以屏幕效果的比例吗/优酷_7p_结论就是不管屏幕尺寸还是按点去布局.png">
+<meta property="og:image" content="https://karosli.github.io/2018/02/10/iOS界面开发需要用Point乘以屏幕效果的比例吗/淘宝_5s_标题是14号字体.png">
+<meta property="og:image" content="https://karosli.github.io/2018/02/10/iOS界面开发需要用Point乘以屏幕效果的比例吗/淘宝_7p_结论就是不管屏幕尺寸还是按点去布局.png">
+<meta property="og:image" content="https://karosli.github.io/2018/02/10/iOS界面开发需要用Point乘以屏幕效果的比例吗/淘宝截图1.jpg">
+<meta property="og:image" content="https://karosli.github.io/2018/02/10/iOS界面开发需要用Point乘以屏幕效果的比例吗/淘宝_7p_结论是标题在大小屏幕是14号字体.png">
+<meta property="og:updated_time" content="2019-08-01T16:59:11.974Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="iOS界面开发需要用Point乘以屏幕比例系数吗">
 <meta name="twitter:description" content="iOS界面开发需要用Point乘以屏幕比例系数吗现状由于公司给 app 设计的效果图是基于 iPhone 6 的，效果图的宽度是 375 point。为了适应大小屏幕，我们专门封装了一个函数来获取一个适配的点。 inline CGFloat Point(void)&amp;#123;    static CGFloat point;    static dispatch_once_t onceToken;">
-<meta name="twitter:image" content="http://olf3t4omk.bkt.clouddn.com/%E4%BC%98%E9%85%B7_5s.png">
+<meta name="twitter:image" content="https://karosli.github.io/2018/02/10/iOS界面开发需要用Point乘以屏幕效果的比例吗/优酷_5s.png">
 
 
 
@@ -391,15 +391,30 @@
 </ol>
 <h3 id="优酷用的是什么方式呢？"><a href="#优酷用的是什么方式呢？" class="headerlink" title="优酷用的是什么方式呢？"></a>优酷用的是什么方式呢？</h3><p>优酷是怎么处理这个问题的呢？<br>我用 Reveal 捕获了优酷在 5s（越狱） 上的界面，然后在 7p（系统版本高了，越不了监狱） 做了截图。</p>
 <p>然后用 ps 工具对 7p 上的截图做了尺寸获取，并与 5s 上的 reveal 界面进行对比。发现这两个机型下，九宫格图片距离屏幕左边都是 9 个点，九宫格图片之间的距离都是 3 个点，包括头像左右，上下，还有头像大小都是一样的。</p>
-<p>iPhone 5s：<br><img src="http://olf3t4omk.bkt.clouddn.com/%E4%BC%98%E9%85%B7_5s.png" alt="优酷_5s"></p>
-<p>iPhone 7 Plus：<br><img src="http://olf3t4omk.bkt.clouddn.com/%E4%BC%98%E9%85%B7_7p_%E7%BB%93%E8%AE%BA%E5%B0%B1%E6%98%AF%E4%B8%8D%E7%AE%A1%E5%B1%8F%E5%B9%95%E5%B0%BA%E5%AF%B8%E8%BF%98%E6%98%AF%E6%8C%89%E7%82%B9%E5%8E%BB%E5%B8%83%E5%B1%80.png" alt="优酷_7p_结论就是不管屏幕尺寸还是按点去布局"></p>
+<p>iPhone 5s：</p>
+<img src="/2018/02/10/iOS界面开发需要用Point乘以屏幕效果的比例吗/优酷_5s.png">
+
+<p>iPhone 7 Plus：</p>
+<img src="/2018/02/10/iOS界面开发需要用Point乘以屏幕效果的比例吗/优酷_7p_结论就是不管屏幕尺寸还是按点去布局.png">
+
+
 <h3 id="淘宝用的是什么方式呢？"><a href="#淘宝用的是什么方式呢？" class="headerlink" title="淘宝用的是什么方式呢？"></a>淘宝用的是什么方式呢？</h3><p>淘宝是怎么处理这个问题的呢？<br>我用 Reveal 捕获了淘宝在 5s（越狱） 上的界面，然后在 7p（系统版本高了，越不了监狱） 做了截图。</p>
 <p>淘宝对比的结果跟优酷一样的，在间距上都是用的点。图片的大小都是 140 点。图片上下的间距都是 6 点。</p>
-<p>iPhone 5s：<br><img src="http://olf3t4omk.bkt.clouddn.com/%E6%B7%98%E5%AE%9D_5s_%E6%A0%87%E9%A2%98%E6%98%AF14%E5%8F%B7%E5%AD%97%E4%BD%93.png" alt="淘宝_5s_标题是14号字体"></p>
-<p>iPhone 7 Plus：<br><img src="http://olf3t4omk.bkt.clouddn.com/%E6%B7%98%E5%AE%9D_7p_%E7%BB%93%E8%AE%BA%E5%B0%B1%E6%98%AF%E4%B8%8D%E7%AE%A1%E5%B1%8F%E5%B9%95%E5%B0%BA%E5%AF%B8%E8%BF%98%E6%98%AF%E6%8C%89%E7%82%B9%E5%8E%BB%E5%B8%83%E5%B1%80.png" alt="淘宝_7p_结论就是不管屏幕尺寸还是按点去布局"></p>
+<p>iPhone 5s：</p>
+<img src="/2018/02/10/iOS界面开发需要用Point乘以屏幕效果的比例吗/淘宝_5s_标题是14号字体.png">
+
+<p>iPhone 7 Plus：</p>
+<img src="/2018/02/10/iOS界面开发需要用Point乘以屏幕效果的比例吗/淘宝_7p_结论就是不管屏幕尺寸还是按点去布局.png">
+
+
 <p>我来看看淘宝在 5s 上的字号与 7p 上字号是否一致。</p>
-<p>iPhone 5s 上标题的字号是 14。<br><img src="http://olf3t4omk.bkt.clouddn.com/%E6%B7%98%E5%AE%9D%E6%88%AA%E5%9B%BE1.jpg" alt="淘宝截图1"></p>
-<p>iPhone 7 Plus 上的字号也是 14，字号与 5s 上的是一样的。<br><img src="http://olf3t4omk.bkt.clouddn.com/%E6%B7%98%E5%AE%9D_7p_%E7%BB%93%E8%AE%BA%E6%98%AF%E6%A0%87%E9%A2%98%E5%9C%A8%E5%A4%A7%E5%B0%8F%E5%B1%8F%E5%B9%95%E6%98%AF14%E5%8F%B7%E5%AD%97%E4%BD%93.png" alt="淘宝_7p_结论是标题在大小屏幕是14号字体"></p>
+<p>iPhone 5s 上标题的字号是 14。</p>
+<img src="/2018/02/10/iOS界面开发需要用Point乘以屏幕效果的比例吗/淘宝截图1.jpg">
+
+<p>iPhone 7 Plus 上的字号也是 14，字号与 5s 上的是一样的。</p>
+<img src="/2018/02/10/iOS界面开发需要用Point乘以屏幕效果的比例吗/淘宝_7p_结论是标题在大小屏幕是14号字体.png">
+
+
 <h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>经过上面的对比，我们可以发现直接用点去布局，才是合理的，可以更好的利用屏幕空间，让大小屏幕在观感上有一致的体验。而且也会少了很多像素不对齐的情况。</p>
 
       
@@ -520,7 +535,7 @@
           
             <div class="site-state-item site-state-posts">
               <a href="/archives">
-                <span class="site-state-item-count">20</span>
+                <span class="site-state-item-count">18</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>

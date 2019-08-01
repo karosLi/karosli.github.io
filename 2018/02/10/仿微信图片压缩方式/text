@@ -1,0 +1,99 @@
+
+图片上传限定到300k，也不是很对，这样会造成所有的图片都会以300k上传，这样会造成两个问题：
+1. 上传速度会很慢，也比较耗流量。9 张图一起上传会更慢。
+2. 300k 图片质量其实和150k左右的图片看起来差不多，过多的图片空间会意义不大。
+
+附件是我再微信客户端上记录的图片压缩大小，基本上压缩过后是 90k~200k。
+
+基于上面的信息，iOS 有如下压缩规则。
+
++ (NSData *)smartCompressImage:(UIImage *)image {
+    /** LUBAN 算法 **/
+    // https://github.com/Curzibn/Luban/blob/master/library/src/main/java/top/zibin/luban/Engine.java
+    //    int size = 1;
+    //    float scale = ((float) shortSide / longSide);
+    //    if (scale <= 1 && scale > 0.5625) {
+    //        if (longSide < 1664) {
+    //            size = 1;
+    //        } else if (longSide >= 1664 && longSide < 4990) {
+    //            size = 2;
+    //        } else if (longSide > 4990 && longSide < 10240) {
+    //            size = 4;
+    //        } else {
+    //            size = longSide / 1080 == 0 ? 1 : longSide / 1080;
+    //        }
+    //    } else if (scale <= 0.5625 && scale > 0.5) {
+    //        size = longSide / 1080 == 0 ? 1 : longSide / 1080;
+    //    } else {
+    //        size = (int) ceil(longSide / (1080.0 / scale));
+    //    }
+    
+    //    CGSize compressSize = CGSizeMake(width / size, height / size);
+    
+    //    CGFloat compression = 1.0;
+    //    CGFloat maxCompression = 0.1;
+    //
+    //    //We loop into the image data to compress accordingly to the compression ratio
+    //    NSData *imageData = UIImageJPEGRepresentation(image, compression);
+    //    while ([imageData length] > 110 * 1024 && compression > maxCompression) {
+    //        compression -= 0.10;
+    //        imageData = UIImageJPEGRepresentation(image, compression);
+    //    }
+    //
+    //    return imageData;
+    
+    /** 仿微信算法 **/
+    int width = (int)image.size.width;
+    int height = (int)image.size.height;
+    int updateWidth = width;
+    int updateHeight = height;
+    int longSide = MAX(width, height);
+    int shortSide = MIN(width, height);
+    float scale = ((float) shortSide / longSide);
+    
+    // 大小压缩
+    if (shortSide < 1080 || longSide < 1080) { // 如果宽高任何一边都小于 1080
+        updateWidth = width;
+        updateHeight = height;
+    } else { // 如果宽高都大于 1080
+        if (width < height) { // 说明短边是宽
+            updateWidth = 1080;
+            updateHeight = 1080 / scale;
+        } else { // 说明短边是高
+            updateWidth = 1080 / scale;
+            updateHeight = 1080;
+        }
+    }
+    
+    CGSize compressSize = CGSizeMake(updateWidth, updateHeight);
+    UIGraphicsBeginImageContext(compressSize);
+    [image drawInRect:CGRectMake(0,0, compressSize.width, compressSize.height)];
+    UIImage *compressImage = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    
+    // 质量压缩 50%
+    NSData *compressData = UIImageJPEGRepresentation(compressImage, 0.5);
+    
+    return compressData;
+}
+
+输出结果：
+"https://cdn.leoao.com/FgSGonz8h_k46KTzchvOmXOFOUBE",
+"https://cdn.leoao.com/FiQZgfVaJVTOVLOq7dwPP4aeO-Vt",
+"https://cdn.leoao.com/FqYnBQlbsFBw6ogdhoMdjsTJ2WFi",
+"https://cdn.leoao.com/FmfQ99oQg50_p9qO00dPLvALlUZK",
+"https://cdn.leoao.com/Fr7k79zDzXcBS4uzic8EF_a1o7Ts",
+"https://cdn.leoao.com/FiGV2dHi2vNMEzFL8xI_gTnRXtpI",
+"https://cdn.leoao.com/FqRze9h-7TmkDUnvag9B-QgjcT8e",
+"https://cdn.leoao.com/Fm2RDM9u8jcogvS3YnFWgu4TAumL",
+"https://cdn.leoao.com/FjNI2sIRnb3PomcuhrKl-PL5ExIY"
+https://cdn.leoao.com/Fv6qv9KtVctliKZR3EURNGuAfQBa
+https://cdn.leoao.com/FihNqr6vQ8jd-cOy1lc5m2yOGNqJ
+https://cdn.leoao.com/FoHx8LjFTCGWSqwOepnqV1PjdjTl
+
+参考
+https://github.com/Curzibn/Luban/blob/master/DESCRIPTION.md
+https://www.jianshu.com/p/5b77da571a5c?utm_campaign=maleskine
+https://github.com/IcaliaLabs/UIImage-ImageCompress/blob/master/UIImage%2BImageCompress.m
+https://github.com/hucool/WXImageCompress/blob/master/Pod/Classes/WXImageCompress.swift
+

@@ -94,12 +94,12 @@
 <meta property="og:site_name" content="卡洛斯的博客">
 <meta property="og:description" content="目录  问题 尝试 xcodebuild 查看 WCDB 是怎么编译 尝试自动静态库 尝试手动静态库 总结   1. 问题由于项目需求，需要使用一款数据库，直接使用 sqlite 会手动写很多 sql 代码，也容易出错。使用苹果官方的 core data，core data 不是线程安全的，需要严格区分在不同的线程使用不同的 manage context，使用上也增加了代码复杂度，也会更容易出现">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="http://olf3t4omk.bkt.clouddn.com/15160901483602.jpg">
-<meta property="og:updated_time" content="2018-01-16T10:08:30.652Z">
+<meta property="og:image" content="https://karosli.github.io/2018/01/16/WCDB命令行报错解决方案/15160901483602.jpg">
+<meta property="og:updated_time" content="2019-08-01T17:21:31.889Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="WCDB命令行编译报错解决方案">
 <meta name="twitter:description" content="目录  问题 尝试 xcodebuild 查看 WCDB 是怎么编译 尝试自动静态库 尝试手动静态库 总结   1. 问题由于项目需求，需要使用一款数据库，直接使用 sqlite 会手动写很多 sql 代码，也容易出错。使用苹果官方的 core data，core data 不是线程安全的，需要严格区分在不同的线程使用不同的 manage context，使用上也增加了代码复杂度，也会更容易出现">
-<meta name="twitter:image" content="http://olf3t4omk.bkt.clouddn.com/15160901483602.jpg">
+<meta name="twitter:image" content="https://karosli.github.io/2018/01/16/WCDB命令行报错解决方案/15160901483602.jpg">
 
 
 
@@ -392,7 +392,9 @@
 <p>使用方案一打出来的静态库，如果在主工程里使用没有问题，一旦放入到单独的 pod 里，检测的时候，就会上传失败。所以放弃了。</p>
 <figure class="highlight livecodeserver"><table><tr><td class="code"><pre><span class="line">xcodebuild: error: The workspace named <span class="string">"App"</span> does <span class="keyword">not</span> contain <span class="keyword">a</span> scheme named <span class="string">"xxxDatabase"</span>. The <span class="string">"-list"</span> option can be used <span class="built_in">to</span> find <span class="keyword">the</span> names <span class="keyword">of</span> <span class="keyword">the</span> schemes <span class="keyword">in</span> <span class="keyword">the</span> workspace.</span><br></pre></td></tr></table></figure>
 
-<p>然后尝试方案二，打出的包可以引入工程，代码编译没有错，但是一运行就报错了。<br><img src="http://olf3t4omk.bkt.clouddn.com/15160901483602.jpg" alt></p>
+<p>然后尝试方案二，打出的包可以引入工程，代码编译没有错，但是一运行就报错了。</p>
+<img src="/2018/01/16/WCDB命令行报错解决方案/15160901483602.jpg">
+
 <p>真是懵逼，百思不得解，后来想想，我现在打开的工程是 WCDB 的 master 分支，而 pod repo 里面的是 1.0.6 的 tag，所以就切换到 1.0.6 上重新进行方案二。</p>
 <p>果然通过这个 tag 打出来的静态库是没有问题的，放入到测试工程(需要加上 other linker flags: <code>$(inherited) -ObjC -all_load</code>)，模拟器和真机测试皆可通过。<a href="https://www.jianshu.com/p/7f6a7e1b3235" target="_blank" rel="noopener">静态库制作教程</a></p>
 <p>剩下就是用一个单独的 pod 基础组件去包含这个静态库，然后<br>让其他业务组件引入这个 pod 基础组件就可以避免这个静态库存在多份。</p>
@@ -513,7 +515,7 @@
           
             <div class="site-state-item site-state-posts">
               <a href="/archives">
-                <span class="site-state-item-count">20</span>
+                <span class="site-state-item-count">18</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
