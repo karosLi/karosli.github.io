@@ -76,6 +76,8 @@ tags: WKWebView
 
 - 兼容 WebViewJavascriptBridge
 
+<!-- more -->
+
 ## 基于 MessageHandler 搭建通信层
 
 WKWebView 支持新的 MessageHandler 通信方式，那我们就它来替换老的 iframe 通信方式了，原理是类似的，我们需要在 JS 侧创建一个统一的 callNative 函数，可以接受模块，方法，数据和回调，针对回调产生一个唯一的回调 id，并在 JS 侧把 id 和回调函数进行缓存，当在 Native 处理完逻辑并回调给 H5 时，可以通过保存的回调 id，找到缓存中的回调函数来完成个 JS 侧的数据获取。
@@ -654,3 +656,5 @@ NSString *jsString = [[NSString alloc] initWithContentsOfFile:[[NSBundle bundleF
 - [HybridPageKit](https://github.com/dequan1331/HybridPageKit)
 
 - [kerkee_ios](https://github.com/kercer/kerkee_ios)
+
+

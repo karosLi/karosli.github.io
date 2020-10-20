@@ -38,6 +38,8 @@ tags: 离线包
 |  （H5不依赖window.location）方案可行性 | 低 | 高 | 高 | 中 |
 |  全场景方案可行性 | 低 | 高 | 中 | 中 |
 
+<!-- more -->
+
 ## 沙盒方案
 
 ## NSURLProtocol 方案
