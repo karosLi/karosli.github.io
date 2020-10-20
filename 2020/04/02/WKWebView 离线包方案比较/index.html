@@ -99,7 +99,7 @@
 <meta property="og:image" content="https://karosli.github.io/2020/04/02/WKWebView%20离线包方案比较/media/15858247250569.jpg">
 <meta property="og:image" content="https://karosli.github.io/2020/04/02/WKWebView%20离线包方案比较/15858255338518.jpg">
 <meta property="og:image" content="https://karosli.github.io/2020/04/02/WKWebView%20离线包方案比较/media/15858255338518.jpg">
-<meta property="og:updated_time" content="2020-04-02T11:13:00.242Z">
+<meta property="og:updated_time" content="2020-10-20T11:29:08.112Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="WKWebView 离线包方案比较">
 <meta name="twitter:description" content="WKWebView 离线包方案比较方案列表 沙盒方案：通过沙盒路径直接加载本地文件 NSURLProtocol 方案：基于 NSURLProtocol 进行全局请求拦截 LocalServer 方案：搭建本地服务器加载本地资源 WKURLSchemeHandler 方案：基于 WKURLSchemeHandler 进行自定义Scheme 注册拦截  方案图表比较   问题 沙盒 NSURLProt">
@@ -506,6 +506,8 @@
 <td>中</td>
 </tr>
 </tbody></table>
+<a id="more"></a>
+
 <h2 id="沙盒方案"><a href="#沙盒方案" class="headerlink" title="沙盒方案"></a>沙盒方案</h2><h2 id="NSURLProtocol-方案"><a href="#NSURLProtocol-方案" class="headerlink" title="NSURLProtocol 方案"></a>NSURLProtocol 方案</h2><h2 id="LocalServer-方案"><a href="#LocalServer-方案" class="headerlink" title="LocalServer 方案"></a>LocalServer 方案</h2><h2 id="WKURLSchemeHandler-方案"><a href="#WKURLSchemeHandler-方案" class="headerlink" title="WKURLSchemeHandler 方案"></a>WKURLSchemeHandler 方案</h2><h2 id="支付宝-mPaas-离线包方案（基于-WKWebView）探秘"><a href="#支付宝-mPaas-离线包方案（基于-WKWebView）探秘" class="headerlink" title="支付宝 mPaas 离线包方案（基于 WKWebView）探秘"></a>支付宝 mPaas 离线包方案（基于 WKWebView）探秘</h2><p>实际上支付宝 <code>mPaas</code> 离线包方案是基于 <code>NSURLProtocol + Ajax Hook</code>来实现的。</p>
 <h3 id="mPaas-的-NSURLProtocol"><a href="#mPaas-的-NSURLProtocol" class="headerlink" title="mPaas 的 NSURLProtocol"></a>mPaas 的 NSURLProtocol</h3><p>通过下图可以看到，在启动和打开离线包时，都会去注册 <code>PSDWebViewURLProtocol</code>，当阻止它注册时，在加载离线包的时候就会报加载失败。这里就可以说明 <code>资源拦截</code> 和 <code>虚拟域</code> 都是基于 <code>NSURLProtocol</code> 实现的。</p>
 <img src="/2020/04/02/WKWebView%20离线包方案比较/15858247250569.jpg">
