@@ -1,0 +1,717 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css">
+
+
+  <meta name="keywords" content="线程,">
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.0">
+
+
+
+
+
+
+<meta name="description" content="主线程和主队列的关系先说结论主队列只在主线程中被执行的，而主线程运行的是一个 runloop，不仅仅只有主队列的中的任务，还会处理 UI 的布局和绘制任务。 几个例子一、自定义串行队列，同步执行。- (void)someMethod &amp;#123;    dispatch_queue_t queue = dispatch_queue_create(&quot;com.kk&quot;, nil);    dispatc">
+<meta name="keywords" content="线程">
+<meta property="og:type" content="article">
+<meta property="og:title" content="主线程和主队列的关系">
+<meta property="og:url" content="https://karosli.github.io/2020/10/20/主线程和主队列的关系/index.html">
+<meta property="og:site_name" content="卡洛斯的博客">
+<meta property="og:description" content="主线程和主队列的关系先说结论主队列只在主线程中被执行的，而主线程运行的是一个 runloop，不仅仅只有主队列的中的任务，还会处理 UI 的布局和绘制任务。 几个例子一、自定义串行队列，同步执行。- (void)someMethod &amp;#123;    dispatch_queue_t queue = dispatch_queue_create(&quot;com.kk&quot;, nil);    dispatc">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2020-10-20T11:24:09.135Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="主线程和主队列的关系">
+<meta name="twitter:description" content="主线程和主队列的关系先说结论主队列只在主线程中被执行的，而主线程运行的是一个 runloop，不仅仅只有主队列的中的任务，还会处理 UI 的布局和绘制任务。 几个例子一、自定义串行队列，同步执行。- (void)someMethod &amp;#123;    dispatch_queue_t queue = dispatch_queue_create(&quot;com.kk&quot;, nil);    dispatc">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://karosli.github.io/2020/10/20/主线程和主队列的关系/">
+
+
+
+
+
+  <title> 主线程和主队列的关系 | 卡洛斯的博客 </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?2c60eb726acae80a0bd58fe0229a46b8";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">卡洛斯的博客</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+    
+      <p class="site-subtitle"></p>
+    
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+  <link itemprop="mainEntityOfPage" href="https://karosli.github.io/2020/10/20/主线程和主队列的关系/">
+
+  <span style="display:none" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <meta itemprop="name" content="KarosLi (卡洛斯)">
+    <meta itemprop="description" content>
+    <meta itemprop="image" content="/images/avatar.jpeg">
+  </span>
+
+  <span style="display:none" itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+    <meta itemprop="name" content="卡洛斯的博客">
+    <span style="display:none" itemprop="logo" itemscope itemtype="http://schema.org/ImageObject">
+      <img style="display:none;" itemprop="url image" alt="卡洛斯的博客" src>
+    </span>
+  </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                主线程和主队列的关系
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2020-10-20T18:16:21+08:00">
+                2020-10-20
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2020/10/20/主线程和主队列的关系/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2020/10/20/主线程和主队列的关系/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="主线程和主队列的关系"><a href="#主线程和主队列的关系" class="headerlink" title="主线程和主队列的关系"></a>主线程和主队列的关系</h1><h2 id="先说结论"><a href="#先说结论" class="headerlink" title="先说结论"></a>先说结论</h2><p>主队列只在主线程中被执行的，而主线程运行的是一个 runloop，不仅仅只有主队列的中的任务，还会处理 UI 的布局和绘制任务。</p>
+<h2 id="几个例子"><a href="#几个例子" class="headerlink" title="几个例子"></a>几个例子</h2><h3 id="一、自定义串行队列，同步执行。"><a href="#一、自定义串行队列，同步执行。" class="headerlink" title="一、自定义串行队列，同步执行。"></a>一、自定义串行队列，同步执行。</h3><figure class="highlight routeros"><table><tr><td class="code"><pre><span class="line">- (void)someMethod &#123;</span><br><span class="line">    dispatch_queue_t<span class="built_in"> queue </span>= dispatch_queue_create(<span class="string">"com.kk"</span>, <span class="literal">nil</span>);</span><br><span class="line">    dispatch_sync(queue, ^&#123;</span><br><span class="line">        NSLog(@<span class="string">"current thread = %@， curren queue = %@， main queue = %@"</span>, [NSThread currentThread], [NSString stringWithCString:dispatch_queue_get_label(DISPATCH_CURRENT_QUEUE_LABEL) encoding:NSUTF8StringEncoding], [NSString stringWithCString:dispatch_queue_get_label(dispatch_get_main_queue()) encoding:NSUTF8StringEncoding]);</span><br><span class="line">    </span><br><span class="line">    &#125;);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">------------------</span><br><span class="line">current thread = &lt;NSThread: 0x600002c0cf00&gt;&#123;number = 1, name = main&#125;， curren<span class="built_in"> queue </span>= com.kk， main<span class="built_in"> queue </span>= com.apple.main-thread</span><br><span class="line">这里是主线程但不是主队列。</span><br></pre></td></tr></table></figure>
+
+<h3 id="二、主线程判断的几个方法"><a href="#二、主线程判断的几个方法" class="headerlink" title="二、主线程判断的几个方法"></a>二、主线程判断的几个方法</h3><figure class="highlight objectivec"><table><tr><td class="code"><pre><span class="line"><span class="comment">//下面这几种切换到主线程执行的方法, 你更喜欢哪种?有什么优缺点?</span></span><br><span class="line"><span class="comment">//方法1</span></span><br><span class="line"><span class="keyword">if</span> ([<span class="built_in">NSThread</span> isMainThread]) &#123;</span><br><span class="line">   <span class="comment">//xxx</span></span><br><span class="line">&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">   <span class="built_in">dispatch_sync</span>(dispatch_get_main_queue(), ^&#123;</span><br><span class="line">       <span class="comment">//xxx</span></span><br><span class="line">   &#125;);</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 如果是子线程执行这段代码，并且主队列里的任务是更新 UI，那么是会可能引起崩溃的。</span></span><br><span class="line">    </span><br><span class="line"><span class="comment">//方法2</span></span><br><span class="line"><span class="keyword">if</span> ([<span class="built_in">NSThread</span> isMainThread]) &#123;</span><br><span class="line">   <span class="comment">//xxx</span></span><br><span class="line">&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">   <span class="built_in">dispatch_async</span>(dispatch_get_main_queue(), ^&#123;</span><br><span class="line">       <span class="comment">//xxx</span></span><br><span class="line">   &#125;);</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 大部分都是这么用的，也没有什么问题</span></span><br><span class="line"><span class="comment">// 但是主线程不一定能过只跑主队列的任务。当主线程在同步执行自定义串行队列的任务时，那此方法的判断就不对了，因为此时是主线程且是非主队列</span></span><br><span class="line">    </span><br><span class="line"><span class="comment">//方法3</span></span><br><span class="line"><span class="built_in">dispatch_async</span>(dispatch_get_main_queue(), ^&#123;</span><br><span class="line">   <span class="comment">//xxx</span></span><br><span class="line">&#125;);</span><br><span class="line"><span class="comment">// 始终异步放在下一个loop使用，会延迟执行时机</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//方法4   </span></span><br><span class="line"><span class="keyword">if</span> (dispatch_queue_get_label(DISPATCH_CURRENT_QUEUE_LABEL) == dispatch_queue_get_label(dispatch_get_main_queue())) &#123;</span><br><span class="line">   <span class="comment">//xxx</span></span><br><span class="line">&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">   <span class="built_in">dispatch_async</span>(dispatch_get_main_queue(), ^&#123;</span><br><span class="line">       <span class="comment">//xxx</span></span><br><span class="line">   &#125;);</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 方法二已经解释了，这里可以通过判断队列label的形式，可以保证任务一定是放在主队列中的。虽然方法二，也不会造成什么问题，但是方法四会更加符合预期（任务一定要在主队列中）</span></span><br></pre></td></tr></table></figure>
+
+<p>综合来说，方法 4 是更好的判断是否是主线程的方式。</p>
+<h2 id="苹果的一个bug"><a href="#苹果的一个bug" class="headerlink" title="苹果的一个bug"></a>苹果的一个bug</h2><p>在苹果的MapKit框架中，有一个叫做addOverlay的方法，它在底层实现的时候，不仅仅要求代码执行在主线程上，<br> 还要求执行在 GCD 的主队列上。这是一个极罕见的问题，但已经有人在使用 ReactiveCocoa 时踩到了坑，并提交了 issue。<br> 苹果的 Developer Technology Support 承认这是一个 bug。<br><a href="https://toutiao.io/posts/535857/app_preview" target="_blank" rel="noopener">https://toutiao.io/posts/535857/app_preview</a></p>
+<p>正如上面的方法二，使用起来不会有什么问题，但是在这里，如果把一些数据通过<code>dispatch_set_specific</code> 绑定到<code>main queue</code>中，这才会产生 bug。例如下面，<br>这个获取就是和 <code>main queue</code> 绑定的，如果仅仅在主线程访问，无法获取到数据。</p>
+<figure class="highlight stylus"><table><tr><td class="code"><pre><span class="line"><span class="selector-tag">var</span> skr = DispatchSpecificKey(<span class="string">""</span>)</span><br><span class="line"><span class="keyword">if</span> Thread<span class="selector-class">.isMainThread</span> &#123;</span><br><span class="line">    let v = DispatchQueue<span class="selector-class">.main</span><span class="selector-class">.getSpecific</span>(key: skr)</span><br><span class="line">&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    DispatchQueue<span class="selector-class">.main</span><span class="selector-class">.sync</span> &#123;</span><br><span class="line">        let v = DispatchQueue<span class="selector-class">.main</span><span class="selector-class">.getSpecific</span>(key: skr)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ul>
+<li><a href="http://sindrilin.com/2018/03/03/weird_thread.html" target="_blank" rel="noopener">多线程-奇怪的GCD</a></li>
+<li><a href="https://toutiao.io/posts/535857/app_preview" target="_blank" rel="noopener">主线程中也不绝对安全的 UI 操作</a></li>
+<li>iTeamTime|技术清谈</li>
+</ul>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/线程/" rel="tag"># 线程</a>
+          
+        </div>
+      
+
+      
+        
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2020/04/02/WKWebView 离线包方案比较/" rel="next" title="WKWebView 离线包方案比较">
+                <i class="fa fa-chevron-left"></i> WKWebView 离线包方案比较
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+          
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2020/10/20/主线程和主队列的关系/" data-title="主线程和主队列的关系" data-url="https://karosli.github.io/2020/10/20/主线程和主队列的关系/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image" src="/images/avatar.jpeg" alt="KarosLi (卡洛斯)">
+          <p class="site-author-name" itemprop="name">KarosLi (卡洛斯)</p>
+          <p class="site-description motion-element" itemprop="description">正在修行的路上</p>
+        </div>
+        <nav class="site-state motion-element">
+        
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">21</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-categories">
+              
+                <span class="site-state-item-count">13</span>
+                <span class="site-state-item-name">分类</span>
+              
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">16</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+          <div class="links-of-blogroll motion-element links-of-blogroll-inline">
+            <div class="links-of-blogroll-title">
+              <i class="fa  fa-fw fa-globe"></i>
+              友情链接
+            </div>
+            <ul class="links-of-blogroll-list">
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://hexiaofei51.cn/" title="晓飞的博客" target="_blank">晓飞的博客</a>
+                </li>
+              
+            </ul>
+          </div>
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#主线程和主队列的关系"><span class="nav-number">1.</span> <span class="nav-text">主线程和主队列的关系</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#先说结论"><span class="nav-number">1.1.</span> <span class="nav-text">先说结论</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#几个例子"><span class="nav-number">1.2.</span> <span class="nav-text">几个例子</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#一、自定义串行队列，同步执行。"><span class="nav-number">1.2.1.</span> <span class="nav-text">一、自定义串行队列，同步执行。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#二、主线程判断的几个方法"><span class="nav-number">1.2.2.</span> <span class="nav-text">二、主线程判断的几个方法</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#苹果的一个bug"><span class="nav-number">1.3.</span> <span class="nav-text">苹果的一个bug</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参考"><span class="nav-number">1.4.</span> <span class="nav-text">参考</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">KarosLi (卡洛斯)</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<span> | </span><span id="busuanzi_container_site_pv">本站总访问量<span id="busuanzi_value_site_pv"></span>次</span>
+<span id="busuanzi_container_page_pv">
+  本文总阅读量<span id="busuanzi_value_page_pv"></span>次
+</span>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"karosli"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+    
+    <script src="/lib/ua-parser-js/dist/ua-parser.min.js?v=0.7.9"></script>
+    <script src="/js/src/hook-duoshuo.js"></script>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+
+</body>
+</html>

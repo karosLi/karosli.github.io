@@ -259,6 +259,445 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+  <link itemprop="mainEntityOfPage" href="https://karosli.github.io/2020/10/20/主线程和主队列的关系/">
+
+  <span style="display:none" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <meta itemprop="name" content="KarosLi (卡洛斯)">
+    <meta itemprop="description" content>
+    <meta itemprop="image" content="/images/avatar.jpeg">
+  </span>
+
+  <span style="display:none" itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+    <meta itemprop="name" content="卡洛斯的博客">
+    <span style="display:none" itemprop="logo" itemscope itemtype="http://schema.org/ImageObject">
+      <img style="display:none;" itemprop="url image" alt="卡洛斯的博客" src>
+    </span>
+  </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2020/10/20/主线程和主队列的关系/" itemprop="url">
+                  主线程和主队列的关系
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2020-10-20T18:16:21+08:00">
+                2020-10-20
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2020/10/20/主线程和主队列的关系/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2020/10/20/主线程和主队列的关系/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h1 id="主线程和主队列的关系"><a href="#主线程和主队列的关系" class="headerlink" title="主线程和主队列的关系"></a>主线程和主队列的关系</h1><h2 id="先说结论"><a href="#先说结论" class="headerlink" title="先说结论"></a>先说结论</h2><p>主队列只在主线程中被执行的，而主线程运行的是一个 runloop，不仅仅只有主队列的中的任务，还会处理 UI 的布局和绘制任务。</p>
+<h2 id="几个例子"><a href="#几个例子" class="headerlink" title="几个例子"></a>几个例子</h2><h3 id="一、自定义串行队列，同步执行。"><a href="#一、自定义串行队列，同步执行。" class="headerlink" title="一、自定义串行队列，同步执行。"></a>一、自定义串行队列，同步执行。</h3><figure class="highlight routeros"><table><tr><td class="code"><pre><span class="line">- (void)someMethod &#123;</span><br><span class="line">    dispatch_queue_t<span class="built_in"> queue </span>= dispatch_queue_create(<span class="string">"com.kk"</span>, <span class="literal">nil</span>);</span><br><span class="line">    dispatch_sync(queue, ^&#123;</span><br><span class="line">        NSLog(@<span class="string">"current thread = %@， curren queue = %@， main queue = %@"</span>, [NSThread currentThread], [NSString stringWithCString:dispatch_queue_get_label(DISPATCH_CURRENT_QUEUE_LABEL) encoding:NSUTF8StringEncoding], [NSString stringWithCString:dispatch_queue_get_label(dispatch_get_main_queue()) encoding:NSUTF8StringEncoding]);</span><br><span class="line">    </span><br><span class="line">    &#125;);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">------------------</span><br><span class="line">current thread = &lt;NSThread: 0x600002c0cf00&gt;&#123;number = 1, name = main&#125;， curren<span class="built_in"> queue </span>= com.kk， main<span class="built_in"> queue </span>= com.apple.main-thread</span><br><span class="line">这里是主线程但不是主队列。</span><br></pre></td></tr></table></figure>
+
+<h3 id="二、主线程判断的几个方法"><a href="#二、主线程判断的几个方法" class="headerlink" title="二、主线程判断的几个方法"></a>二、主线程判断的几个方法</h3><figure class="highlight objectivec"><table><tr><td class="code"><pre><span class="line"><span class="comment">//下面这几种切换到主线程执行的方法, 你更喜欢哪种?有什么优缺点?</span></span><br><span class="line"><span class="comment">//方法1</span></span><br><span class="line"><span class="keyword">if</span> ([<span class="built_in">NSThread</span> isMainThread]) &#123;</span><br><span class="line">   <span class="comment">//xxx</span></span><br><span class="line">&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">   <span class="built_in">dispatch_sync</span>(dispatch_get_main_queue(), ^&#123;</span><br><span class="line">       <span class="comment">//xxx</span></span><br><span class="line">   &#125;);</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 如果是子线程执行这段代码，并且主队列里的任务是更新 UI，那么是会可能引起崩溃的。</span></span><br><span class="line">    </span><br><span class="line"><span class="comment">//方法2</span></span><br><span class="line"><span class="keyword">if</span> ([<span class="built_in">NSThread</span> isMainThread]) &#123;</span><br><span class="line">   <span class="comment">//xxx</span></span><br><span class="line">&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">   <span class="built_in">dispatch_async</span>(dispatch_get_main_queue(), ^&#123;</span><br><span class="line">       <span class="comment">//xxx</span></span><br><span class="line">   &#125;);</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 大部分都是这么用的，也没有什么问题</span></span><br><span class="line"><span class="comment">// 但是主线程不一定能过只跑主队列的任务。当主线程在同步执行自定义串行队列的任务时，那此方法的判断就不对了，因为此时是主线程且是非主队列</span></span><br><span class="line">    </span><br><span class="line"><span class="comment">//方法3</span></span><br><span class="line"><span class="built_in">dispatch_async</span>(dispatch_get_main_queue(), ^&#123;</span><br><span class="line">   <span class="comment">//xxx</span></span><br><span class="line">&#125;);</span><br><span class="line"><span class="comment">// 始终异步放在下一个loop使用，会延迟执行时机</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//方法4   </span></span><br><span class="line"><span class="keyword">if</span> (dispatch_queue_get_label(DISPATCH_CURRENT_QUEUE_LABEL) == dispatch_queue_get_label(dispatch_get_main_queue())) &#123;</span><br><span class="line">   <span class="comment">//xxx</span></span><br><span class="line">&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">   <span class="built_in">dispatch_async</span>(dispatch_get_main_queue(), ^&#123;</span><br><span class="line">       <span class="comment">//xxx</span></span><br><span class="line">   &#125;);</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 方法二已经解释了，这里可以通过判断队列label的形式，可以保证任务一定是放在主队列中的。虽然方法二，也不会造成什么问题，但是方法四会更加符合预期（任务一定要在主队列中）</span></span><br></pre></td></tr></table></figure>
+
+<p>综合来说，方法 4 是更好的判断是否是主线程的方式。</p>
+<h2 id="苹果的一个bug"><a href="#苹果的一个bug" class="headerlink" title="苹果的一个bug"></a>苹果的一个bug</h2><p>在苹果的MapKit框架中，有一个叫做addOverlay的方法，它在底层实现的时候，不仅仅要求代码执行在主线程上，<br> 还要求执行在 GCD 的主队列上。这是一个极罕见的问题，但已经有人在使用 ReactiveCocoa 时踩到了坑，并提交了 issue。<br> 苹果的 Developer Technology Support 承认这是一个 bug。<br><a href="https://toutiao.io/posts/535857/app_preview" target="_blank" rel="noopener">https://toutiao.io/posts/535857/app_preview</a></p>
+<p>正如上面的方法二，使用起来不会有什么问题，但是在这里，如果把一些数据通过<code>dispatch_set_specific</code> 绑定到<code>main queue</code>中，这才会产生 bug。例如下面，<br>这个获取就是和 <code>main queue</code> 绑定的，如果仅仅在主线程访问，无法获取到数据。</p>
+<figure class="highlight stylus"><table><tr><td class="code"><pre><span class="line"><span class="selector-tag">var</span> skr = DispatchSpecificKey(<span class="string">""</span>)</span><br><span class="line"><span class="keyword">if</span> Thread<span class="selector-class">.isMainThread</span> &#123;</span><br><span class="line">    let v = DispatchQueue<span class="selector-class">.main</span><span class="selector-class">.getSpecific</span>(key: skr)</span><br><span class="line">&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    DispatchQueue<span class="selector-class">.main</span><span class="selector-class">.sync</span> &#123;</span><br><span class="line">        let v = DispatchQueue<span class="selector-class">.main</span><span class="selector-class">.getSpecific</span>(key: skr)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ul>
+<li><a href="http://sindrilin.com/2018/03/03/weird_thread.html" target="_blank" rel="noopener">多线程-奇怪的GCD</a></li>
+<li><a href="https://toutiao.io/posts/535857/app_preview" target="_blank" rel="noopener">主线程中也不绝对安全的 UI 操作</a></li>
+<li>iTeamTime|技术清谈</li>
+</ul>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+  <link itemprop="mainEntityOfPage" href="https://karosli.github.io/2020/04/02/WKWebView 离线包方案比较/">
+
+  <span style="display:none" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <meta itemprop="name" content="KarosLi (卡洛斯)">
+    <meta itemprop="description" content>
+    <meta itemprop="image" content="/images/avatar.jpeg">
+  </span>
+
+  <span style="display:none" itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+    <meta itemprop="name" content="卡洛斯的博客">
+    <span style="display:none" itemprop="logo" itemscope itemtype="http://schema.org/ImageObject">
+      <img style="display:none;" itemprop="url image" alt="卡洛斯的博客" src>
+    </span>
+  </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2020/04/02/WKWebView 离线包方案比较/" itemprop="url">
+                  WKWebView 离线包方案比较
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2020-04-02T16:43:40+08:00">
+                2020-04-02
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2020/04/02/WKWebView 离线包方案比较/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2020/04/02/WKWebView 离线包方案比较/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h1 id="WKWebView-离线包方案比较"><a href="#WKWebView-离线包方案比较" class="headerlink" title="WKWebView 离线包方案比较"></a>WKWebView 离线包方案比较</h1><h2 id="方案列表"><a href="#方案列表" class="headerlink" title="方案列表"></a>方案列表</h2><ul>
+<li>沙盒方案：通过沙盒路径直接加载本地文件</li>
+<li>NSURLProtocol 方案：基于 NSURLProtocol 进行全局请求拦截</li>
+<li>LocalServer 方案：搭建本地服务器加载本地资源</li>
+<li>WKURLSchemeHandler 方案：基于 WKURLSchemeHandler 进行自定义Scheme 注册拦截</li>
+</ul>
+<h2 id="方案图表比较"><a href="#方案图表比较" class="headerlink" title="方案图表比较"></a>方案图表比较</h2><table>
+<thead>
+<tr>
+<th>问题</th>
+<th>沙盒</th>
+<th>NSURLProtocol</th>
+<th>LocalServer</th>
+<th>WKURLSchemeHandler</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>是否可以同步 Cookie</td>
+<td>NO</td>
+<td>YES</td>
+<td>NO</td>
+<td>NO（Session Cookie无效）</td>
+</tr>
+<tr>
+<td>是否有跨域问题</td>
+<td>YES</td>
+<td>NO</td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td>Ajax 是否完全可用</td>
+<td>NO</td>
+<td>NO</td>
+<td>YES</td>
+<td>NO</td>
+</tr>
+<tr>
+<td>Fetch 是否完全可用</td>
+<td>NO</td>
+<td>NO</td>
+<td>YES</td>
+<td>NO</td>
+</tr>
+<tr>
+<td>是否丢失 POST Body</td>
+<td>NO</td>
+<td>YES</td>
+<td>NO</td>
+<td>YES</td>
+</tr>
+<tr>
+<td>是否可以提交表单</td>
+<td>NO</td>
+<td>NO</td>
+<td>YES</td>
+<td>NO</td>
+</tr>
+<tr>
+<td>是否必须使用 Ajax Hook</td>
+<td>NO</td>
+<td>YES</td>
+<td>NO</td>
+<td>NO</td>
+</tr>
+<tr>
+<td>是否必须使用 JSBridge 发送 API</td>
+<td>YES</td>
+<td>NO</td>
+<td>NO</td>
+<td>NO</td>
+</tr>
+<tr>
+<td>是否需要后台配置 CORS（跨域）</td>
+<td>NO</td>
+<td>NO</td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td>是否可以获取期望的 window.location</td>
+<td>NO</td>
+<td>YES</td>
+<td>NO</td>
+<td>YES</td>
+</tr>
+<tr>
+<td>是否使用私有 API</td>
+<td>NO</td>
+<td>YES</td>
+<td>NO</td>
+<td>NO</td>
+</tr>
+<tr>
+<td>是否有系统限制</td>
+<td>NO</td>
+<td>NO</td>
+<td>NO</td>
+<td>YES（iOS11以上）</td>
+</tr>
+<tr>
+<td>是否需要 H5 改造支持</td>
+<td>YES</td>
+<td>NO</td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td>是否需要请求是绝对路径</td>
+<td>NO</td>
+<td>NO</td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td>是否需要资源是相对路径</td>
+<td>YES</td>
+<td>NO</td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td>是否有后期维护成本</td>
+<td>NO</td>
+<td>YES(Fetch Hook)</td>
+<td>NO</td>
+<td>NO</td>
+</tr>
+<tr>
+<td>方案成本</td>
+<td>低</td>
+<td>高</td>
+<td>中</td>
+<td>中</td>
+</tr>
+<tr>
+<td>（H5不依赖Session Cookie）方案可行性</td>
+<td>低</td>
+<td>高</td>
+<td>中</td>
+<td>高</td>
+</tr>
+<tr>
+<td>（H5不依赖window.location）方案可行性</td>
+<td>低</td>
+<td>高</td>
+<td>高</td>
+<td>中</td>
+</tr>
+<tr>
+<td>全场景方案可行性</td>
+<td>低</td>
+<td>高</td>
+<td>中</td>
+<td>中</td>
+</tr>
+</tbody></table>
+<h2 id="沙盒方案"><a href="#沙盒方案" class="headerlink" title="沙盒方案"></a>沙盒方案</h2><h2 id="NSURLProtocol-方案"><a href="#NSURLProtocol-方案" class="headerlink" title="NSURLProtocol 方案"></a>NSURLProtocol 方案</h2><h2 id="LocalServer-方案"><a href="#LocalServer-方案" class="headerlink" title="LocalServer 方案"></a>LocalServer 方案</h2><h2 id="WKURLSchemeHandler-方案"><a href="#WKURLSchemeHandler-方案" class="headerlink" title="WKURLSchemeHandler 方案"></a>WKURLSchemeHandler 方案</h2><h2 id="支付宝-mPaas-离线包方案（基于-WKWebView）探秘"><a href="#支付宝-mPaas-离线包方案（基于-WKWebView）探秘" class="headerlink" title="支付宝 mPaas 离线包方案（基于 WKWebView）探秘"></a>支付宝 mPaas 离线包方案（基于 WKWebView）探秘</h2><p>实际上支付宝 <code>mPaas</code> 离线包方案是基于 <code>NSURLProtocol + Ajax Hook</code>来实现的。</p>
+<h3 id="mPaas-的-NSURLProtocol"><a href="#mPaas-的-NSURLProtocol" class="headerlink" title="mPaas 的 NSURLProtocol"></a>mPaas 的 NSURLProtocol</h3><p>通过下图可以看到，在启动和打开离线包时，都会去注册 <code>PSDWebViewURLProtocol</code>，当阻止它注册时，在加载离线包的时候就会报加载失败。这里就可以说明 <code>资源拦截</code> 和 <code>虚拟域</code> 都是基于 <code>NSURLProtocol</code> 实现的。</p>
+<img src="/2020/04/02/WKWebView%20离线包方案比较/15858247250569.jpg">
+<p><img src="media/15858247250569.jpg" alt></p>
+<h3 id="mPaas-的-Ajax-Hook"><a href="#mPaas-的-Ajax-Hook" class="headerlink" title="mPaas 的 Ajax Hook"></a>mPaas 的 Ajax Hook</h3><p>通过下图可以看到，实际上是 <code>Hook</code> 了 <code>Ajax</code> 的 <code>open</code> 和 <code>send</code> 方法。可以看到这里没有拦截 <code>get</code> 请求，这样就可以很好的兼容小游戏场景（通过 <code>Ajax Get</code> 获取的游戏资源，这些资源拦截不了）。</p>
+<img src="/2020/04/02/WKWebView%20离线包方案比较/15858255338518.jpg">
+<p><img src="media/15858255338518.jpg" alt></p>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
   <link itemprop="mainEntityOfPage" href="https://karosli.github.io/2019/08/30/一站式解决WKWebView各类问题/">
 
   <span style="display:none" itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -348,7 +787,8 @@
 
       
         
-          <h1 id="一站式解决WKWebView各类问题"><a href="#一站式解决WKWebView各类问题" class="headerlink" title="一站式解决WKWebView各类问题"></a>一站式解决WKWebView各类问题</h1><p><img src="https://raw.githubusercontent.com/karosLi/BlogImageBed/master/Blog20190830112208.png" alt></p>
+          
+            <h1 id="一站式解决WKWebView各类问题"><a href="#一站式解决WKWebView各类问题" class="headerlink" title="一站式解决WKWebView各类问题"></a>一站式解决WKWebView各类问题</h1><p><img src="https://raw.githubusercontent.com/karosLi/BlogImageBed/master/Blog20190830112208.png" alt></p>
 <h2 id="为什么要使用-WKWebView"><a href="#为什么要使用-WKWebView" class="headerlink" title="为什么要使用 WKWebView"></a>为什么要使用 WKWebView</h2><ul>
 <li><p>UIWebView 在 iOS 12 后被标记为过期了。</p>
 </li>
@@ -408,16 +848,120 @@
 <li><p>WKWebView 复用</p>
 </li>
 <li><p>兼容 WebViewJavascriptBridge</p>
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2019/08/30/一站式解决WKWebView各类问题/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
+</li>
+</ul>
+<h2 id="基于-MessageHandler-搭建通信层"><a href="#基于-MessageHandler-搭建通信层" class="headerlink" title="基于 MessageHandler 搭建通信层"></a>基于 MessageHandler 搭建通信层</h2><p>WKWebView 支持新的 MessageHandler 通信方式，那我们就它来替换老的 iframe 通信方式了，原理是类似的，我们需要在 JS 侧创建一个统一的 callNative 函数，可以接受模块，方法，数据和回调，针对回调产生一个唯一的回调 id，并在 JS 侧把 id 和回调函数进行缓存，当在 Native 处理完逻辑并回调给 H5 时，可以通过保存的回调 id，找到缓存中的回调函数来完成个 JS 侧的数据获取。</p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">var</span> KKJSBridge = <span class="comment">/** @class */</span> (<span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">        <span class="function"><span class="keyword">function</span> <span class="title">KKJSBridge</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">            <span class="keyword">this</span>.uniqueId = <span class="number">1</span>;</span><br><span class="line">            <span class="keyword">this</span>.callbackCache = &#123;&#125;;</span><br><span class="line">            <span class="keyword">this</span>.eventCallbackCache = &#123;&#125;;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">/**</span></span><br><span class="line"><span class="comment">         * 调用 Natvie 方法git</span></span><br><span class="line"><span class="comment">         * @param module 模块</span></span><br><span class="line"><span class="comment">         * @param method 方法</span></span><br><span class="line"><span class="comment">         * @param data 数据</span></span><br><span class="line"><span class="comment">         * @param callback 调用回调</span></span><br><span class="line"><span class="comment">         */</span></span><br><span class="line">        KKJSBridge.prototype.callNative = <span class="function"><span class="keyword">function</span> (<span class="params">module, method, data, callback</span>) </span>&#123;</span><br><span class="line">            <span class="keyword">var</span> message = &#123;</span><br><span class="line">                <span class="built_in">module</span>: <span class="built_in">module</span> || <span class="string">'default'</span>,</span><br><span class="line">                method: method,</span><br><span class="line">                data: data,</span><br><span class="line">                callbackId: <span class="literal">null</span></span><br><span class="line">            &#125;;</span><br><span class="line">            <span class="keyword">if</span> (callback) &#123;</span><br><span class="line">                <span class="comment">// 拼装 callbackId</span></span><br><span class="line">                <span class="keyword">var</span> callbackId = <span class="string">'cb_'</span> + message.module + <span class="string">'_'</span> + method + <span class="string">'_'</span> + (<span class="keyword">this</span>.uniqueId++) + <span class="string">'_'</span> + <span class="keyword">new</span> <span class="built_in">Date</span>().getTime();</span><br><span class="line">                <span class="comment">// 缓存 callback，用于在 Native 处理完消息后，通知 H5</span></span><br><span class="line">                <span class="keyword">this</span>.callbackCache[callbackId] = callback;</span><br><span class="line">                <span class="comment">// 追加 callbackId 属性</span></span><br><span class="line">                message.callbackId = callbackId;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="comment">// 发送消息给 Native</span></span><br><span class="line">            <span class="built_in">window</span>.webkit.messageHandlers.KKJSBridgeMessage.postMessage(message);</span><br><span class="line">        &#125;;</span><br><span class="line">        <span class="comment">/**</span></span><br><span class="line"><span class="comment">         * 用于处理来自 Native 的消息</span></span><br><span class="line"><span class="comment">         * @param callbackMessage 回调消息</span></span><br><span class="line"><span class="comment">         */</span></span><br><span class="line">        KKJSBridge.prototype._handleMessageFromNative = <span class="function"><span class="keyword">function</span> (<span class="params">messageString</span>) </span>&#123;</span><br><span class="line">            <span class="keyword">var</span> callbackMessage = <span class="built_in">JSON</span>.parse(messageString);</span><br><span class="line">            <span class="keyword">if</span> (callbackMessage.messageType === <span class="string">"callback"</span> <span class="comment">/* Callback */</span>) &#123; <span class="comment">// 回调消息</span></span><br><span class="line">                <span class="keyword">var</span> callback = <span class="keyword">this</span>.callbackCache[callbackMessage.callbackId];</span><br><span class="line">                <span class="keyword">if</span> (callback) &#123; <span class="comment">// 执行 callback 回调，并删除缓存的 callback</span></span><br><span class="line">                    callback(callbackMessage.data);</span><br><span class="line">                    <span class="keyword">this</span>.callbackCache[callbackMessage.callbackId] = <span class="literal">null</span>;</span><br><span class="line">                    <span class="keyword">delete</span> <span class="keyword">this</span>.callbackCache[callbackMessage.callbackId];</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">else</span> <span class="keyword">if</span> (callbackMessage.messageType === <span class="string">"event"</span> <span class="comment">/* Event */</span>) &#123; <span class="comment">// 事件消息</span></span><br><span class="line">                <span class="keyword">var</span> eventCallback = <span class="keyword">this</span>.eventCallbackCache[callbackMessage.eventName];</span><br><span class="line">                <span class="keyword">if</span> (eventCallback) &#123;</span><br><span class="line">                    eventCallback(callbackMessage.data);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;;</span><br><span class="line">        <span class="comment">/**</span></span><br><span class="line"><span class="comment">         * 调用方法</span></span><br><span class="line"><span class="comment">         * @param module 模块</span></span><br><span class="line"><span class="comment">         * @param method 方法</span></span><br><span class="line"><span class="comment">         * @param data 数据</span></span><br><span class="line"><span class="comment">         * @param callback 调用回调</span></span><br><span class="line"><span class="comment">         */</span></span><br><span class="line">        KKJSBridge.prototype.call = <span class="function"><span class="keyword">function</span> (<span class="params">module, method, data, callback</span>) </span>&#123;</span><br><span class="line">            <span class="keyword">this</span>.callNative(<span class="built_in">module</span>, method, data, callback);</span><br><span class="line">        &#125;;</span><br><span class="line">        <span class="comment">/**</span></span><br><span class="line"><span class="comment">         * 监听事件</span></span><br><span class="line"><span class="comment">         * @param eventName 事件名字</span></span><br><span class="line"><span class="comment">         * @param callback 事件回调</span></span><br><span class="line"><span class="comment">         */</span></span><br><span class="line">        KKJSBridge.prototype.on = <span class="function"><span class="keyword">function</span> (<span class="params">eventName, callback</span>) </span>&#123;</span><br><span class="line">            <span class="keyword">this</span>.eventCallbackCache[eventName] = callback;</span><br><span class="line">        &#125;;</span><br><span class="line">        <span class="keyword">return</span> KKJSBridge;</span><br><span class="line">    &#125;());</span><br><span class="line">    <span class="comment">// 初始化 KKJSBridge</span></span><br><span class="line">    <span class="keyword">var</span> KKJSBridgeInstance = <span class="keyword">new</span> KKJSBridge();</span><br><span class="line">    <span class="built_in">window</span>.KKJSBridge = KKJSBridgeInstance;</span><br></pre></td></tr></table></figure>
+
+<h2 id="支持模块化的管理-JSAPI"><a href="#支持模块化的管理-JSAPI" class="headerlink" title="支持模块化的管理 JSAPI"></a>支持模块化的管理 JSAPI</h2><p>有时我们需要把 JSAPI 进行分类，来更好的管理，比如我们会把 JSAPI 分成基础，数据，设备，界面，媒体，传感器，业务等模块，每个模块管理好自己分类里的 JSAPI，在多人开发的时候，也能更好的进行维护。</p>
+<p>在 KKJSBridge 创建一个模块很简单，可以在代码中创建一个模块a，然后通过 KKJSBridgeEngine 进行注册。</p>
+<figure class="highlight objectivec"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">@implementation</span> <span class="title">ModuleA</span></span></span><br><span class="line"></span><br><span class="line">+ (<span class="keyword">nonnull</span> <span class="built_in">NSString</span> *)moduleName &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="string">@"a"</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (<span class="keyword">void</span>)callToAddOneForA:(KKJSBridgeEngine *)engine params:(<span class="built_in">NSDictionary</span> *)params responseCallback:(<span class="keyword">void</span> (^)(<span class="built_in">NSDictionary</span> *responseData))responseCallback &#123;</span><br><span class="line">    <span class="built_in">NSInteger</span> a = [params[<span class="string">@"a"</span>] integerValue];</span><br><span class="line">    a++;</span><br><span class="line">    responseCallback ? responseCallback(@&#123;<span class="string">@"a"</span>: @(a)&#125;) : <span class="literal">nil</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">@end</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight objectivec"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 给 webView 绑定一个 Bridge Engine</span></span><br><span class="line">_jsBridgeEngine = [KKJSBridgeEngine bridgeForWebView:<span class="keyword">self</span>.webView];</span><br><span class="line"><span class="comment">// 注册 模块A</span></span><br><span class="line">[<span class="keyword">self</span>.jsBridgeEngine.moduleRegister registerModuleClass:ModuleA.class];</span><br></pre></td></tr></table></figure>
+
+<p>在 JS 代码里可以用如下形式来调用。</p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="built_in">window</span>.KKJSBridge.call(<span class="string">'a'</span>, <span class="string">'callToAddOneForA'</span>, &#123;<span class="attr">a</span>:<span class="number">4</span>&#125;, <span class="function"><span class="keyword">function</span>(<span class="params">res</span>) </span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">'receive callToAddOneForA res 4+1=：'</span>, res.a);</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+<h2 id="支持模块共享上下文信息"><a href="#支持模块共享上下文信息" class="headerlink" title="支持模块共享上下文信息"></a>支持模块共享上下文信息</h2><p>有的时候，我们需要通过 JSAPI 去控制 Native 的外观或者行为，这时是需要借助一些上下文辅助信息来帮我我们完成业务上需求。比如：常见改变导航栏的背景色</p>
+<figure class="highlight objectivec"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">@interface</span> <span class="title">ModuleB</span>()</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">@property</span> (<span class="keyword">nonatomic</span>, <span class="keyword">weak</span>) ModuleContext *context;</span><br><span class="line"></span><br><span class="line"><span class="keyword">@end</span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">@implementation</span> <span class="title">ModuleB</span></span></span><br><span class="line"></span><br><span class="line">+ (<span class="keyword">nonnull</span> <span class="built_in">NSString</span> *)moduleName &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="string">@"b"</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (<span class="keyword">instancetype</span>)initWithEngine:(KKJSBridgeEngine *)engine context:(<span class="keyword">id</span>)context &#123;</span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">self</span> = [<span class="keyword">super</span> init]) &#123;</span><br><span class="line">        _context = context;</span><br><span class="line">        <span class="built_in">NSLog</span>(<span class="string">@"ModuleB 初始化并带上 %@"</span>, <span class="keyword">self</span>.context.name);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">self</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (<span class="keyword">void</span>)callToGetVCTitle:(KKJSBridgeEngine *)engine params:(<span class="built_in">NSDictionary</span> *)params responseCallback:(<span class="keyword">void</span> (^)(<span class="built_in">NSDictionary</span> *responseData))responseCallback &#123;</span><br><span class="line">    responseCallback ? responseCallback(@&#123;<span class="string">@"title"</span>: <span class="keyword">self</span>.context.vc.navigationItem.title ? <span class="keyword">self</span>.context.vc.navigationItem.title : <span class="string">@""</span>&#125;) : <span class="literal">nil</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">@end</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight objectivec"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 给 webView 绑定一个 Bridge Engine</span></span><br><span class="line">_jsBridgeEngine = [KKJSBridgeEngine bridgeForWebView:<span class="keyword">self</span>.webView];</span><br><span class="line"></span><br><span class="line"><span class="comment">// 创建一个上下文对象</span></span><br><span class="line">ModuleContext *context = [ModuleContext new];</span><br><span class="line">context.vc = <span class="keyword">self</span>;</span><br><span class="line">context.scrollView = <span class="keyword">self</span>.webView.scrollView;</span><br><span class="line">context.name = <span class="string">@"上下文"</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 注册 模块B 并带入上下文</span></span><br><span class="line">[<span class="keyword">self</span>.jsBridgeEngine.moduleRegister registerModuleClass:ModuleB.class withContext:context];</span><br></pre></td></tr></table></figure>
+
+<p>在 JS 代码里可以用如下形式来调用。</p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="built_in">window</span>.KKJSBridge.call(<span class="string">'b'</span>, <span class="string">'callToGetVCTitle'</span>, &#123;&#125;, <span class="function"><span class="keyword">function</span>(<span class="params">res</span>) </span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">'receive vc title：'</span>, res.title);</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+<h2 id="支持模块消息转发"><a href="#支持模块消息转发" class="headerlink" title="支持模块消息转发"></a>支持模块消息转发</h2><p>有时候前期我们只定义了一个模块，所有 JSAPI 都在里面，后期想清楚了，又想要把 JSAPI 分模块来管理，那这里提供了一个转发机制，把一个模块的消息转发给另一个模块。</p>
+<figure class="highlight objectivec"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">@implementation</span> <span class="title">ModuleDefault</span></span></span><br><span class="line"></span><br><span class="line">+ (<span class="keyword">nonnull</span> <span class="built_in">NSString</span> *)moduleName &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="string">@"default"</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">+ (<span class="keyword">nonnull</span> <span class="built_in">NSDictionary</span>&lt;<span class="built_in">NSString</span> *, <span class="built_in">NSString</span> *&gt; *)methodInvokeMapper &#123;</span><br><span class="line">    <span class="comment">// 消息转发，可以把 本模块的消息转发到 c 模块里</span></span><br><span class="line">    <span class="keyword">return</span> @&#123;<span class="string">@"method"</span>: <span class="string">@"c.method"</span>&#125;;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (<span class="keyword">void</span>)method:(KKJSBridgeEngine *)engine params:(<span class="built_in">NSDictionary</span> *)params responseCallback:(<span class="keyword">void</span> (^)(<span class="built_in">NSDictionary</span> *responseData))responseCallback &#123;</span><br><span class="line">    responseCallback ? responseCallback(@&#123;<span class="string">@"desc"</span>: <span class="string">@"我是默认模块"</span>&#125;) : <span class="literal">nil</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">@end</span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">@implementation</span> <span class="title">ModuleC</span></span></span><br><span class="line"></span><br><span class="line">+ (<span class="keyword">nonnull</span> <span class="built_in">NSString</span> *)moduleName &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="string">@"c"</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (<span class="keyword">void</span>)method:(KKJSBridgeEngine *)engine params:(<span class="built_in">NSDictionary</span> *)params responseCallback:(<span class="keyword">void</span> (^)(<span class="built_in">NSDictionary</span> *responseData))responseCallback &#123;</span><br><span class="line">    responseCallback ? responseCallback(@&#123;<span class="string">@"desc"</span>: <span class="string">@"我是c模块"</span>&#125;) : <span class="literal">nil</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">@end</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight objectivec"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 给 webView 绑定一个 Bridge Engine</span></span><br><span class="line">_jsBridgeEngine = [KKJSBridgeEngine bridgeForWebView:<span class="keyword">self</span>.webView];</span><br><span class="line"><span class="comment">// 注册 默认模块</span></span><br><span class="line">[<span class="keyword">self</span>.jsBridgeEngine.moduleRegister registerModuleClass:ModuleDefault.class];</span><br><span class="line"><span class="comment">// 注册 模块C</span></span><br><span class="line">[<span class="keyword">self</span>.jsBridgeEngine.moduleRegister registerModuleClass:ModuleC.class];</span><br></pre></td></tr></table></figure>
+
+<p>在 JS 代码里可以用如下形式来调用。</p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="built_in">window</span>.KKJSBridge.call(<span class="string">'default'</span>, <span class="string">'method'</span>, &#123;<span class="attr">a</span>:<span class="number">4</span>&#125;, <span class="function"><span class="keyword">function</span>(<span class="params">res</span>) </span>&#123;</span><br><span class="line">    <span class="comment">// 这里输出的是'receive method desc of default module：我是c模块'</span></span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">'receive method desc of default module：'</span>, res.desc);</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+<h2 id="支持离线资源-amp-支持-ajax-hook"><a href="#支持离线资源-amp-支持-ajax-hook" class="headerlink" title="支持离线资源&amp;支持 ajax hook"></a>支持离线资源&amp;支持 ajax hook</h2><p>我们都知道 WKWebView 支持离线资源，需要使用 NSURLProtocol 注册 http/https scheme 进行请求拦截，才能实现加载本地资源。而一旦进行注册， Network Process 进程把 ajax 请求 encode 后，通过 IPC 发送回 App Process，由于出于性能考虑，而不会把 HTTPBody 和 HTTPBodyStream 发送回来，所以就会导致 ajax 请求 body 体丢失。</p>
+<p>为了既不影响 WKWebView 原有的离线包流程，又不影响 H5 侧发送 ajax 请求的体验，ajax hook 方式是目前合适的方式。好在有一个开源库 <a href="https://github.com/wendux/Ajax-hook" target="_blank" rel="noopener">Ajax-hook</a> 实现了在 H5 侧进行 ajax hook，那我们可以使用这个能力，在关键属性，方法，回调里通过 JSAPI 来调用 Native 的能力。</p>
+<p>这里的样例代码展现的是怎么 hook readyState 属性和 open 方法，拦截 open 方法，可以使用 JSAPI 去调用 Native 侧发送请求能力，然后把 readyState 的所有状态按照 XMLHttpRequest 标准返回。具体的逻辑可以查看 GitHub。</p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="built_in">window</span>._hookAjaxProxy.hookAjax(&#123;</span><br><span class="line">            <span class="comment">// 拦截属性</span></span><br><span class="line">            readyState: &#123;</span><br><span class="line">                getter: <span class="function"><span class="keyword">function</span> (<span class="params">v, xhr</span>) </span>&#123;</span><br><span class="line">                    <span class="keyword">return</span> xhr.callbackProperties.readyState;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="comment">//拦截方法</span></span><br><span class="line">            open: <span class="function"><span class="keyword">function</span> (<span class="params">arg, xhr</span>) </span>&#123;</span><br><span class="line">                <span class="built_in">console</span>.log(<span class="string">"open called: method:%s,url:%s,async:%s"</span>, arg[<span class="number">0</span>], arg[<span class="number">1</span>], arg[<span class="number">2</span>]);</span><br><span class="line">                <span class="keyword">var</span> method = arg[<span class="number">0</span>];</span><br><span class="line">                <span class="keyword">var</span> url = arg[<span class="number">1</span>];</span><br><span class="line">                <span class="keyword">var</span> <span class="keyword">async</span> = arg[<span class="number">2</span>];</span><br><span class="line">                _XHR.cacheXHRIfNeed(<span class="keyword">this</span>);</span><br><span class="line">                <span class="built_in">window</span>.KKJSBridge.call(_XHR.moduleName, <span class="string">'open'</span>, &#123;</span><br><span class="line">                    <span class="string">"id"</span>: <span class="keyword">this</span>.id,</span><br><span class="line">                    <span class="string">"method"</span>: method,</span><br><span class="line">                    <span class="string">"url"</span>: url,</span><br><span class="line">                    <span class="string">"scheme"</span>: <span class="built_in">window</span>.location.protocol,</span><br><span class="line">                    <span class="string">"host"</span>: <span class="built_in">window</span>.location.hostname,</span><br><span class="line">                    <span class="string">"port"</span>: <span class="built_in">window</span>.location.port,</span><br><span class="line">                    <span class="string">"href"</span>: <span class="built_in">window</span>.location.href,</span><br><span class="line">                    <span class="string">"referer"</span>: <span class="built_in">document</span>.referrer != <span class="string">""</span> ? <span class="built_in">document</span>.referrer : <span class="literal">null</span>,</span><br><span class="line">                    <span class="string">"useragent"</span>: navigator.userAgent,</span><br><span class="line">                    <span class="string">"async"</span>: <span class="keyword">async</span></span><br><span class="line">                &#125;);</span><br><span class="line">                <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">            &#125;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+<h2 id="Native-和-H5-侧都可以控制-ajax-hook-开关"><a href="#Native-和-H5-侧都可以控制-ajax-hook-开关" class="headerlink" title="Native 和 H5 侧都可以控制 ajax hook 开关"></a>Native 和 H5 侧都可以控制 ajax hook 开关</h2><p>考虑在 H5 侧增加开关，目的是应对突发情况，当 H5 侧在发送 ajax 请求有问题时，我们可以通过 H5 侧的开关，来动态关闭 hook 功能，H5 侧控制了 ajax hook 开关时，都会通过 JSAPI 来通知 Native，可以让 H5 的开关同步到 Native 侧，这里我们可以通过 KVO/RAC 形式可以来监听 Native 侧的开关，来动态的注册和取消注册 http/https，来保证 H5 的变化能动态的同步到 Native 而不影响正常功能。</p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">var</span> KKJSBridgeConfig = <span class="comment">/** @class */</span> (<span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">function</span> <span class="title">KKJSBridgeConfig</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 开启 ajax hook，方便 H5 自己控制是否开启 ajax hook</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    KKJSBridgeConfig.enableAjaxHook = <span class="function"><span class="keyword">function</span> (<span class="params">enable</span>) </span>&#123;</span><br><span class="line">        KKJSBridgeConfig.enableAjaxHookWithNotify(enable, <span class="literal">true</span>);</span><br><span class="line">    &#125;;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 开启 ajax hook 并 通知 native，方便 H5 自己控制是否开启 ajax hook</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    KKJSBridgeConfig.enableAjaxHookWithNotify = <span class="function"><span class="keyword">function</span> (<span class="params">enable, notifyNative</span>) </span>&#123;</span><br><span class="line">        <span class="function"><span class="keyword">function</span> <span class="title">_innerEnableAjaxHook</span>(<span class="params">enable</span>) </span>&#123;</span><br><span class="line">            <span class="keyword">if</span> (enable) &#123;</span><br><span class="line">                hookAjax();</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">else</span> &#123;</span><br><span class="line">                unHookAjax();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (notifyNative) &#123; <span class="comment">// 是否需要通知到 native 侧，当需要通知 native 侧时，需要在通知后再来执行 H5 侧的开关修改</span></span><br><span class="line">            <span class="built_in">window</span>.KKJSBridge.call(KKJSBridgeConfig.moduleName, <span class="string">'receiveConfig'</span>, &#123; <span class="attr">isEnableAjaxHook</span>: enable &#125;, <span class="function"><span class="keyword">function</span> (<span class="params">data</span>) </span>&#123;</span><br><span class="line">                <span class="built_in">console</span>.log(<span class="string">"h5 control ajaxHook "</span>, enable);</span><br><span class="line">                _innerEnableAjaxHook(enable);</span><br><span class="line">            &#125;);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="built_in">console</span>.log(<span class="string">"native control ajaxHook "</span>, enable);</span><br><span class="line">            _innerEnableAjaxHook(enable);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> KKJSBridgeConfig;</span><br><span class="line">&#125;());</span><br><span class="line"><span class="built_in">window</span>.KKJSBridgeConfig.enableAjaxHook(<span class="literal">false</span>);</span><br></pre></td></tr></table></figure>
+
+<h2 id="Cookie-统一管理"><a href="#Cookie-统一管理" class="headerlink" title="Cookie 统一管理"></a>Cookie 统一管理</h2><p>为了让 Cookie 处理更加统一和高内聚，这里定义了 KKWebView 并继承 WKWebView。同时也定义 KKWebViewCookieManager 来帮助处理 cookie 同步的问题。</p>
+<p>还是先列下所有情况下 cookie 同步的问题，然后一一看下是怎么解决的：</p>
+<ul>
+<li><p>首次同步请求的 cookie 同步（NSHTTPCookieStorage 同步到 WKWebView cookie）</p>
+<p>在首次请求发送之前，先进行 cookie 同步处理。</p>
+<figure class="highlight objectivec"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">@implementation</span> <span class="title">KKWebViewCookieManager</span></span></span><br><span class="line">+ (<span class="keyword">void</span>)syncRequestCookie:(<span class="built_in">NSMutableURLRequest</span> *)request &#123;</span><br><span class="line">    <span class="keyword">if</span> (!request.URL) &#123;</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">NSArray</span> *availableCookie = [[<span class="built_in">NSHTTPCookieStorage</span> sharedHTTPCookieStorage] cookiesForURL:request.URL];</span><br><span class="line">    <span class="keyword">if</span> (availableCookie.count &gt; <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="built_in">NSDictionary</span> *reqHeader = [<span class="built_in">NSHTTPCookie</span> requestHeaderFieldsWithCookies:availableCookie];</span><br><span class="line">        <span class="built_in">NSString</span> *cookieStr = [reqHeader objectForKey:<span class="string">@"Cookie"</span>];</span><br><span class="line">        [request setValue:cookieStr forHTTPHeaderField:<span class="string">@"Cookie"</span>];</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">@end</span></span><br></pre></td></tr></table></figure>
+
+
+</li>
+</ul>
+  <figure class="highlight objectivec"><table><tr><td class="code"><pre><span class="line">- (<span class="keyword">nullable</span> <span class="built_in">WKNavigation</span> *)loadRequest:(<span class="built_in">NSURLRequest</span> *)request &#123;</span><br><span class="line">    <span class="built_in">NSMutableURLRequest</span> *requestWithCookie = request.mutableCopy;</span><br><span class="line">    [KKWebViewCookieManager syncRequestCookie:requestWithCookie];</span><br><span class="line">    <span class="keyword">return</span> [<span class="keyword">super</span> loadRequest:requestWithCookie];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><p>异步 ajax 的 cookie 同步（NSHTTPCookieStorage 同步到 WKWebView cookie）</p>
+<p>通过 JS 注入的形式，来处理异步 ajax cookie 同步的问题。</p>
+<figure class="highlight objectivec"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">@implementation</span> <span class="title">KKWebViewCookieManager</span></span></span><br><span class="line">+ (<span class="built_in">NSString</span> *)ajaxCookieScripts &#123;</span><br><span class="line">    <span class="built_in">NSMutableString</span> *cookieScript = [[<span class="built_in">NSMutableString</span> alloc] init];</span><br><span class="line">    <span class="keyword">for</span> (<span class="built_in">NSHTTPCookie</span> *cookie <span class="keyword">in</span> [[<span class="built_in">NSHTTPCookieStorage</span> sharedHTTPCookieStorage] cookies]) &#123;</span><br><span class="line">        <span class="comment">// Skip cookies that will break our script</span></span><br><span class="line">        <span class="keyword">if</span> ([cookie.value rangeOfString:<span class="string">@"'"</span>].location != <span class="built_in">NSNotFound</span>) &#123;</span><br><span class="line">            <span class="keyword">continue</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// Create a line that appends this cookie to the web view's document's cookies</span></span><br><span class="line">        [cookieScript appendFormat:<span class="string">@"document.cookie='%@=%@;"</span>, cookie.name, cookie.value];</span><br><span class="line">        <span class="keyword">if</span> (cookie.domain || cookie.domain.length &gt; <span class="number">0</span>) &#123;</span><br><span class="line">            [cookieScript appendFormat:<span class="string">@"domain=%@;"</span>, cookie.domain];</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (cookie.path || cookie.path.length &gt; <span class="number">0</span>) &#123;</span><br><span class="line">            [cookieScript appendFormat:<span class="string">@"path=%@;"</span>, cookie.path];</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (cookie.expiresDate) &#123;</span><br><span class="line">            [cookieScript appendFormat:<span class="string">@"expires=%@;"</span>, [[<span class="keyword">self</span> cookieDateFormatter] stringFromDate:cookie.expiresDate]];</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (cookie.secure) &#123;</span><br><span class="line">            <span class="comment">// 只有 https 请求才能携带该 cookie</span></span><br><span class="line">            [cookieScript appendString:<span class="string">@"Secure;"</span>];</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (cookie.HTTPOnly) &#123;</span><br><span class="line">            <span class="comment">// 保持 native 的 cookie 完整性，当 HTTPOnly 时，不能通过 document.cookie 来读取该 cookie。</span></span><br><span class="line">            [cookieScript appendString:<span class="string">@"HTTPOnly;"</span>];</span><br><span class="line">        &#125;</span><br><span class="line">        [cookieScript appendFormat:<span class="string">@"'\n"</span>];</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> cookieScript;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">@end</span></span><br></pre></td></tr></table></figure>
+
+
+</li>
+</ul>
+  <figure class="highlight objectivec"><table><tr><td class="code"><pre><span class="line"><span class="built_in">WKUserScript</span> *cookieScript = [[<span class="built_in">WKUserScript</span> alloc] initWithSource:[KKWebViewCookieManager ajaxCookieScripts] injectionTime:<span class="built_in">WKUserScriptInjectionTimeAtDocumentStart</span> forMainFrameOnly:<span class="literal">NO</span>];</span><br><span class="line">    [<span class="keyword">self</span>.configuration.userContentController addUserScript:cookieScript];</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><p>服务器端（302）重定向/浏览器重定向的 cookie 同步（NSHTTPCookieStorage 同步到 WKWebView cookie）</p>
+<p>在每次跳转之前，通过再次同步请求的 cookie，来解决重定向 cookie 不同步的问题。</p>
+<figure class="highlight objectivec"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 1、在发送请求之前，决定是否跳转</span></span><br><span class="line">- (<span class="keyword">void</span>)webView:(<span class="built_in">WKWebView</span> *)webView decidePolicyForNavigationAction:(<span class="built_in">WKNavigationAction</span> *)navigationAction decisionHandler:(<span class="keyword">void</span> (^)(<span class="built_in">WKNavigationActionPolicy</span>))decisionHandler &#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     【COOKIE 3】对服务器端重定向(302)/浏览器重定向(a标签[包括 target="_blank"]) 进行同步 cookie 处理。</span></span><br><span class="line"><span class="comment">     由于所有的跳转都会是 NSMutableURLRequest 类型，同时也无法单独区分出 302 服务器端重定向跳转，所以这里统一对服务器端重定向(302)/浏览器重定向(a标签[包括 target="_blank"])进行同步 cookie 处理。</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">if</span> ([navigationAction.request isKindOfClass:<span class="built_in">NSMutableURLRequest</span>.class]) &#123;</span><br><span class="line">        [KKWebViewCookieManager syncRequestCookie:(<span class="built_in">NSMutableURLRequest</span> *)navigationAction.request];</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>服务器端响应头里的 Set-Cookie 同步（WKWebView cookie 同步到 NSHTTPCookieStorage）</p>
+<p>通过 WKWebView 的代理方法，在收到响应头后，可以从响应头 Set-Cookie 取到 cookie 信息，然后同步给 NSHTTPCookieStorage。</p>
+<figure class="highlight objectivec"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 3、在收到响应后，决定是否跳转</span></span><br><span class="line">- (<span class="keyword">void</span>)webView:(<span class="built_in">WKWebView</span> *)webView decidePolicyForNavigationResponse:(<span class="built_in">WKNavigationResponse</span> *)navigationResponse decisionHandler:(<span class="keyword">void</span> (^)(<span class="built_in">WKNavigationResponsePolicy</span>))decisionHandler &#123;</span><br><span class="line">    <span class="comment">// iOS 12 之后，响应头里 Set-Cookie 不再返回。 所以这里针对系统版本做区分处理。</span></span><br><span class="line">    <span class="keyword">if</span> (@available(iOS <span class="number">11.0</span>, *)) &#123;</span><br><span class="line">        <span class="comment">// 【COOKIE 4】同步 WKWebView cookie 到 NSHTTPCookieStorage。</span></span><br><span class="line">        [KKWebViewCookieManager copyWKHTTPCookieStoreToNSHTTPCookieStorageForWebViewOniOS11:webView withCompletion:<span class="literal">nil</span>];</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="comment">// 【COOKIE 4】同步服务器端响应头里的 Set-Cookie，既把 WKWebView cookie 同步到 NSHTTPCookieStorage。</span></span><br><span class="line">        <span class="built_in">NSHTTPURLResponse</span> *response = (<span class="built_in">NSHTTPURLResponse</span> *)navigationResponse.response;</span><br><span class="line">        <span class="built_in">NSArray</span> *cookies = [<span class="built_in">NSHTTPCookie</span> cookiesWithResponseHeaderFields:[response allHeaderFields] forURL:response.URL];</span><br><span class="line">        <span class="keyword">for</span> (<span class="built_in">NSHTTPCookie</span> *cookie <span class="keyword">in</span> cookies) &#123;</span><br><span class="line">            [[<span class="built_in">NSHTTPCookieStorage</span> sharedHTTPCookieStorage] setCookie:cookie];</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>H5 侧的 document.cookie 同步（WKWebView cookie 同步到 NSHTTPCookieStorage）</p>
+<p>可以使用 cookie hook 来把 document.cookie 的修改，通过 JSAPI 同步给 NSHTTPCookieStorage。</p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">var</span> cookieDesc = <span class="built_in">Object</span>.getOwnPropertyDescriptor(Document.prototype, <span class="string">'cookie'</span>) || <span class="built_in">Object</span>.getOwnPropertyDescriptor(HTMLDocument.prototype, <span class="string">'cookie'</span>);</span><br><span class="line"><span class="keyword">if</span> (cookieDesc &amp;&amp; cookieDesc.configurable) &#123;</span><br><span class="line">    <span class="built_in">Object</span>.defineProperty(<span class="built_in">document</span>, <span class="string">'cookie'</span>, &#123;</span><br><span class="line">        configurable: <span class="literal">true</span>,</span><br><span class="line">        enumerable: <span class="literal">true</span>,</span><br><span class="line">        <span class="keyword">get</span>: function () &#123;</span><br><span class="line">            <span class="built_in">console</span>.log(<span class="string">'getCookie'</span>);</span><br><span class="line">            <span class="keyword">return</span> cookieDesc.get.call(<span class="built_in">document</span>);</span><br><span class="line">        &#125;,</span><br><span class="line">        <span class="keyword">set</span>: function (val) &#123;</span><br><span class="line">            <span class="built_in">console</span>.log(<span class="string">'setCookie'</span>);</span><br><span class="line">            cookieDesc.set.call(<span class="built_in">document</span>, val);</span><br><span class="line">            <span class="built_in">window</span>.KKJSBridge.call(_COOKIE.moduleName, <span class="string">'setCookie'</span>, &#123;</span><br><span class="line">                <span class="string">"cookie"</span>: val</span><br><span class="line">            &#125;);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>异步 ajax 响应头里的 Set-Cookie 同步（WKWebView cookie 同步到 NSHTTPCookieStorage）</p>
+<p>处理 ajax response Set-Cookie 同步问题，此时 Set-Cookie 并不会触发 document.cookie 设置 cookie。一般只有登录相关的 ajax 请求才会在 response 里返回 Set-Cookie。好在 Hybird WebView 都是以 Native 的登录 cookie 为准，这种情况影响不大，主要是需要跟前端约定好。</p>
+<p>如果再和 ajax hook 结合后，所有的 ajax 都是走的 native 发送请求，request 自动从 NSHTTPCookieStorage 获取 cookie，并且 response Set-Cookie 也都会存在 NSHTTPCookieStorage 里，所以这个问题是可以通过 ajax hook 来完美解决的。</p>
+</li>
+<li><p>cookie HTTPOnly 同步 （NSHTTPCookieStorage 同步到 WKWebView cookie 和 WKWebView cookie 同步到 NSHTTPCookieStorage）</p>
+<p>我们都知道一旦设置了 HTTPOnly，则意味着 通过 document.cookie 是获取不到该 cookie，而实际发送请求时，还是会发送出去的。</p>
+<p>针对这类的 cookie，需要分为两类来看：</p>
+<ul>
+<li><p>如果 HTTPOnly 类 cookie 也是在 Native 上的登录接口返回的，而通过 ajax cookie js 注入去同步 cookie 时，HTTPOnly cookie 也是可以发送让 ajax 携带并发送的，这种是正常的操作，也没有问题。</p>
+</li>
+<li><p>而如果 HTTPOnly 类 cookie 是在 H5 侧通过 ajax reposne Set-Cookie HttpOnly 设置的，这种情况处理不了，因为从 document.cookie 本身是读取不到 HTTPOnly 类 cookie 的。所以还是建议针对这类 cookie 最好是通过 native 来管理。</p>
+</li>
+</ul>
+<p>针对第二类的 HTTPOnly 类 cookie 问题，如果结合 ajax hook 来看，Natvie 发送的请求是不会依赖 document.cookie，也是会通过 NSHTTPCookieStorage 获取 cookie，来发送请求的，所以针对这点，也是可以通过 ajax hook 来完美解决。</p>
+</li>
+</ul>
+<h2 id="WKWebView-复用"><a href="#WKWebView-复用" class="headerlink" title="WKWebView 复用"></a>WKWebView 复用</h2><p>为了加载 H5 的首屏速度，可以在启动时，加载一个 WKWebView 到复用池子里，等第一次加载 H5 时，可以从复用池取出缓存的 WKWebView，就可以直接使用，省去初始化的过程。</p>
+<figure class="highlight objectivec"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">@implementation</span> <span class="title">WebViewController</span></span></span><br><span class="line"></span><br><span class="line">+ (<span class="keyword">void</span>)load &#123;</span><br><span class="line">    __block <span class="keyword">id</span> observer = [[<span class="built_in">NSNotificationCenter</span> defaultCenter] addObserverForName:<span class="built_in">UIApplicationDidFinishLaunchingNotification</span> object:<span class="literal">nil</span> queue:<span class="literal">nil</span> usingBlock:^(<span class="built_in">NSNotification</span> * _Nonnull note) &#123;</span><br><span class="line">        [<span class="keyword">self</span> prepareWebView];</span><br><span class="line">        [[<span class="built_in">NSNotificationCenter</span> defaultCenter] removeObserver:observer];</span><br><span class="line">    &#125;];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">+ (<span class="keyword">void</span>)prepareWebView &#123;</span><br><span class="line">    <span class="comment">// 预先缓存一个 webView</span></span><br><span class="line">    [KKWebView configCustomUAWithType:KKWebViewConfigUATypeAppend UAString:<span class="string">@"KKJSBridge/1.0.0"</span>];</span><br><span class="line">    [[KKWebViewPool sharedInstance] enqueueWebViewWithClass:KKWebView.class];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (<span class="keyword">void</span>)dealloc &#123;</span><br><span class="line">    [[KKWebViewPool sharedInstance] enqueueWebView:<span class="keyword">self</span>.webView];</span><br><span class="line">    <span class="built_in">NSLog</span>(<span class="string">@"WebViewController dealloc"</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (<span class="keyword">instancetype</span>)initWithUrl:(<span class="built_in">NSString</span> *)url &#123;</span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">self</span> = [<span class="keyword">super</span> initWithNibName:<span class="literal">nil</span> bundle:<span class="literal">nil</span>]) &#123;</span><br><span class="line">        _url = [url <span class="keyword">copy</span>];</span><br><span class="line">        [<span class="keyword">self</span> commonInit];</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">self</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (<span class="keyword">void</span>)commonInit &#123;</span><br><span class="line">    <span class="comment">// 从复用池取出缓存的 WKWebView</span></span><br><span class="line">    _webView = [[KKWebViewPool sharedInstance] dequeueWebViewWithClass:KKWebView.class webViewHolder:<span class="keyword">self</span>];</span><br><span class="line">    _webView.configuration.allowsInlineMediaPlayback = <span class="literal">YES</span>;</span><br><span class="line">    _webView.configuration.preferences.minimumFontSize = <span class="number">12</span>;</span><br><span class="line">    _webView.hybirdDelegate = <span class="keyword">self</span>;</span><br><span class="line">    _jsBridgeEngine = [KKJSBridgeEngine bridgeForWebView:<span class="keyword">self</span>.webView];</span><br><span class="line">    _jsBridgeEngine.config.enableAjaxHook = <span class="literal">YES</span>;</span><br><span class="line"></span><br><span class="line">    [<span class="keyword">self</span> compatibleWebViewJavascriptBridge];</span><br><span class="line">    [<span class="keyword">self</span> registerModule];</span><br><span class="line">    [<span class="keyword">self</span> loadRequest];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">@end</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="兼容-WebViewJavascriptBridge"><a href="#兼容-WebViewJavascriptBridge" class="headerlink" title="兼容 WebViewJavascriptBridge"></a>兼容 WebViewJavascriptBridge</h2><p>兼容 WebViewJavascriptBridge 本身不是目的，这里是提供了一个小思路，可以方便让自己的通信层更新换代。</p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 当 H5 还在使用 WebViewJavascriptBridge（基于 iframe 通信） 框架时，可以通过下方代码来兼容 WebViewJavascriptBridge。这样可以在不用改动 H5 任何代码，就可以无缝支持新的 JSBridge。</span></span><br><span class="line"><span class="comment"> * 如果使用不是 WebViewJavascriptBridge 这样的框架，兼容的原理也是类似的。</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line">; (<span class="function"><span class="keyword">function</span>(<span class="params">window</span>) </span>&#123;</span><br><span class="line">   <span class="comment">// 声明 WebViewJavascriptBridge 在函数体作用域里，这样就不会污染全局作用域</span></span><br><span class="line">   <span class="keyword">var</span> WebViewJavascriptBridge = &#123;</span><br><span class="line">     init: <span class="function"><span class="keyword">function</span> (<span class="params">func</span>) </span>&#123;</span><br><span class="line">     &#125;,</span><br><span class="line">     registerHandler: <span class="function"><span class="keyword">function</span> (<span class="params">handlerName, handler</span>) </span>&#123;</span><br><span class="line">       <span class="built_in">window</span>.KKJSBridgeInstance.on(handlerName, handler);</span><br><span class="line">     &#125;,</span><br><span class="line">     callHandler: <span class="function"><span class="keyword">function</span> (<span class="params">handlerName, data, responseCallback</span>) </span>&#123;</span><br><span class="line">       <span class="built_in">window</span>.KKJSBridgeInstance.call(<span class="literal">null</span>, handlerName, data, responseCallback);</span><br><span class="line">     &#125;</span><br><span class="line">   &#125;;</span><br><span class="line">   <span class="built_in">window</span>.WebViewJavascriptBridge = WebViewJavascriptBridge;</span><br><span class="line"></span><br><span class="line">   <span class="comment">// 告诉 H5， WebViewJavascriptBridge 已经 ready</span></span><br><span class="line">   <span class="keyword">let</span> WebViewJavascriptBridgeReadyEvent: Event = <span class="built_in">document</span>.createEvent(<span class="string">"Events"</span>);</span><br><span class="line">   WebViewJavascriptBridge.initEvent(<span class="string">"WebViewJavascriptBridgeReady"</span>);</span><br><span class="line">   <span class="built_in">document</span>.dispatchEvent(WebViewJavascriptBridge);</span><br><span class="line">&#125;)(<span class="built_in">window</span>);</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight objectivec"><table><tr><td class="code"><pre><span class="line"><span class="built_in">NSString</span> *jsString = [[<span class="built_in">NSString</span> alloc] initWithContentsOfFile:[[<span class="built_in">NSBundle</span> bundleForClass:<span class="keyword">self</span>.class] pathForResource:<span class="string">@"WebViewJavascriptBridge"</span> ofType:<span class="string">@"js"</span>] encoding:<span class="built_in">NSUTF8StringEncoding</span> error:<span class="literal">NULL</span>];</span><br><span class="line">    <span class="built_in">WKUserScript</span> *userScript = [[<span class="built_in">WKUserScript</span> alloc] initWithSource:jsString injectionTime:<span class="built_in">WKUserScriptInjectionTimeAtDocumentStart</span> forMainFrameOnly:<span class="literal">NO</span>];</span><br><span class="line">    [<span class="keyword">self</span>.webView.configuration.userContentController addUserScript:userScript];</span><br></pre></td></tr></table></figure>
+
+<h2 id="GitHub地址"><a href="#GitHub地址" class="headerlink" title="GitHub地址"></a>GitHub地址</h2><p><a href="https://github.com/karosLi/KKJSBridge" target="_blank" rel="noopener">https://github.com/karosLi/KKJSBridge</a></p>
+<h2 id="TODO"><a href="#TODO" class="headerlink" title="TODO"></a>TODO</h2><ul>
+<li><input disabled type="checkbox"> Fetch hook。 虽然现在大多数 H5 页面的异步请求都是基于 ajax 实现的，随着 Fetch 的慢慢普及，后面也会多起来。</li>
+</ul>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ul>
+<li><p><a href="https://github.com/wendux/Ajax-hook" target="_blank" rel="noopener">Ajax-hook</a></p>
+</li>
+<li><p><a href="https://github.com/dequan1331/HybridPageKit" target="_blank" rel="noopener">HybridPageKit</a></p>
+</li>
+<li><p><a href="https://github.com/kercer/kerkee_ios" target="_blank" rel="noopener">kerkee_ios</a></p>
+</li>
+</ul>
+
+          
         
       
-    </li></ul></div>
+    </div>
 
     <div>
       
@@ -1622,342 +2166,11 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-  <link itemprop="mainEntityOfPage" href="https://karosli.github.io/2017/05/27/Hybird-App离线缓存系统/">
-
-  <span style="display:none" itemprop="author" itemscope itemtype="http://schema.org/Person">
-    <meta itemprop="name" content="KarosLi (卡洛斯)">
-    <meta itemprop="description" content>
-    <meta itemprop="image" content="/images/avatar.jpeg">
-  </span>
-
-  <span style="display:none" itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-    <meta itemprop="name" content="卡洛斯的博客">
-    <span style="display:none" itemprop="logo" itemscope itemtype="http://schema.org/ImageObject">
-      <img style="display:none;" itemprop="url image" alt="卡洛斯的博客" src>
-    </span>
-  </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2017/05/27/Hybird-App离线缓存系统/" itemprop="url">
-                  Hybird-App离线缓存系统
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-05-27T23:42:20+08:00">
-                2017-05-27
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category">
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/hybird/" itemprop="url" rel="index">
-                    <span itemprop="name">hybird</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-              <span class="post-comments-count">
-                <span class="post-meta-divider">|</span>
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-comment-o"></i>
-                </span>
-                <a href="/2017/05/27/Hybird-App离线缓存系统/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="2017/05/27/Hybird-App离线缓存系统/" itemprop="commentCount"></span>
-                </a>
-              </span>
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <h1 id="Hybird-App离线缓存系统"><a href="#Hybird-App离线缓存系统" class="headerlink" title="Hybird-App离线缓存系统"></a>Hybird-App离线缓存系统</h1><h2 id="目录"><a href="#目录" class="headerlink" title="目录"></a>目录</h2><blockquote>
-<ul>
-<li>背景</li>
-<li>接口格式</li>
-<li>离线资源包格式</li>
-<li>离线资源下发</li>
-<li>离线资源缓存</li>
-</ul>
-</blockquote>
-<h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>由于线上乐刻客户端 <code>App</code> 第一次打开平台 <code>H5</code> 需要几秒的加载时间，这个体验对用户来说并不友好，为了让用户跳转 <code>H5</code> 和跳转到原生一样的用户体验，就需要把 <code>H5</code> 相关的离线资源包下发给客户端，客户端就可以使用离线资源来代替实际网络请求，节省用户等待时间和流量消耗。并且随着业务的发展，不同的业务升级进度不一样，就需要 <code>App</code> 支持模块化升级。</p>
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2017/05/27/Hybird-App离线缓存系统/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-  <link itemprop="mainEntityOfPage" href="https://karosli.github.io/2017/05/27/Hybird-后台接口和后台管理界面/">
-
-  <span style="display:none" itemprop="author" itemscope itemtype="http://schema.org/Person">
-    <meta itemprop="name" content="KarosLi (卡洛斯)">
-    <meta itemprop="description" content>
-    <meta itemprop="image" content="/images/avatar.jpeg">
-  </span>
-
-  <span style="display:none" itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-    <meta itemprop="name" content="卡洛斯的博客">
-    <span style="display:none" itemprop="logo" itemscope itemtype="http://schema.org/ImageObject">
-      <img style="display:none;" itemprop="url image" alt="卡洛斯的博客" src>
-    </span>
-  </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2017/05/27/Hybird-后台接口和后台管理界面/" itemprop="url">
-                  Hybird-后台接口和后台管理界面
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-05-27T23:42:20+08:00">
-                2017-05-27
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category">
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/hybird/" itemprop="url" rel="index">
-                    <span itemprop="name">hybird</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-              <span class="post-comments-count">
-                <span class="post-meta-divider">|</span>
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-comment-o"></i>
-                </span>
-                <a href="/2017/05/27/Hybird-后台接口和后台管理界面/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="2017/05/27/Hybird-后台接口和后台管理界面/" itemprop="commentCount"></span>
-                </a>
-              </span>
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <h1 id="Hybird-后台接口和后台管理界面"><a href="#Hybird-后台接口和后台管理界面" class="headerlink" title="Hybird-后台接口和后台管理界面"></a>Hybird-后台接口和后台管理界面</h1><h2 id="目录"><a href="#目录" class="headerlink" title="目录"></a>目录</h2><blockquote>
-<ul>
-<li>背景</li>
-<li>接口格式</li>
-<li>管理界面</li>
-<li>后台逻辑</li>
-</ul>
-</blockquote>
-<h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>由于线上乐刻客户端 <code>App</code> 第一次打开平台 <code>H5</code> 需要几秒的加载时间，这个体验对用户来说并不友好，为了让用户跳转 <code>H5</code> 和跳转到原生一样的用户体验，就需要把 <code>H5</code> 相关的离线资源包下发给客户端，客户端就可以使用离线资源来代替实际网络请求，节省用户等待时间和流量消耗。这里就需要后台来负责离线资源包的管理和下发。</p>
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2017/05/27/Hybird-后台接口和后台管理界面/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
   </section>
 
   
   <nav class="pagination">
-    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="extend next" rel="next" href="/page/2/"><i class="fa fa-angle-right"></i></a>
+    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><a class="extend next" rel="next" href="/page/2/"><i class="fa fa-angle-right"></i></a>
   </nav>
 
 
@@ -1998,7 +2211,7 @@
           
             <div class="site-state-item site-state-posts">
               <a href="/archives">
-                <span class="site-state-item-count">19</span>
+                <span class="site-state-item-count">21</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
@@ -2016,7 +2229,7 @@
           
             <div class="site-state-item site-state-tags">
               <a href="/tags">
-                <span class="site-state-item-count">14</span>
+                <span class="site-state-item-count">16</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>
@@ -2070,7 +2283,7 @@
         <div class="copyright">
   
   &copy; 
-  <span itemprop="copyrightYear">2019</span>
+  <span itemprop="copyrightYear">2020</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>
