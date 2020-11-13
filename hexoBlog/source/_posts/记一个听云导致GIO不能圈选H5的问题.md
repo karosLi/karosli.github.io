@@ -138,8 +138,8 @@ try {
 
 两张图来解释他们的 hook 时序和 hook 后的状态，由于我们 APP 引入了 Aspect，所以这里也把 Aspect hook 的逻辑化进来了，序号（1~8）代表执行顺序。
 
-{% asset_img "hook时序.jpg" %}
-{% asset_img "hook后的状态.jpg" %}
+{% asset_img "hooksequence.jpg" %}
+{% asset_img "hookstatus.jpg" %}
 
 
 > 听云这个时候是不应该针对动态生成的子类做处理的，需要一个过滤处理。而 GIO 在动态添加方法失败时，需要有一个兜底方案，目前是没有这么一个兜底方案的，所以这个问题是 GIO 和 听云共同造成的问题，并且是需要他们共同来解决的。
