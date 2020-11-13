@@ -97,7 +97,9 @@
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="https://karosli.github.io/2020/11/13/记一个听云导致GIO不能圈选H5的问题/tingyunend.jpg">
 <meta property="og:image" content="https://karosli.github.io/2020/11/13/记一个听云导致GIO不能圈选H5的问题/hookinitialize.jpg">
-<meta property="og:updated_time" content="2020-11-13T10:49:32.893Z">
+<meta property="og:image" content="https://karosli.github.io/2020/11/13/记一个听云导致GIO不能圈选H5的问题/hooksequence.png">
+<meta property="og:image" content="https://karosli.github.io/2020/11/13/记一个听云导致GIO不能圈选H5的问题/hookstatus.png">
+<meta property="og:updated_time" content="2020-11-13T10:52:28.268Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="记一个听云导致GIO不能圈选H5的问题">
 <meta name="twitter:description" content="记一个听云导致GIO不能圈选H5的问题产品侧是一直是使用 GIO 在 APP 内圈选 H5 页面来进行埋点的。然后有一天产品跑过来跟我说，GIO 在圈选 H5 元素时，不能弹出圈选操作的界面了，于是就走上了排查的不归路。 联系 GIO 技术客服联系了 GIO 技术客服，给他们提供了不能圈选 H5 的视频和 SDK 版本号。另外也告知了 GIO，我们最近是把 UIWebView 升级到了 WKWeb">
@@ -404,14 +406,17 @@
 <h2 id="成立专案组"><a href="#成立专案组" class="headerlink" title="成立专案组"></a>成立专案组</h2><p>那为什么 initialize 方法会导致 GIO 不能圈选呢？通过调试发现听云会 hook initialize 方法。</p>
 <img src="/2020/11/13/记一个听云导致GIO不能圈选H5的问题/hookinitialize.jpg">
 
+
 <p>于是就联系 GIO 和 听云技术客服，跟他们说这个需要三方一起来看这个问题，于是就成立了 GIO 不能圈选 H5 的专案组。</p>
 <p>再经过一番讨论和分析，已经确定了根本原因了：</p>
 <blockquote>
 <p>GIO 在每个页面初始化的时候动态创建一个子类继承当前页面(是通过 KVO 来做这种子类化的)，并给动态创建的子类添加 viewWillAppear 方法，而听云这个时候也会在动态生成的子类中添加  viewWillAppear 方法，由于听云添加此方法的时机是先与 GIO 的，所以会导致 GIO 动态添加方法失败，从而导致 GIO 不能执行添加的 viewWillAppear 方法里的自定义逻辑，从而导致圈选失败。</p>
 </blockquote>
 <p>两张图来解释他们的 hook 时序和 hook 后的状态，由于我们 APP 引入了 Aspect，所以这里也把 Aspect hook 的逻辑化进来了，序号（1~8）代表执行顺序。</p>
+<img src="/2020/11/13/记一个听云导致GIO不能圈选H5的问题/hooksequence.png">
 
 
+<img src="/2020/11/13/记一个听云导致GIO不能圈选H5的问题/hookstatus.png">
 
 
 <blockquote>
