@@ -130,6 +130,7 @@ try {
 
 {% asset_img "hookinitialize.jpg" %}
 
+
 于是就联系 GIO 和 听云技术客服，跟他们说这个需要三方一起来看这个问题，于是就成立了 GIO 不能圈选 H5 的专案组。
 
 再经过一番讨论和分析，已经确定了根本原因了：
@@ -138,8 +139,10 @@ try {
 
 两张图来解释他们的 hook 时序和 hook 后的状态，由于我们 APP 引入了 Aspect，所以这里也把 Aspect hook 的逻辑化进来了，序号（1~8）代表执行顺序。
 
-{% asset_img "hooksequence.jpg" %}
-{% asset_img "hookstatus.jpg" %}
+{% asset_img "hooksequence.png" %}
+
+
+{% asset_img "hookstatus.png" %}
 
 
 > 听云这个时候是不应该针对动态生成的子类做处理的，需要一个过滤处理。而 GIO 在动态添加方法失败时，需要有一个兜底方案，目前是没有这么一个兜底方案的，所以这个问题是 GIO 和 听云共同造成的问题，并且是需要他们共同来解决的。
