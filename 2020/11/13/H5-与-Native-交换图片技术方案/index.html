@@ -1,0 +1,738 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css">
+
+
+  <meta name="keywords" content="Hybrid,">
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.0">
+
+
+
+
+
+
+<meta name="description" content="H5 与 Native 交换图片技术方案背景目前在APP内的H5分享图片流程如下：  H5 -&amp;gt; canvas 绘制界面获取要分享的图片 -&amp;gt; 上传图片到 CDN -&amp;gt; 调用 JSSDK 的分享 API，入参是图片的 CDN 链接 -&amp;gt; App 收到分享请求后，会根据图片的 CDN 链接下载图片 -&amp;gt; 然后调用第三方 SDK 分享图片。  从这个过程中，实际上 H5">
+<meta name="keywords" content="Hybrid">
+<meta property="og:type" content="article">
+<meta property="og:title" content="H5 与 Native 交换图片技术方案">
+<meta property="og:url" content="https://karosli.github.io/2020/11/13/H5-与-Native-交换图片技术方案/index.html">
+<meta property="og:site_name" content="卡洛斯的博客">
+<meta property="og:description" content="H5 与 Native 交换图片技术方案背景目前在APP内的H5分享图片流程如下：  H5 -&amp;gt; canvas 绘制界面获取要分享的图片 -&amp;gt; 上传图片到 CDN -&amp;gt; 调用 JSSDK 的分享 API，入参是图片的 CDN 链接 -&amp;gt; App 收到分享请求后，会根据图片的 CDN 链接下载图片 -&amp;gt; 然后调用第三方 SDK 分享图片。  从这个过程中，实际上 H5">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://karosli.github.io/2020/11/13/H5-与-Native-交换图片技术方案/H5与Native图片交换时序图.jpg">
+<meta property="og:updated_time" content="2020-11-13T01:53:33.392Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="H5 与 Native 交换图片技术方案">
+<meta name="twitter:description" content="H5 与 Native 交换图片技术方案背景目前在APP内的H5分享图片流程如下：  H5 -&amp;gt; canvas 绘制界面获取要分享的图片 -&amp;gt; 上传图片到 CDN -&amp;gt; 调用 JSSDK 的分享 API，入参是图片的 CDN 链接 -&amp;gt; App 收到分享请求后，会根据图片的 CDN 链接下载图片 -&amp;gt; 然后调用第三方 SDK 分享图片。  从这个过程中，实际上 H5">
+<meta name="twitter:image" content="https://karosli.github.io/2020/11/13/H5-与-Native-交换图片技术方案/H5与Native图片交换时序图.jpg">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://karosli.github.io/2020/11/13/H5-与-Native-交换图片技术方案/">
+
+
+
+
+
+  <title> H5 与 Native 交换图片技术方案 | 卡洛斯的博客 </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?2c60eb726acae80a0bd58fe0229a46b8";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">卡洛斯的博客</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+    
+      <p class="site-subtitle"></p>
+    
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+  <link itemprop="mainEntityOfPage" href="https://karosli.github.io/2020/11/13/H5-与-Native-交换图片技术方案/">
+
+  <span style="display:none" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <meta itemprop="name" content="KarosLi (卡洛斯)">
+    <meta itemprop="description" content>
+    <meta itemprop="image" content="/images/avatar.jpeg">
+  </span>
+
+  <span style="display:none" itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+    <meta itemprop="name" content="卡洛斯的博客">
+    <span style="display:none" itemprop="logo" itemscope itemtype="http://schema.org/ImageObject">
+      <img style="display:none;" itemprop="url image" alt="卡洛斯的博客" src>
+    </span>
+  </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                H5 与 Native 交换图片技术方案
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2020-11-13T09:47:31+08:00">
+                2020-11-13
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2020/11/13/H5-与-Native-交换图片技术方案/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2020/11/13/H5-与-Native-交换图片技术方案/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="H5-与-Native-交换图片技术方案"><a href="#H5-与-Native-交换图片技术方案" class="headerlink" title="H5 与 Native 交换图片技术方案"></a>H5 与 Native 交换图片技术方案</h1><h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>目前在APP内的H5分享图片流程如下：</p>
+<blockquote>
+<p>H5 -&gt; canvas 绘制界面获取要分享的图片 -&gt; 上传图片到 CDN -&gt; 调用 JSSDK 的分享 API，入参是图片的 CDN 链接 -&gt; App 收到分享请求后，会根据图片的 CDN 链接下载图片 -&gt; 然后调用第三方 SDK 分享图片。</p>
+</blockquote>
+<p>从这个过程中，实际上 H5 和 App 一共会进行两次的 CDN 操作，这样的操作是非常耗时，网络差的时候，在 H5 内的分享图片操作会非常卡，体验很差。</p>
+<h2 id="方案选型"><a href="#方案选型" class="headerlink" title="方案选型"></a>方案选型</h2><h4 id="Base64-方案："><a href="#Base64-方案：" class="headerlink" title="Base64 方案："></a>Base64 方案：</h4><p>此方案是把图片二进制的一个字节转成一个字符，最后会生成一个纯字符串，通过 JSBridge 把改字符串传给 Native，但是如果图片过大，产生的字符串很长，会导致 H5 和 Natvie 传输很慢，会让页面有卡死的现象。</p>
+<h4 id="Local-Web-Server-方案："><a href="#Local-Web-Server-方案：" class="headerlink" title="Local Web Server 方案："></a>Local Web Server 方案：</h4><p>逆向了微信，看了下微信里 log 日志，会发现 </p>
+<blockquote>
+<p>[INFO] WCProxyServer started on port 48765 and reachable at http: //localhost:48765/<br>    2019 - 05 - 30 22 : 17 : 52.821043 + 0800 WeChat[625 : 18089] evaluateJavaScript: if (window.WeixinJSBridge) {<br>        WeixinJSBridge._handleMessageFromWeixin({<br>            “<strong>sha_key”: “e917c46a4fec7f116c7a3a9b325ab946e94bb15b”,<br>            “</strong>json_message”: “{&quot;<strong>params&quot;:{&quot;err_msg&quot;:&quot;imageProxyInit:ok&quot;,&quot;serverUrl&quot;:&quot;<a href="http://localhost:48765/\&quot;,\&quot;port\&quot;:48765},\&quot;" target="_blank" rel="noopener">http://localhost:48765/\&quot;,\&quot;port\&quot;:48765},\&quot;</a></strong>callback_id&quot;:&quot;1018&quot;,&quot;__msg_type&quot;:&quot;callback&quot;}”<br>        });<br>    }</p>
+</blockquote>
+<p>这段日志，说明微信在本地也是开启了一个本地web服务，来进行 H5 和 Native 的图片交换。</p>
+<h2 id="数据性能统计"><a href="#数据性能统计" class="headerlink" title="数据性能统计"></a>数据性能统计</h2><figure class="highlight xml"><table><tr><td class="code"><pre><span class="line">总耗时</span><br><span class="line"> </span><br><span class="line"> <span class="comment">&lt;!-- 3.5M http://apk.leoao.com/4b3743a85db31d18159b357de0e3c5b2f2f5b268.jpg --&gt;</span></span><br><span class="line"> <span class="comment">&lt;!-- 2.5M http://apk.leoao.com/5a699c89baaea.jpg --&gt;</span></span><br><span class="line"> <span class="comment">&lt;!-- 1.5M http://apk.leoao.com/1ZF9110359-1.jpg --&gt;</span></span><br><span class="line"> <span class="comment">&lt;!-- 540k http://apk.leoao.com/1ZF9110359-1%20%281%29.jpg --&gt;</span></span><br><span class="line"> <span class="comment">&lt;!-- 200k http://apk.leoao.com/4@3x.png --&gt;</span></span><br><span class="line"> </span><br><span class="line"> 七牛CDN上传：</span><br><span class="line">    3.5M 1.82s</span><br><span class="line">    2.5M 1.34s</span><br><span class="line">    1.5M 768ms</span><br><span class="line">    540k 248ms</span><br><span class="line">    200k 130ms</span><br><span class="line"> </span><br><span class="line"> 七牛CDN下载：</span><br><span class="line">    3.5M 1.59s</span><br><span class="line">    2.5M 1.12s</span><br><span class="line">    1.5M 800ms</span><br><span class="line">    540k 253ms</span><br><span class="line">    200k 120ms</span><br><span class="line"> </span><br><span class="line"> local web server 方案(从H5传图片给Native,再到从Native回到H5):</span><br><span class="line">    3.5M 280ms</span><br><span class="line">    2.5M 252ms</span><br><span class="line">    1.5M 108ms</span><br><span class="line">    540k 67ms</span><br><span class="line">    200k 44ms</span><br><span class="line"> </span><br><span class="line"> iOS UIWebView base64 方案(从H5传图片给Native,再到从Native回到H5):</span><br><span class="line">    3.5M 2.1s</span><br><span class="line">    2.5M 613ms</span><br><span class="line">    1.5M 400ms</span><br><span class="line">    540k 220ms</span><br><span class="line">    200k 50ms</span><br><span class="line"> </span><br><span class="line"> iOS WKWebView base64 方案(从H5传图片给Native,再到从Native回到H5):</span><br><span class="line">    3.5M 1.1s</span><br><span class="line">    2.5M 320ms</span><br><span class="line">    1.5M 400ms</span><br><span class="line">    540k 220ms</span><br><span class="line">    200k 39ms</span><br><span class="line"> </span><br><span class="line">Android base64 方案(从H5传图片给Native,再到从Native回到H5):</span><br><span class="line">    3.5M 6s</span><br><span class="line">    2.5M 1.7s</span><br><span class="line">    1.5M 2.1s</span><br><span class="line">    540k 1.2s</span><br><span class="line">    200k 180ms</span><br></pre></td></tr></table></figure>
+
+<p>从上面的数据可以看出，base64是性能比较差的，特别是在 Android 机型上。CDN 也会有上传和下载的过程，过大的图片，也会导致更长的上传的和下载时间，而且也需要依赖于网络稳定性。基于这些因素我们决定使用 Local Web Server 方案来做图片交换。</p>
+<h2 id="Local-Web-Server"><a href="#Local-Web-Server" class="headerlink" title="Local Web Server"></a>Local Web Server</h2><h3 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h3><p>相当于在 App 内部启动了一个 Web 服务器，这样我们就可以绕过 JSBridge，让 H5 和本地 Web 服务器进行通信。</p>
+<p>所以对于此方案可以简单的想象是把图片上传到 CDN 和从 CDN 下载的过程，替换成把图片上传到本地 Web 服务器和从本地 Web 服务器下载图片。</p>
+<h3 id="技术选型"><a href="#技术选型" class="headerlink" title="技术选型"></a>技术选型</h3><h4 id="iOS-Local-Web-Server"><a href="#iOS-Local-Web-Server" class="headerlink" title="iOS Local Web Server"></a>iOS Local Web Server</h4><p><a href="https://github.com/robbiehanson/CocoaHTTPServer" target="_blank" rel="noopener">CocoaHTTPServer</a></p>
+<h4 id="Android-Local-Web-Server（仅供-Android-参考，要选能支持-Https-的服务器）"><a href="#Android-Local-Web-Server（仅供-Android-参考，要选能支持-Https-的服务器）" class="headerlink" title="Android Local Web Server（仅供 Android 参考，要选能支持 Https 的服务器）"></a>Android Local Web Server（仅供 Android 参考，要选能支持 Https 的服务器）</h4><p><a href="https://github.com/koush/AndroidAsync" target="_blank" rel="noopener">AndroidAsync</a></p>
+<p><a href="https://github.com/piotrpolak/android-http-server" target="_blank" rel="noopener">android-http-server</a></p>
+<p><a href="https://github.com/NanoHttpd/nanohttpd" target="_blank" rel="noopener">nanohttpd</a></p>
+<h3 id="流程图"><a href="#流程图" class="headerlink" title="流程图"></a>流程图</h3><img src="/2020/11/13/H5-与-Native-交换图片技术方案/H5与Native图片交换时序图.jpg">
+
+<h3 id="遇到的问题"><a href="#遇到的问题" class="headerlink" title="遇到的问题"></a>遇到的问题</h3><h4 id="跨域"><a href="#跨域" class="headerlink" title="跨域"></a>跨域</h4><p>由于大部分的链接都是支持 Https，如果本地服务器是 Http 会产生 跨域问题。那怎么让本地服务器支持 Https 呢，此时就需要使用自签名证书和代码上需要集成支持自签名证书。</p>
+<h4 id="自签名证书会过期"><a href="#自签名证书会过期" class="headerlink" title="自签名证书会过期"></a>自签名证书会过期</h4><p>自签名会有过期的问题，怎么好动态更新证书。我们可以在创建自签名证书时设置有效期为 10 年，那这样就可以不用考虑动态更新了。</p>
+<h4 id="自签名证书信任问题"><a href="#自签名证书信任问题" class="headerlink" title="自签名证书信任问题"></a>自签名证书信任问题</h4><p>通过 NSURLProtocol/WebViewClient 拦截请求，在校验证书合法性时，始终信任自签名证书可以解决这个问题。</p>
+<h4 id="计算上传文件-MD5"><a href="#计算上传文件-MD5" class="headerlink" title="计算上传文件 MD5"></a>计算上传文件 MD5</h4><p>可以使用 spark-md5 在 H5 侧计算上传图片的 MD5 值。</p>
+<h4 id="本地图片删除策略"><a href="#本地图片删除策略" class="headerlink" title="本地图片删除策略"></a>本地图片删除策略</h4><p>什么时候去清掉不用的图片呢，不然本地目录会越来越大的。通过设定最大缓存大小是 100M，最大保留时间是 7天来解决此问题，触发的时机可以在 App 启动 60s 后在子线程来做一次清理。</p>
+<h4 id="动态端口"><a href="#动态端口" class="headerlink" title="动态端口"></a>动态端口</h4><p>由于本地服务器的端口只有 Native 知道，而 H5 是不知道的，那怎么把端口号告诉 H5 呢，如果通过 JSBridge 告诉 H5 就比较繁琐了。有没有可能直接把 <a href="https://resource/uploadFile" target="_blank" rel="noopener">https://resource/uploadFile</a> 映射到 <a href="https://localhost:60000/uploadFile" target="_blank" rel="noopener">https://localhost:60000/uploadFile</a> 呢？</p>
+<p>是有可能的，可以通过 NSURLProtocol/WebViewClient 针对 AJAX POST 请求进行拦截，并把 <a href="https://resource/uploadFile" target="_blank" rel="noopener">https://resource/uploadFile</a> 重定向到 <a href="https://localhost:60000/uploadFile" target="_blank" rel="noopener">https://localhost:60000/uploadFile</a> 上，这样就可以完美的 屏蔽动态端口对 H5 的影响。</p>
+<h4 id="App-怎么更好的访问本地图片"><a href="#App-怎么更好的访问本地图片" class="headerlink" title="App 怎么更好的访问本地图片"></a>App 怎么更好的访问本地图片</h4><p>App 是否支持这样的链接呢？<br><a href="https://resource/76a9ca44b0af8b4d5fa238e5f19f5a4f" target="_blank" rel="noopener">https://resource/76a9ca44b0af8b4d5fa238e5f19f5a4f</a></p>
+<p>也是可以的，同样是通过 NSURLProtocol/WebViewClient 针对 Get 请求进行拦截，把 <a href="https://resource/76a9ca44b0af8b4d5fa238e5f19f5a4f" target="_blank" rel="noopener">https://resource/76a9ca44b0af8b4d5fa238e5f19f5a4f</a> 重定向到 <a href="https://localhost:60000/76a9ca44b0af8b4d5fa238e5f19f5a4f" target="_blank" rel="noopener">https://localhost:60000/76a9ca44b0af8b4d5fa238e5f19f5a4f</a> 上即可。</p>
+<h4 id="本地服务会占用资源"><a href="#本地服务会占用资源" class="headerlink" title="本地服务会占用资源"></a>本地服务会占用资源</h4><p>这种方式都是比较成熟的，可以使用轻量级的 Web Server 框架。</p>
+<p>另外可以监听前台和后台通知，在后台时停止服务，前台时恢复服务，这样可以避免占用资源导致在后台时被系统杀掉。</p>
+<h2 id="未来考虑"><a href="#未来考虑" class="headerlink" title="未来考虑"></a>未来考虑</h2><p>这是一个基础的能力，未来还可以有其他想象。<br>比如选择照片时可以返回刚给 H5 本地图片 URL。<br>比如预览图片时，H5 也可以把本地图片 URL 交给 Native 去完成直接预览。<br>比如有场景的话，还可以给 H5 提供上传本地图片到远程 CDN 的能力，类似微信，他是把图片预览和图片上传分开了，有利于H5去快速预览，不需要实际上传。</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Hybrid/" rel="tag"># Hybrid</a>
+          
+        </div>
+      
+
+      
+        
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2020/10/20/主线程和主队列的关系/" rel="next" title="主线程和主队列的关系">
+                <i class="fa fa-chevron-left"></i> 主线程和主队列的关系
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+          
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2020/11/13/H5-与-Native-交换图片技术方案/" data-title="H5 与 Native 交换图片技术方案" data-url="https://karosli.github.io/2020/11/13/H5-与-Native-交换图片技术方案/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image" src="/images/avatar.jpeg" alt="KarosLi (卡洛斯)">
+          <p class="site-author-name" itemprop="name">KarosLi (卡洛斯)</p>
+          <p class="site-description motion-element" itemprop="description">正在修行的路上</p>
+        </div>
+        <nav class="site-state motion-element">
+        
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">22</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-categories">
+              
+                <span class="site-state-item-count">13</span>
+                <span class="site-state-item-name">分类</span>
+              
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">17</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+          <div class="links-of-blogroll motion-element links-of-blogroll-inline">
+            <div class="links-of-blogroll-title">
+              <i class="fa  fa-fw fa-globe"></i>
+              友情链接
+            </div>
+            <ul class="links-of-blogroll-list">
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://hexiaofei51.cn/" title="晓飞的博客" target="_blank">晓飞的博客</a>
+                </li>
+              
+            </ul>
+          </div>
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#H5-与-Native-交换图片技术方案"><span class="nav-number">1.</span> <span class="nav-text">H5 与 Native 交换图片技术方案</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#背景"><span class="nav-number">1.1.</span> <span class="nav-text">背景</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#方案选型"><span class="nav-number">1.2.</span> <span class="nav-text">方案选型</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Base64-方案："><span class="nav-number">1.2.0.1.</span> <span class="nav-text">Base64 方案：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Local-Web-Server-方案："><span class="nav-number">1.2.0.2.</span> <span class="nav-text">Local Web Server 方案：</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#数据性能统计"><span class="nav-number">1.3.</span> <span class="nav-text">数据性能统计</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Local-Web-Server"><span class="nav-number">1.4.</span> <span class="nav-text">Local Web Server</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#介绍"><span class="nav-number">1.4.1.</span> <span class="nav-text">介绍</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#技术选型"><span class="nav-number">1.4.2.</span> <span class="nav-text">技术选型</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#iOS-Local-Web-Server"><span class="nav-number">1.4.2.1.</span> <span class="nav-text">iOS Local Web Server</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Android-Local-Web-Server（仅供-Android-参考，要选能支持-Https-的服务器）"><span class="nav-number">1.4.2.2.</span> <span class="nav-text">Android Local Web Server（仅供 Android 参考，要选能支持 Https 的服务器）</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#流程图"><span class="nav-number">1.4.3.</span> <span class="nav-text">流程图</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#遇到的问题"><span class="nav-number">1.4.4.</span> <span class="nav-text">遇到的问题</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#跨域"><span class="nav-number">1.4.4.1.</span> <span class="nav-text">跨域</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#自签名证书会过期"><span class="nav-number">1.4.4.2.</span> <span class="nav-text">自签名证书会过期</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#自签名证书信任问题"><span class="nav-number">1.4.4.3.</span> <span class="nav-text">自签名证书信任问题</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#计算上传文件-MD5"><span class="nav-number">1.4.4.4.</span> <span class="nav-text">计算上传文件 MD5</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#本地图片删除策略"><span class="nav-number">1.4.4.5.</span> <span class="nav-text">本地图片删除策略</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#动态端口"><span class="nav-number">1.4.4.6.</span> <span class="nav-text">动态端口</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#App-怎么更好的访问本地图片"><span class="nav-number">1.4.4.7.</span> <span class="nav-text">App 怎么更好的访问本地图片</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#本地服务会占用资源"><span class="nav-number">1.4.4.8.</span> <span class="nav-text">本地服务会占用资源</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#未来考虑"><span class="nav-number">1.5.</span> <span class="nav-text">未来考虑</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">KarosLi (卡洛斯)</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<span> | </span><span id="busuanzi_container_site_pv">本站总访问量<span id="busuanzi_value_site_pv"></span>次</span>
+<span id="busuanzi_container_page_pv">
+  本文总阅读量<span id="busuanzi_value_page_pv"></span>次
+</span>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"karosli"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+    
+    <script src="/lib/ua-parser-js/dist/ua-parser.min.js?v=0.7.9"></script>
+    <script src="/js/src/hook-duoshuo.js"></script>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+
+</body>
+</html>
