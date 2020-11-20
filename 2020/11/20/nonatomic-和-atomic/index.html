@@ -71,7 +71,7 @@
 <link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css">
 
 
-  <meta name="keywords" content="离线包,">
+  <meta name="keywords" content="线程,">
 
 
 
@@ -87,23 +87,18 @@
 
 
 
-<meta name="description" content="WKWebView 离线包方案比较方案列表 沙盒方案：通过沙盒路径直接加载本地文件 NSURLProtocol 方案：基于 NSURLProtocol 进行全局请求拦截 LocalServer 方案：搭建本地服务器加载本地资源 WKURLSchemeHandler 方案：基于 WKURLSchemeHandler 进行自定义Scheme 注册拦截  方案图表比较   问题 沙盒 NSURLProt">
-<meta name="keywords" content="离线包">
+<meta name="description" content="nonatomic 和 atomicatomic 并不是绝对线程安全，它能保证代码进入 getter 和 setter 方法的时候是安全的，但是并不能保证多线程的访问情况下是安全的，一旦出了 getter 和 setter 方法，其线程安全就要由程序员自己来把握，所以 atomic 属性和线程安全并没有必然联系。 nonatomic 特点 不会加锁 多线程给nonatomic属性赋值，是可能重复r">
+<meta name="keywords" content="线程">
 <meta property="og:type" content="article">
-<meta property="og:title" content="WKWebView 离线包方案比较">
-<meta property="og:url" content="https://karosli.github.io/2020/04/02/WKWebView 离线包方案比较/index.html">
+<meta property="og:title" content="nonatomic 和 atomic">
+<meta property="og:url" content="https://karosli.github.io/2020/11/20/nonatomic-和-atomic/index.html">
 <meta property="og:site_name" content="卡洛斯的博客">
-<meta property="og:description" content="WKWebView 离线包方案比较方案列表 沙盒方案：通过沙盒路径直接加载本地文件 NSURLProtocol 方案：基于 NSURLProtocol 进行全局请求拦截 LocalServer 方案：搭建本地服务器加载本地资源 WKURLSchemeHandler 方案：基于 WKURLSchemeHandler 进行自定义Scheme 注册拦截  方案图表比较   问题 沙盒 NSURLProt">
+<meta property="og:description" content="nonatomic 和 atomicatomic 并不是绝对线程安全，它能保证代码进入 getter 和 setter 方法的时候是安全的，但是并不能保证多线程的访问情况下是安全的，一旦出了 getter 和 setter 方法，其线程安全就要由程序员自己来把握，所以 atomic 属性和线程安全并没有必然联系。 nonatomic 特点 不会加锁 多线程给nonatomic属性赋值，是可能重复r">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="https://karosli.github.io/2020/04/02/WKWebView%20离线包方案比较/15858247250569.jpg">
-<meta property="og:image" content="https://karosli.github.io/2020/04/02/WKWebView%20离线包方案比较/media/15858247250569.jpg">
-<meta property="og:image" content="https://karosli.github.io/2020/04/02/WKWebView%20离线包方案比较/15858255338518.jpg">
-<meta property="og:image" content="https://karosli.github.io/2020/04/02/WKWebView%20离线包方案比较/media/15858255338518.jpg">
-<meta property="og:updated_time" content="2020-10-20T11:29:08.112Z">
+<meta property="og:updated_time" content="2020-11-20T08:16:34.801Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="WKWebView 离线包方案比较">
-<meta name="twitter:description" content="WKWebView 离线包方案比较方案列表 沙盒方案：通过沙盒路径直接加载本地文件 NSURLProtocol 方案：基于 NSURLProtocol 进行全局请求拦截 LocalServer 方案：搭建本地服务器加载本地资源 WKURLSchemeHandler 方案：基于 WKURLSchemeHandler 进行自定义Scheme 注册拦截  方案图表比较   问题 沙盒 NSURLProt">
-<meta name="twitter:image" content="https://karosli.github.io/2020/04/02/WKWebView%20离线包方案比较/15858247250569.jpg">
+<meta name="twitter:title" content="nonatomic 和 atomic">
+<meta name="twitter:description" content="nonatomic 和 atomicatomic 并不是绝对线程安全，它能保证代码进入 getter 和 setter 方法的时候是安全的，但是并不能保证多线程的访问情况下是安全的，一旦出了 getter 和 setter 方法，其线程安全就要由程序员自己来把握，所以 atomic 属性和线程安全并没有必然联系。 nonatomic 特点 不会加锁 多线程给nonatomic属性赋值，是可能重复r">
 
 
 
@@ -131,13 +126,13 @@
 
 
 
-  <link rel="canonical" href="https://karosli.github.io/2020/04/02/WKWebView 离线包方案比较/">
+  <link rel="canonical" href="https://karosli.github.io/2020/11/20/nonatomic-和-atomic/">
 
 
 
 
 
-  <title> WKWebView 离线包方案比较 | 卡洛斯的博客 </title>
+  <title> nonatomic 和 atomic | 卡洛斯的博客 </title>
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
@@ -264,7 +259,7 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-  <link itemprop="mainEntityOfPage" href="https://karosli.github.io/2020/04/02/WKWebView 离线包方案比较/">
+  <link itemprop="mainEntityOfPage" href="https://karosli.github.io/2020/11/20/nonatomic-和-atomic/">
 
   <span style="display:none" itemprop="author" itemscope itemtype="http://schema.org/Person">
     <meta itemprop="name" content="KarosLi (卡洛斯)">
@@ -288,7 +283,7 @@
             
             
               
-                WKWebView 离线包方案比较
+                nonatomic 和 atomic
               
             
           </h1>
@@ -303,8 +298,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2020-04-02T16:43:40+08:00">
-                2020-04-02
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2020-11-20T16:14:17+08:00">
+                2020-11-20
               </time>
             
 
@@ -322,8 +317,8 @@
                 <span class="post-meta-item-icon">
                   <i class="fa fa-comment-o"></i>
                 </span>
-                <a href="/2020/04/02/WKWebView 离线包方案比较/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="2020/04/02/WKWebView 离线包方案比较/" itemprop="commentCount"></span>
+                <a href="/2020/11/20/nonatomic-和-atomic/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2020/11/20/nonatomic-和-atomic/" itemprop="commentCount"></span>
                 </a>
               </span>
             
@@ -349,172 +344,20 @@
       
 
       
-        <h1 id="WKWebView-离线包方案比较"><a href="#WKWebView-离线包方案比较" class="headerlink" title="WKWebView 离线包方案比较"></a>WKWebView 离线包方案比较</h1><h2 id="方案列表"><a href="#方案列表" class="headerlink" title="方案列表"></a>方案列表</h2><ul>
-<li>沙盒方案：通过沙盒路径直接加载本地文件</li>
-<li>NSURLProtocol 方案：基于 NSURLProtocol 进行全局请求拦截</li>
-<li>LocalServer 方案：搭建本地服务器加载本地资源</li>
-<li>WKURLSchemeHandler 方案：基于 WKURLSchemeHandler 进行自定义Scheme 注册拦截</li>
+        <h1 id="nonatomic-和-atomic"><a href="#nonatomic-和-atomic" class="headerlink" title="nonatomic 和 atomic"></a>nonatomic 和 atomic</h1><p>atomic 并不是绝对线程安全，它能保证代码进入 getter 和 setter 方法的时候是安全的，但是并不能保证多线程的访问情况下是安全的，一旦出了 getter 和 setter 方法，其线程安全就要由程序员自己来把握，所以 atomic 属性和线程安全并没有必然联系。</p>
+<h2 id="nonatomic-特点"><a href="#nonatomic-特点" class="headerlink" title="nonatomic 特点"></a>nonatomic 特点</h2><ul>
+<li>不会加锁</li>
+<li>多线程给nonatomic属性赋值，是可能重复release而崩溃的</li>
 </ul>
-<h2 id="方案图表比较"><a href="#方案图表比较" class="headerlink" title="方案图表比较"></a>方案图表比较</h2><table>
-<thead>
-<tr>
-<th>问题</th>
-<th>沙盒</th>
-<th>NSURLProtocol</th>
-<th>LocalServer</th>
-<th>WKURLSchemeHandler</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>是否可以同步 Cookie</td>
-<td>NO</td>
-<td>YES</td>
-<td>NO</td>
-<td>NO（Session Cookie无效）</td>
-</tr>
-<tr>
-<td>是否有跨域问题</td>
-<td>YES</td>
-<td>NO</td>
-<td>YES</td>
-<td>YES</td>
-</tr>
-<tr>
-<td>Ajax 是否完全可用</td>
-<td>NO</td>
-<td>NO</td>
-<td>YES</td>
-<td>NO</td>
-</tr>
-<tr>
-<td>Fetch 是否完全可用</td>
-<td>NO</td>
-<td>NO</td>
-<td>YES</td>
-<td>NO</td>
-</tr>
-<tr>
-<td>是否丢失 POST Body</td>
-<td>NO</td>
-<td>YES</td>
-<td>NO</td>
-<td>YES</td>
-</tr>
-<tr>
-<td>是否可以提交表单</td>
-<td>NO</td>
-<td>NO</td>
-<td>YES</td>
-<td>NO</td>
-</tr>
-<tr>
-<td>是否必须使用 Ajax Hook</td>
-<td>NO</td>
-<td>YES</td>
-<td>NO</td>
-<td>NO</td>
-</tr>
-<tr>
-<td>是否必须使用 JSBridge 发送 API</td>
-<td>YES</td>
-<td>NO</td>
-<td>NO</td>
-<td>NO</td>
-</tr>
-<tr>
-<td>是否需要后台配置 CORS（跨域）</td>
-<td>NO</td>
-<td>NO</td>
-<td>YES</td>
-<td>YES</td>
-</tr>
-<tr>
-<td>是否可以获取期望的 window.location</td>
-<td>NO</td>
-<td>YES</td>
-<td>NO</td>
-<td>YES</td>
-</tr>
-<tr>
-<td>是否使用私有 API</td>
-<td>NO</td>
-<td>YES</td>
-<td>NO</td>
-<td>NO</td>
-</tr>
-<tr>
-<td>是否有系统限制</td>
-<td>NO</td>
-<td>NO</td>
-<td>NO</td>
-<td>YES（iOS11以上）</td>
-</tr>
-<tr>
-<td>是否需要 H5 改造支持</td>
-<td>YES</td>
-<td>NO</td>
-<td>YES</td>
-<td>YES</td>
-</tr>
-<tr>
-<td>是否需要请求是绝对路径</td>
-<td>NO</td>
-<td>NO</td>
-<td>YES</td>
-<td>YES</td>
-</tr>
-<tr>
-<td>是否需要资源是相对路径</td>
-<td>YES</td>
-<td>NO</td>
-<td>YES</td>
-<td>YES</td>
-</tr>
-<tr>
-<td>是否有后期维护成本</td>
-<td>NO</td>
-<td>YES(Fetch Hook)</td>
-<td>NO</td>
-<td>NO</td>
-</tr>
-<tr>
-<td>方案成本</td>
-<td>低</td>
-<td>高</td>
-<td>中</td>
-<td>中</td>
-</tr>
-<tr>
-<td>（H5不依赖Session Cookie）方案可行性</td>
-<td>低</td>
-<td>高</td>
-<td>中</td>
-<td>高</td>
-</tr>
-<tr>
-<td>（H5不依赖window.location）方案可行性</td>
-<td>低</td>
-<td>高</td>
-<td>高</td>
-<td>中</td>
-</tr>
-<tr>
-<td>全场景方案可行性</td>
-<td>低</td>
-<td>高</td>
-<td>中</td>
-<td>中</td>
-</tr>
-</tbody></table>
-<a id="more"></a>
+<figure class="highlight objectivec"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">@interface</span> <span class="title">NonatomicTest</span> : <span class="title">NSObject</span></span></span><br><span class="line"><span class="keyword">@property</span> (<span class="keyword">nonatomic</span>, <span class="keyword">strong</span>) <span class="keyword">id</span> obj;</span><br><span class="line"><span class="keyword">@end</span></span><br><span class="line"><span class="class"><span class="keyword">@implementation</span></span></span><br><span class="line">+ (<span class="keyword">void</span>)main &#123;</span><br><span class="line">    <span class="comment">// 多线程给 nonatomic 属性赋值，是可能重复 release 而崩溃的</span></span><br><span class="line">    <span class="comment">// ivar 所指向的内存区域被其他线程修改了，产生了野指针. Thread 62: EXC_BAD_ACCESS (code=1, address=0x43308abb42f0)</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">100000</span>; ++i) &#123;</span><br><span class="line">        <span class="built_in">dispatch_async</span>(dispatch_get_global_queue(<span class="number">0</span>, <span class="number">0</span>), ^&#123;</span><br><span class="line">            <span class="keyword">id</span> o = [[<span class="built_in">NSObject</span> alloc] init];</span><br><span class="line">            <span class="keyword">self</span>.obj = o;</span><br><span class="line">        &#125;);</span><br><span class="line">    &#125;  </span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">@end</span></span><br></pre></td></tr></table></figure>
 
-<h2 id="沙盒方案"><a href="#沙盒方案" class="headerlink" title="沙盒方案"></a>沙盒方案</h2><h2 id="NSURLProtocol-方案"><a href="#NSURLProtocol-方案" class="headerlink" title="NSURLProtocol 方案"></a>NSURLProtocol 方案</h2><h2 id="LocalServer-方案"><a href="#LocalServer-方案" class="headerlink" title="LocalServer 方案"></a>LocalServer 方案</h2><h2 id="WKURLSchemeHandler-方案"><a href="#WKURLSchemeHandler-方案" class="headerlink" title="WKURLSchemeHandler 方案"></a>WKURLSchemeHandler 方案</h2><h2 id="支付宝-mPaas-离线包方案（基于-WKWebView）探秘"><a href="#支付宝-mPaas-离线包方案（基于-WKWebView）探秘" class="headerlink" title="支付宝 mPaas 离线包方案（基于 WKWebView）探秘"></a>支付宝 mPaas 离线包方案（基于 WKWebView）探秘</h2><p>实际上支付宝 <code>mPaas</code> 离线包方案是基于 <code>NSURLProtocol + Ajax Hook</code>来实现的。</p>
-<h3 id="mPaas-的-NSURLProtocol"><a href="#mPaas-的-NSURLProtocol" class="headerlink" title="mPaas 的 NSURLProtocol"></a>mPaas 的 NSURLProtocol</h3><p>通过下图可以看到，在启动和打开离线包时，都会去注册 <code>PSDWebViewURLProtocol</code>，当阻止它注册时，在加载离线包的时候就会报加载失败。这里就可以说明 <code>资源拦截</code> 和 <code>虚拟域</code> 都是基于 <code>NSURLProtocol</code> 实现的。</p>
-<img src="/2020/04/02/WKWebView%20离线包方案比较/15858247250569.jpg">
-<p><img src="media/15858247250569.jpg" alt></p>
-<h3 id="mPaas-的-Ajax-Hook"><a href="#mPaas-的-Ajax-Hook" class="headerlink" title="mPaas 的 Ajax Hook"></a>mPaas 的 Ajax Hook</h3><p>通过下图可以看到，实际上是 <code>Hook</code> 了 <code>Ajax</code> 的 <code>open</code> 和 <code>send</code> 方法。可以看到这里没有拦截 <code>get</code> 请求，这样就可以很好的兼容小游戏场景（通过 <code>Ajax Get</code> 获取的游戏资源，这些资源拦截不了）。</p>
-<img src="/2020/04/02/WKWebView%20离线包方案比较/15858255338518.jpg">
-<p><img src="media/15858255338518.jpg" alt></p>
+<h2 id="atomic-特点"><a href="#atomic-特点" class="headerlink" title="atomic 特点"></a>atomic 特点</h2><ul>
+<li>无差别加锁，及时是在非多线程环境下，加锁会损耗性能。</li>
+<li>由于是原子操作，可以在多线程情况下不崩溃，但是无法保证业务正确。</li>
+</ul>
+<h2 id="为什么-atomic-可以在多线程环境下可以不崩溃而-nonatomic-会崩溃？"><a href="#为什么-atomic-可以在多线程环境下可以不崩溃而-nonatomic-会崩溃？" class="headerlink" title="为什么 atomic 可以在多线程环境下可以不崩溃而 nonatomic 会崩溃？"></a>为什么 atomic 可以在多线程环境下可以不崩溃而 nonatomic 会崩溃？</h2><p>atomic 的底层实现是有加锁的，老版本是自旋锁，iOS10 开始是互斥锁，spinlock 底层实现改变了。<br>nonatomic 底层是没有加锁的, 多线程读写，资源抢夺就会崩，比如多线程给属性赋值，是可能重复 release 而崩溃的。</p>
+<figure class="highlight haxe"><table><tr><td class="code"><pre><span class="line"><span class="comment">// objc4-779.1 </span></span><br><span class="line"><span class="comment">// @property (strong) strong 属性赋值底层实现</span></span><br><span class="line"><span class="keyword">static</span> <span class="keyword">inline</span> void reallySetProperty(id self, SEL _cmd, id <span class="keyword">new</span><span class="type">Value</span>, ptrdiff_t offset, bool atomic, bool copy, bool mutableCopy)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">if</span> (offset == <span class="number">0</span>) &#123;<span class="comment">// 偏移 0 就是修改 isa 指针</span></span><br><span class="line">        object_setClass(self, <span class="keyword">new</span><span class="type">Value</span>);</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    id oldValue;</span><br><span class="line">    id *slot = (id*) ((char*)self + offset);<span class="comment">// 根据偏移找到变量地址</span></span><br><span class="line">    </span><br><span class="line">    <span class="keyword">if</span> (*slot == <span class="keyword">new</span><span class="type">Value</span>) <span class="keyword">return</span>;<span class="comment">// 1、值不相等，才做赋值操作</span></span><br><span class="line">    <span class="keyword">new</span><span class="type">Value</span> = objc_retain(<span class="keyword">new</span><span class="type">Value</span>);<span class="comment">// 2、先对新值 retain</span></span><br><span class="line">    </span><br><span class="line">    <span class="keyword">if</span> (!atomic) &#123;<span class="comment">// nonatomic</span></span><br><span class="line">        oldValue = *slot;<span class="comment">// 3、保存变量旧值</span></span><br><span class="line">        *slot = <span class="keyword">new</span><span class="type">Value</span>;<span class="comment">// 4、给变量赋值新值</span></span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;<span class="comment">// atomic</span></span><br><span class="line">        spinlock_t&amp; slotlock = PropertyLocks[slot];</span><br><span class="line">        slotlock.lock();<span class="comment">// 加锁 由于这里有加锁逻辑，那么多线程情况下是不会多次获取到同一个旧值的，所以也不会引起重复释放的问题</span></span><br><span class="line">        oldValue = *slot;<span class="comment">// 3、保存变量旧值</span></span><br><span class="line">        *slot = <span class="keyword">new</span><span class="type">Value</span>;<span class="comment">// 4、给变量赋值新值        </span></span><br><span class="line">        slotlock.unlock();<span class="comment">// 解锁</span></span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    objc_release(oldValue);<span class="comment">// 5、release 旧值</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
 
       
     </div>
@@ -538,7 +381,7 @@
       
         <div class="post-tags">
           
-            <a href="/tags/离线包/" rel="tag"># 离线包</a>
+            <a href="/tags/线程/" rel="tag"># 线程</a>
           
         </div>
       
@@ -551,8 +394,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2019/08/30/一站式解决WKWebView各类问题/" rel="next" title="一站式解决WKWebView各类问题">
-                <i class="fa fa-chevron-left"></i> 一站式解决WKWebView各类问题
+              <a href="/2020/11/13/记一个听云导致GIO不能圈选H5的问题/" rel="next" title="记一个听云导致GIO不能圈选H5的问题">
+                <i class="fa fa-chevron-left"></i> 记一个听云导致GIO不能圈选H5的问题
               </a>
             
           </div>
@@ -560,10 +403,6 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2020/10/20/主线程和主队列的关系/" rel="prev" title="主线程和主队列的关系">
-                主线程和主队列的关系 <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -589,7 +428,7 @@
           
   <div class="comments" id="comments">
     
-      <div class="ds-thread" data-thread-key="2020/04/02/WKWebView 离线包方案比较/" data-title="WKWebView 离线包方案比较" data-url="https://karosli.github.io/2020/04/02/WKWebView 离线包方案比较/">
+      <div class="ds-thread" data-thread-key="2020/11/20/nonatomic-和-atomic/" data-title="nonatomic 和 atomic" data-url="https://karosli.github.io/2020/11/20/nonatomic-和-atomic/">
       </div>
     
   </div>
@@ -701,7 +540,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#WKWebView-离线包方案比较"><span class="nav-number">1.</span> <span class="nav-text">WKWebView 离线包方案比较</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#方案列表"><span class="nav-number">1.1.</span> <span class="nav-text">方案列表</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#方案图表比较"><span class="nav-number">1.2.</span> <span class="nav-text">方案图表比较</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#沙盒方案"><span class="nav-number">1.3.</span> <span class="nav-text">沙盒方案</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#NSURLProtocol-方案"><span class="nav-number">1.4.</span> <span class="nav-text">NSURLProtocol 方案</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#LocalServer-方案"><span class="nav-number">1.5.</span> <span class="nav-text">LocalServer 方案</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#WKURLSchemeHandler-方案"><span class="nav-number">1.6.</span> <span class="nav-text">WKURLSchemeHandler 方案</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#支付宝-mPaas-离线包方案（基于-WKWebView）探秘"><span class="nav-number">1.7.</span> <span class="nav-text">支付宝 mPaas 离线包方案（基于 WKWebView）探秘</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#mPaas-的-NSURLProtocol"><span class="nav-number">1.7.1.</span> <span class="nav-text">mPaas 的 NSURLProtocol</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#mPaas-的-Ajax-Hook"><span class="nav-number">1.7.2.</span> <span class="nav-text">mPaas 的 Ajax Hook</span></a></li></ol></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#nonatomic-和-atomic"><span class="nav-number">1.</span> <span class="nav-text">nonatomic 和 atomic</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#nonatomic-特点"><span class="nav-number">1.1.</span> <span class="nav-text">nonatomic 特点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#atomic-特点"><span class="nav-number">1.2.</span> <span class="nav-text">atomic 特点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#为什么-atomic-可以在多线程环境下可以不崩溃而-nonatomic-会崩溃？"><span class="nav-number">1.3.</span> <span class="nav-text">为什么 atomic 可以在多线程环境下可以不崩溃而 nonatomic 会崩溃？</span></a></li></ol></li></ol></div>
             
 
           </div>

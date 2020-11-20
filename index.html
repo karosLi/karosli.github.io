@@ -259,6 +259,150 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+  <link itemprop="mainEntityOfPage" href="https://karosli.github.io/2020/11/20/nonatomic-和-atomic/">
+
+  <span style="display:none" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <meta itemprop="name" content="KarosLi (卡洛斯)">
+    <meta itemprop="description" content>
+    <meta itemprop="image" content="/images/avatar.jpeg">
+  </span>
+
+  <span style="display:none" itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+    <meta itemprop="name" content="卡洛斯的博客">
+    <span style="display:none" itemprop="logo" itemscope itemtype="http://schema.org/ImageObject">
+      <img style="display:none;" itemprop="url image" alt="卡洛斯的博客" src>
+    </span>
+  </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2020/11/20/nonatomic-和-atomic/" itemprop="url">
+                  nonatomic 和 atomic
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2020-11-20T16:14:17+08:00">
+                2020-11-20
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2020/11/20/nonatomic-和-atomic/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2020/11/20/nonatomic-和-atomic/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h1 id="nonatomic-和-atomic"><a href="#nonatomic-和-atomic" class="headerlink" title="nonatomic 和 atomic"></a>nonatomic 和 atomic</h1><p>atomic 并不是绝对线程安全，它能保证代码进入 getter 和 setter 方法的时候是安全的，但是并不能保证多线程的访问情况下是安全的，一旦出了 getter 和 setter 方法，其线程安全就要由程序员自己来把握，所以 atomic 属性和线程安全并没有必然联系。</p>
+<h2 id="nonatomic-特点"><a href="#nonatomic-特点" class="headerlink" title="nonatomic 特点"></a>nonatomic 特点</h2><ul>
+<li>不会加锁</li>
+<li>多线程给nonatomic属性赋值，是可能重复release而崩溃的</li>
+</ul>
+<figure class="highlight objectivec"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">@interface</span> <span class="title">NonatomicTest</span> : <span class="title">NSObject</span></span></span><br><span class="line"><span class="keyword">@property</span> (<span class="keyword">nonatomic</span>, <span class="keyword">strong</span>) <span class="keyword">id</span> obj;</span><br><span class="line"><span class="keyword">@end</span></span><br><span class="line"><span class="class"><span class="keyword">@implementation</span></span></span><br><span class="line">+ (<span class="keyword">void</span>)main &#123;</span><br><span class="line">    <span class="comment">// 多线程给 nonatomic 属性赋值，是可能重复 release 而崩溃的</span></span><br><span class="line">    <span class="comment">// ivar 所指向的内存区域被其他线程修改了，产生了野指针. Thread 62: EXC_BAD_ACCESS (code=1, address=0x43308abb42f0)</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">100000</span>; ++i) &#123;</span><br><span class="line">        <span class="built_in">dispatch_async</span>(dispatch_get_global_queue(<span class="number">0</span>, <span class="number">0</span>), ^&#123;</span><br><span class="line">            <span class="keyword">id</span> o = [[<span class="built_in">NSObject</span> alloc] init];</span><br><span class="line">            <span class="keyword">self</span>.obj = o;</span><br><span class="line">        &#125;);</span><br><span class="line">    &#125;  </span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">@end</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="atomic-特点"><a href="#atomic-特点" class="headerlink" title="atomic 特点"></a>atomic 特点</h2><ul>
+<li>无差别加锁，及时是在非多线程环境下，加锁会损耗性能。</li>
+<li>由于是原子操作，可以在多线程情况下不崩溃，但是无法保证业务正确。</li>
+</ul>
+<h2 id="为什么-atomic-可以在多线程环境下可以不崩溃而-nonatomic-会崩溃？"><a href="#为什么-atomic-可以在多线程环境下可以不崩溃而-nonatomic-会崩溃？" class="headerlink" title="为什么 atomic 可以在多线程环境下可以不崩溃而 nonatomic 会崩溃？"></a>为什么 atomic 可以在多线程环境下可以不崩溃而 nonatomic 会崩溃？</h2><p>atomic 的底层实现是有加锁的，老版本是自旋锁，iOS10 开始是互斥锁，spinlock 底层实现改变了。<br>nonatomic 底层是没有加锁的, 多线程读写，资源抢夺就会崩，比如多线程给属性赋值，是可能重复 release 而崩溃的。</p>
+<figure class="highlight haxe"><table><tr><td class="code"><pre><span class="line"><span class="comment">// objc4-779.1 </span></span><br><span class="line"><span class="comment">// @property (strong) strong 属性赋值底层实现</span></span><br><span class="line"><span class="keyword">static</span> <span class="keyword">inline</span> void reallySetProperty(id self, SEL _cmd, id <span class="keyword">new</span><span class="type">Value</span>, ptrdiff_t offset, bool atomic, bool copy, bool mutableCopy)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">if</span> (offset == <span class="number">0</span>) &#123;<span class="comment">// 偏移 0 就是修改 isa 指针</span></span><br><span class="line">        object_setClass(self, <span class="keyword">new</span><span class="type">Value</span>);</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    id oldValue;</span><br><span class="line">    id *slot = (id*) ((char*)self + offset);<span class="comment">// 根据偏移找到变量地址</span></span><br><span class="line">    </span><br><span class="line">    <span class="keyword">if</span> (*slot == <span class="keyword">new</span><span class="type">Value</span>) <span class="keyword">return</span>;<span class="comment">// 1、值不相等，才做赋值操作</span></span><br><span class="line">    <span class="keyword">new</span><span class="type">Value</span> = objc_retain(<span class="keyword">new</span><span class="type">Value</span>);<span class="comment">// 2、先对新值 retain</span></span><br><span class="line">    </span><br><span class="line">    <span class="keyword">if</span> (!atomic) &#123;<span class="comment">// nonatomic</span></span><br><span class="line">        oldValue = *slot;<span class="comment">// 3、保存变量旧值</span></span><br><span class="line">        *slot = <span class="keyword">new</span><span class="type">Value</span>;<span class="comment">// 4、给变量赋值新值</span></span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;<span class="comment">// atomic</span></span><br><span class="line">        spinlock_t&amp; slotlock = PropertyLocks[slot];</span><br><span class="line">        slotlock.lock();<span class="comment">// 加锁 由于这里有加锁逻辑，那么多线程情况下是不会多次获取到同一个旧值的，所以也不会引起重复释放的问题</span></span><br><span class="line">        oldValue = *slot;<span class="comment">// 3、保存变量旧值</span></span><br><span class="line">        *slot = <span class="keyword">new</span><span class="type">Value</span>;<span class="comment">// 4、给变量赋值新值        </span></span><br><span class="line">        slotlock.unlock();<span class="comment">// 解锁</span></span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    objc_release(oldValue);<span class="comment">// 5、release 旧值</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
   <link itemprop="mainEntityOfPage" href="https://karosli.github.io/2020/11/13/记一个听云导致GIO不能圈选H5的问题/">
 
   <span style="display:none" itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1857,160 +2001,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-  <link itemprop="mainEntityOfPage" href="https://karosli.github.io/2018/01/16/WCDB命令行报错解决方案/">
-
-  <span style="display:none" itemprop="author" itemscope itemtype="http://schema.org/Person">
-    <meta itemprop="name" content="KarosLi (卡洛斯)">
-    <meta itemprop="description" content>
-    <meta itemprop="image" content="/images/avatar.jpeg">
-  </span>
-
-  <span style="display:none" itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-    <meta itemprop="name" content="卡洛斯的博客">
-    <span style="display:none" itemprop="logo" itemscope itemtype="http://schema.org/ImageObject">
-      <img style="display:none;" itemprop="url image" alt="卡洛斯的博客" src>
-    </span>
-  </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2018/01/16/WCDB命令行报错解决方案/" itemprop="url">
-                  WCDB命令行编译报错解决方案
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-01-16T14:13:20+08:00">
-                2018-01-16
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-
-          
-            
-              <span class="post-comments-count">
-                <span class="post-meta-divider">|</span>
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-comment-o"></i>
-                </span>
-                <a href="/2018/01/16/WCDB命令行报错解决方案/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="2018/01/16/WCDB命令行报错解决方案/" itemprop="commentCount"></span>
-                </a>
-              </span>
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <h1 id="目录"><a href="#目录" class="headerlink" title="目录"></a>目录</h1><blockquote>
-<ol>
-<li>问题</li>
-<li>尝试 xcodebuild</li>
-<li>查看 WCDB 是怎么编译</li>
-<li>尝试自动静态库</li>
-<li>尝试手动静态库</li>
-<li>总结</li>
-</ol>
-</blockquote>
-<h2 id="1-问题"><a href="#1-问题" class="headerlink" title="1. 问题"></a>1. 问题</h2><p>由于项目需求，需要使用一款数据库，直接使用 sqlite 会手动写很多 sql 代码，也容易出错。使用苹果官方的 core data，core data 不是线程安全的，需要严格区分在不同的线程使用不同的 manage context，使用上也增加了代码复杂度，也会更容易出现 bug。于是考虑下基于 sqlite 的开源方案。</p>
-<blockquote>
-<p>FMDB: 其实就是 sqlite 的语法糖，多线程访问需要使用专门的 queue，不支持 ORM。<br>Realm: 是为速度而生的数据库，很多配套设施并不齐全。<br>WCDB: 性能高，支持线程安全，支持 ORM。缺点：1. 基于objective c++，所以只要使用到了 WCDB 的地方，都需要以 mm 为文件后缀。2. 增大包体积。</p>
-</blockquote>
-<p>想找到一款易使用有安全的数据库，最后还是考虑使用了 WCDB， 虽然它也有自己的不足，但是还是可以接受的。</p>
-<p>于是通过 pod 在项目中使用了 WCDB，并写了小 <a href="https://github.com/karosLi/WCDBDemo" target="_blank" rel="noopener">demo</a> 熟悉下了使用方式。</p>
-<figure class="highlight nginx"><table><tr><td class="code"><pre><span class="line"><span class="attribute">pod</span> <span class="string">'WCDB'</span></span><br></pre></td></tr></table></figure>
-
-<p>在熟悉了使用方式之后，就可以在项目里使用了，在开发阶段都是通过模拟器或者真机测试，以为都很好。但是在搭建 Bamboo 的 CICD 就会报以下错。</p>
-<figure class="highlight groovy"><table><tr><td class="code"><pre><span class="line">fts5_storage.<span class="string">c:</span><span class="number">305</span>:<span class="number">9</span>: <span class="string">error:</span> <span class="string">'sqlite3_api_routines'</span> has no member named <span class="string">'__builtin___snprintf_chk'</span></span><br><span class="line"></span><br><span class="line">The following build commands <span class="string">failed:</span></span><br><span class="line">	CompileC <span class="regexp">/Users/</span>karosli<span class="regexp">/Library/</span>Developer<span class="regexp">/Xcode/</span>DerivedData<span class="regexp">/xxx-dleyffpkgrddqzfvrhnoakpqgdvz/</span>Build<span class="regexp">/Intermediates.noindex/</span>ArchiveIntermediates<span class="regexp">/LefitCoach/</span>IntermediateBuildFilesPath<span class="regexp">/Pods.build/</span>Debug-iphoneos<span class="regexp">/WCDB.build/</span>Objects-normal<span class="regexp">/armv7/</span>fts5.o WCDB<span class="regexp">/sqlcipher/</span>fts5.c normal armv7 c com.apple.compilers.llvm.clang<span class="number">.1</span>_0.compiler</span><br><span class="line">(<span class="number">1</span> failure)</span><br></pre></td></tr></table></figure>
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2018/01/16/WCDB命令行报错解决方案/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
   </section>
 
   
@@ -2056,7 +2046,7 @@
           
             <div class="site-state-item site-state-posts">
               <a href="/archives">
-                <span class="site-state-item-count">23</span>
+                <span class="site-state-item-count">24</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
